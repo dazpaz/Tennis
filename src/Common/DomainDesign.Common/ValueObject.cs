@@ -1,36 +1,90 @@
-﻿namespace DomainDesign.Common
-{
-	public abstract class ValueObject<T> where T : ValueObject<T>
-	{
-		protected abstract bool ValueObjectEquals(T other);
-		protected abstract int GetValueObjectHashCode();
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
+namespace DomainDesign.Common
+{
+	public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
+	{
 		public override bool Equals(object obj)
 		{
-			var valueObject = obj as T;
+			if (obj == null) return false;
+			T other = obj as T;
+			return Equals(other);
+		}
 
-			if (ReferenceEquals(valueObject, null)) return false;
+		public virtual bool Equals(T other)
+		{
+			if (other == null) return false;
 
-			return ValueObjectEquals(valueObject);
+			Type t = GetType();
+			Type otherType = other.GetType();
+
+			if (t != otherType) return false;
+
+			FieldInfo[] fields = t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+			foreach (FieldInfo field in fields)
+			{
+				object value1 = field.GetValue(other);
+				object value2 = field.GetValue(this);
+
+				if (value1 == null)
+				{
+					if (value2 != null) return false;
+				}
+				else if (!value1.Equals(value2)) return false;
+			}
+
+			return true;
 		}
 
 		public override int GetHashCode()
 		{
-			return GetValueObjectHashCode();
+			IEnumerable<FieldInfo> fields = GetFields();
+
+			int startValue = 17;
+			int multiplier = 59;
+
+			int hashCode = startValue;
+
+			foreach (FieldInfo field in fields)
+			{
+				object value = field.GetValue(this);
+
+				if (value != null)
+				{
+					hashCode = hashCode * multiplier + value.GetHashCode();
+				}
+			}
+
+			return hashCode;
 		}
 
-		public static bool operator ==(ValueObject<T> a, ValueObject<T> b)
+		private IEnumerable<FieldInfo> GetFields()
 		{
-			if (ReferenceEquals(a, null) && ReferenceEquals(b, null)) return true;
+			Type t = GetType();
 
-			if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
+			List<FieldInfo> fields = new();
 
-			return a.Equals(b);
+			while (t != typeof(object))
+			{
+				fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
+
+				t = t.BaseType;
+			}
+
+			return fields;
 		}
 
-		public static bool operator !=(ValueObject<T> a, ValueObject<T> b)
+		public static bool operator ==(ValueObject<T> x, ValueObject<T> y)
 		{
-			return !(a == b);
+			return x.Equals(y);
+		}
+
+		public static bool operator !=(ValueObject<T> x, ValueObject<T> y)
+		{
+			return !(x == y);
 		}
 	}
 }

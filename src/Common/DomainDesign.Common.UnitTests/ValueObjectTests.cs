@@ -8,80 +8,146 @@ namespace DomainDesign.Common.UnitTests
 	public class ValueObjectTests
 	{
 		[Fact]
-		public void ValueEquals_ValueObjectsAreEqualIfAllAttributesMatch()
+		public void AddressEqualsWorksWithIdenticalAddresses()
 		{
-			var money1 = new Money(100, "GBP");
-			var money2 = new Money(100, "GBP");
+			Address address = new("Address1", "Austin", "TX");
+			Address address2 = new("Address1", "Austin", "TX");
 
-			money1.Equals(money2).Should().BeTrue();
+			address.Equals(address2).Should().BeTrue();
 		}
 
 		[Fact]
-		public void ValueEquals_ValueObjectsAreNotEqualIfNotAllAttributesMatch()
+		public void AddressEqualsWorksWithNonIdenticalAddresses()
 		{
-			var money1 = new Money(100, "GBP");
-			var money2 = new Money(101, "GBP");
-			var money3 = new Money(100, "USD");
+			Address address = new("Address1", "Austin", "TX");
+			Address address2 = new("Address2", "Austin", "TX");
 
-			money1.Equals(money2).Should().BeFalse();
-			money1.Equals(money3).Should().BeFalse();
+			address.Equals(address2).Should().BeFalse();
 		}
 
 		[Fact]
-		public void ValueEquals_ObjectsAreNotEqualIfTheyAreNotTheCorrectType()
+		public void AddressEqualsWorksWithNulls()
 		{
-			var money = new Money(100, "GBP");
-			var other = new DateTime();
+			Address address = new(null, "Austin", "TX");
+			Address address2 = new("Address2", "Austin", "TX");
 
-			money.Equals(other).Should().BeFalse();
+			address.Equals(address2).Should().BeFalse();
 		}
 
 		[Fact]
-		public void GetHashCode_ShouldReturnTheSameHasjCodeValueForValueObjectsWhoAreEqual()
+		public void AddressEqualsWorksWithPairOfNulls()
 		{
-			var hashCode1 = new Money(100, "GBP").GetHashCode();
-			var hashCode2 = new Money(100, "GBP").GetHashCode();
+			Address address = new("Address1", "Austin", null);
+			Address address2 = new("Address1", "Austin", null);
 
-			(hashCode1 == hashCode2).Should().BeTrue();
+			address.Equals(address2).Should().BeTrue();
 		}
 
 		[Fact]
-		public void OperatorEquals_TwoNullValueObjectsShouldBeEqual()
+		public void AddressEqualsWorksWithNullsOnOtherObject()
 		{
-			Money money1 = null;
-			Money money2 = null;
+			Address address = new("Address2", "Austin", "TX");
+			Address address2 = new("Address2", null, "TX");
 
-			(money1 == money2).Should().BeTrue();
+			address.Equals(address2).Should().BeFalse();
 		}
 
 		[Fact]
-		public void OperatorEquals_IfOneValueObjectIsNullTheyShouldNotBeEqual()
+		public void AddressEqualsIsReflexive()
 		{
-			Money money1 = new Money(100, "GBP");
-			Money money2 = null;
+			Address address = new("Address1", "Austin", "TX");
 
-			(money1 == money2).Should().BeFalse();
-			(money2 == money1).Should().BeFalse();
+			address.Equals(address).Should().BeTrue();
 		}
 
 		[Fact]
-		public void OperatorEquals1()
+		public void AddressEqualsIsSymmetric()
 		{
-			var money1 = new Money(100, "GBP");
-			var money2 = new Money(100, "GBP");
+			Address address = new("Address1", "Austin", "TX");
+			Address address2 = new("Address2", "Austin", "TX");
 
-			(money1 == money2).Should().BeTrue();
+			address.Equals(address2).Should().BeFalse();
+			address2.Equals(address).Should().BeFalse();
 		}
 
 		[Fact]
-		public void OperatorEquals2()
+		public void AddressEqualsIsTransitive()
 		{
-			var money1 = new Money(100, "GBP");
-			var money2 = new Money(101, "GBP");
-			var money3 = new Money(100, "USD");
+			Address address = new("Address1", "Austin", "TX");
+			Address address2 = new("Address1", "Austin", "TX");
+			Address address3 = new("Address1", "Austin", "TX");
 
-			(money1 == money2).Should().BeFalse();
-			(money1 == money3).Should().BeFalse();
+			address.Equals(address2).Should().BeTrue();
+			address2.Equals(address3).Should().BeTrue();
+			address.Equals(address3).Should().BeTrue();
+		}
+
+		[Fact]
+		public void AddressOperatorsWork()
+		{
+			Address address = new("Address1", "Austin", "TX");
+			Address address2 = new("Address1", "Austin", "TX");
+			Address address3 = new("Address2", "Austin", "TX");
+
+			(address == address2).Should().BeTrue();
+			(address2 != address3).Should().BeTrue();
+		}
+
+		[Fact]
+		public void DerivedTypesBehaveCorrectly()
+		{
+			Address address = new("Address1", "Austin", "TX");
+			ExpandedAddress address2 = new("Address1", "Apt 123", "Austin", "TX");
+
+			address.Equals(address2).Should().BeFalse();
+			(address == address2).Should().BeFalse();
+		}
+
+		[Fact]
+		public void EqualValueObjectsHaveSameHashCode()
+		{
+			var hashCode1 = new Address("Address1", "Austin", "TX").GetHashCode();
+			var hashCode2 = new Address("Address1", "Austin", "TX").GetHashCode();
+
+			hashCode1.Should().Be(hashCode2);
+		}
+
+		[Fact]
+		public void TransposedValuesGiveDifferentHashCodes()
+		{
+			var hashCode1 = new Address(null, "Austin", "TX").GetHashCode();
+			var hashCode2 = new Address("TX", "Austin", null).GetHashCode();
+
+			hashCode1.Should().NotBe(hashCode2);
+		}
+
+		[Fact]
+		public void UnequalValueObjectsHaveDifferentHashCodes()
+		{
+			var hashCode1 = new Address("Address1", "Austin", "TX").GetHashCode();
+			var hashCode2 = new Address("Address2", "Austin", "TX").GetHashCode();
+
+			hashCode1.Should().NotBe(hashCode2);
+		}
+
+		[Fact]
+		public void TransposedValuesOfFieldNamesGivesDifferentHashCodes()
+		{
+			var hashCode1 = new Address("_city", null, null).GetHashCode();
+			var hashCode2 = new Address(null, "_address1", null).GetHashCode();
+
+			hashCode1.Should().NotBe(hashCode2);
+		}
+
+		[Fact]
+		public void DerivedTypesHashCodesBehaveCorrectly()
+		{
+			var hashCode1 = new ExpandedAddress("Address99999", "Apt 123", "New Orleans", "LA")
+				.GetHashCode();
+			var hashCode2 = new ExpandedAddress("Address1", "Apt 123", "Austin", "TX")
+				.GetHashCode();
+
+			hashCode1.Should().NotBe(hashCode2);
 		}
 	}
 }
