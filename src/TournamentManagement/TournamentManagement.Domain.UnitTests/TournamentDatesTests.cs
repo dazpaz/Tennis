@@ -7,7 +7,7 @@ namespace TournamentManagement.Domain.UnitTests
 	public class TournamentDatesTests
 	{
 		[Fact]
-		public void CanCreateTournamentDateRangeUsingStartAndEndDates()
+		public void CanCreateTournamentDatesUsingStartAndEndDates()
 		{
 			var dates = new TournamentDates(new DateTime(2020, 06, 10, 8, 9, 10), new DateTime(2020, 06, 15, 4, 5, 6));
 
@@ -18,7 +18,7 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanCreateTournamentDateRangeUsingStartDateAndDuration()
+		public void CanCreateTournamentDatesUsingStartDateAndDuration()
 		{
 			var dates = new TournamentDates(new DateTime(2020, 06, 10, 8, 9, 10), 10);
 
@@ -71,7 +71,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Theory]
 		[InlineData(0)]
 		[InlineData(15)]
-		public void TournamentDurationCannotBeForOutsideTheRange1To14Days(int duration)
+		public void TournamentDurationCannotBeOutsideTheRange1To14Days(int duration)
 		{
 			Action act = () => new TournamentDates(new DateTime(2020, 06, 10), duration);
 
@@ -90,7 +90,7 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanChangeTheStartDateOfATournamentDateRange()
+		public void CanChangeTheStartDateOfATournamentDates()
 		{
 			var dates = new TournamentDates(new DateTime(2020, 06, 10), 6);
 			dates = dates.NewStartDate(new DateTime(2020, 06, 11));
@@ -100,7 +100,7 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanChangeTheEndDateOfATournamentDateRange()
+		public void CanChangeTheEndDateOfATournamentDates()
 		{
 			var dates = new TournamentDates(new DateTime(2020, 06, 10), 6);
 			dates = dates.NewEndDate(new DateTime(2020, 06, 11));
@@ -110,13 +110,35 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanChangeTheDurationOfATournamentDateRange()
+		public void CanChangeTheDurationOfATournamentDates()
 		{
 			var dates = new TournamentDates(new DateTime(2020, 06, 10), 6);
 			dates = dates.NewDuration(2);
 
 			dates.EndDate.Day.Should().Be(11);
 			dates.Duration.Should().Be(2);
+		}
+
+		[Fact]
+		public void IfTwoTournamentDatesHaveSameValuesTheySouldBeConsideredEqual()
+		{
+			var dates1 = new TournamentDates(new DateTime(2020, 06, 10), 6);
+			var dates2 = new TournamentDates(new DateTime(2020, 06, 10), 6);
+
+			dates1.Equals(dates2).Should().BeTrue();
+			(dates1 == dates2).Should().BeTrue();
+			(dates1 != dates2).Should().BeFalse();
+		}
+
+		[Fact]
+		public void IfTwoTournamentDatesHaveDifferentValuesTheySouldBeConsideredNotEqual()
+		{
+			var dates1 = new TournamentDates(new DateTime(2020, 06, 10), 6);
+			var dates2 = new TournamentDates(new DateTime(2020, 06, 10), 7);
+
+			dates1.Equals(dates2).Should().BeFalse();
+			(dates1 == dates2).Should().BeFalse();
+			(dates1 != dates2).Should().BeTrue();
 		}
 	}
 }
