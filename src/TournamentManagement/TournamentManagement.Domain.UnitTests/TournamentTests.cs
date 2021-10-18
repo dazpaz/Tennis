@@ -9,11 +9,13 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUseFactoryMethodToCreateTournamentAndItIsCreatedCorrectly()
 		{
-			var tournament = Tournament.Create("Wimbledon", new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
 
 			tournament.Id.Should().NotBe(Guid.Empty);
 			tournament.Title.Should().Be("Wimbledon");
 			tournament.Year.Should().Be(2019);
+			tournament.Level.Should().Be(TournamentLevel.GrandSlam);
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 1));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 14));
@@ -24,7 +26,8 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData("")]
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
-			Action act = () => Tournament.Create(title, new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			Action act = () => Tournament.Create(title, TournamentLevel.Masters125,
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
 
 			act.Should()
 				.Throw<ArgumentException>()
