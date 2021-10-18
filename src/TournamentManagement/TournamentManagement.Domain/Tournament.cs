@@ -7,6 +7,7 @@ namespace TournamentManagement.Domain
 	{
 		public string Title { get; private set; }
 		public TournamentDates Dates { get; private set; }
+		public TournamentState State { get; private set; }
 
 		public int Year => Dates.Year;
 		public DateTime StartDate => Dates.StartDate;
@@ -23,6 +24,7 @@ namespace TournamentManagement.Domain
 			var tournament = new Tournament(Guid.NewGuid())
 			{
 				Title = title,
+				State = TournamentState.BeingDefined,
 				Dates = new TournamentDates(startDate, endDate)
 			};
 

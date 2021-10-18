@@ -7,13 +7,14 @@ namespace TournamentManagement.Domain.UnitTests
 	public class TournamentTests
 	{
 		[Fact]
-		public void CanUseFactoryMethodToCreateTournament()
+		public void CanUseFactoryMethodToCreateTournamentAndItIsCreatedCorrectly()
 		{
 			var tournament = Tournament.Create("Wimbledon", new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
 
 			tournament.Id.Should().NotBe(Guid.Empty);
 			tournament.Title.Should().Be("Wimbledon");
 			tournament.Year.Should().Be(2019);
+			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 1));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 14));
 		}
