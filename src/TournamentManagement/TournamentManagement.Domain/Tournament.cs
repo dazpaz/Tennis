@@ -32,5 +32,19 @@ namespace TournamentManagement.Domain
 
 			return tournament;
 		}
+
+		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
+		{
+			if (State != TournamentState.BeingDefined)
+			{
+				throw new Exception("Can only change details of the Tournament before it is opened for entry.");
+			}
+
+			Guard.ForNullOrEmptyString(title, "title");
+
+			Title = title;
+			Level = level;
+			Dates = new TournamentDates(startDate, endDate);
+		}
 	}
 }
