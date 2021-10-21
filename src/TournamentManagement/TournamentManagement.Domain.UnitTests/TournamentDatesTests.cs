@@ -56,7 +56,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value must be between 2019 and 2050 (Parameter 'year')");
+				.WithMessage($"Value {year} must be between 2019 and 2050 (Parameter 'year')");
 		}
 
 		[Theory]
