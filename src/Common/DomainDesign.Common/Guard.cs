@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace DomainDesign.Common
 {
@@ -12,11 +13,19 @@ namespace DomainDesign.Common
 			}
 		}
 
+		public static void ForValueNotInSetOfAllowedValues<T>(T value, T[] allowedValues, string parameterName)
+		{
+			if (!allowedValues.Contains(value))
+			{
+				throw new ArgumentException($"{value} is not one of the allowed values", parameterName);
+			}
+		}
+
 		public static void ForIntegerOutOfRange(int value, int lowLimit, int highLimit, string parameterName)
 		{
 			if (value < lowLimit || value > highLimit)
 			{
-				throw new ArgumentOutOfRangeException(parameterName, $"Value must be between {lowLimit} and {highLimit}");
+				throw new ArgumentOutOfRangeException(parameterName, $"Value {value} must be between {lowLimit} and {highLimit}");
 			}
 		}
 	}
