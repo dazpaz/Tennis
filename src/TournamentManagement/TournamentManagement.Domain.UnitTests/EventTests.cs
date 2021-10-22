@@ -13,6 +13,7 @@ namespace TournamentManagement.Domain.UnitTests
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.Id.Should().NotBe(Guid.Empty);
+			tennisEvent.IsCompleted.Should().BeFalse();
 			tennisEvent.EventType.Should().Be(EventType.MensSingles);
 			tennisEvent.MatchFormat.Should().Be(MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			tennisEvent.EventSize.EntrantsLimit.Should().Be(128);
@@ -49,6 +50,19 @@ namespace TournamentManagement.Domain.UnitTests
 			tennisEvent.MatchFormat.Should().Be(MatchFormat.OneSetMatchWithFinalSetTieBreak);
 			tennisEvent.EventSize.EntrantsLimit.Should().Be(64);
 			tennisEvent.EventSize.NumberOfSeeds.Should().Be(16);
+		}
+
+		[Fact]
+		public void CanMarkAnEventAsCompleted()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			tennisEvent.IsCompleted.Should().BeFalse();
+
+			tennisEvent.MarkEventCompleted();
+
+			tennisEvent.IsCompleted.Should().BeTrue();
 		}
 	}
 }
