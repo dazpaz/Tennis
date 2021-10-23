@@ -171,6 +171,146 @@ namespace TournamentManagement.Domain.UnitTests
 			tournament.Events.Count.Should().Be(0);
 		}
 
+		[Fact]
+		public void CanTransitionThroughTheStatesOfATournament()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+
+			tournament.OpenForEntries();
+			tournament.State.Should().Be(TournamentState.AcceptingEntries);
+
+			tournament.CloseEntries();
+			tournament.State.Should().Be(TournamentState.EntriesClosed);
+
+			tournament.DrawTheEvents();
+			tournament.State.Should().Be(TournamentState.DrawComplete);
+
+			tournament.StartTournament();
+			tournament.State.Should().Be(TournamentState.InProgress);
+
+			tournament.EventCompleted(EventType.MensSingles);
+			tournament.State.Should().Be(TournamentState.InProgress);
+
+			tournament.EventCompleted(EventType.WomensSingles);
+			tournament.State.Should().Be(TournamentState.Complete);
+		}
+
+		[Fact]
+		public void CannotUpdateTournamentDetailsIfItIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotAddEventIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var tennisEvent = CreateTestEvent(EventType.WomensSingles);
+
+			void act() => tournament.AddEvent(tennisEvent);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "AddEvent", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotRemoveEventIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.RemoveEvent(EventType.MensSingles);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "RemoveEvent", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotClearEventsIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.ClearEvents();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "ClearEvents", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotSetEventsIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.SetEvents(null);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "SetEvents", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotOpenForEntriesIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.OpenForEntries();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "OpenForEntries", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotOpenForEntriesIfTournamentHasNoEvents()
+		{
+			var tournament = CreateTestTournament();
+
+			Action act = () => tournament.OpenForEntries();
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Tournament must have at least one event to open it for entries");
+		}
+
+		[Fact]
+		public void CannotCloseEntriesIfTournamentIsNotInAcceptingEntriesState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.CloseEntries();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "CloseEntries", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotDrawTheEventsIfTournamentIsNotInEntriesClosedState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.DrawTheEvents();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "DrawTheEvents", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotStartTournamentIfTournamentIsNotInDrawCompleteState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.StartTournament();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "StartTournament", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotCompleteAnEventIfTournamentIsNotInInProgressState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.EventCompleted(EventType.MensSingles);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", TournamentState.BeingDefined);
+		}
+
 		private static Tournament CreateTestTournament()
 		{
 			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
@@ -180,6 +320,21 @@ namespace TournamentManagement.Domain.UnitTests
 		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)
 		{
 			return Event.Create(eventtype, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+		}
+
+		private static Tournament CreateTestTournamentAndOpenForEntries()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.OpenForEntries();
+			return tournament;
+		}
+
+		private static void VeifyExceptionThrownWhenNotInCorrectState(Action act, string action, TournamentState state)
+		{
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Action {action} not allowed for a tournament in the state {state}");
 		}
 	}
 }
