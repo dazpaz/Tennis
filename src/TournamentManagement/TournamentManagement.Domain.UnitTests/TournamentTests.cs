@@ -10,8 +10,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUseFactoryMethodToCreateTournamentAndItIsCreatedCorrectly()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = CreateTestTournament();
 
 			tournament.Id.Should().NotBe(Guid.Empty);
 			tournament.Title.Should().Be("Wimbledon");
@@ -38,8 +37,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUpdateTournamentDetails()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = CreateTestTournament();
 
 			tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
@@ -54,10 +52,8 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanAddAnEventToATournament()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var tournament = CreateTestTournament();
+			var tennisEvent = CreateTestEvent();
 
 			tournament.AddEvent(tennisEvent);
 
@@ -68,19 +64,12 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanAddAllTypesOfEventToATournament()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
-
-			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
-			tournament.AddEvent(Event.Create(EventType.WomensSingles, 128, 32,
-				MatchFormat.ThreeSetMatchWithTwoGamesClear));
-			tournament.AddEvent(Event.Create(EventType.MensDoubles, 64, 16,
-				MatchFormat.FiveSetMatchWithFinalSetTieBreak));
-			tournament.AddEvent(Event.Create(EventType.WomensDoubles, 64, 16,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
-			tournament.AddEvent(Event.Create(EventType.MixedDoubles, 32, 8,
-				new MatchFormat(3, FinalSetType.ChampionsTieBreak)));
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensDoubles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensDoubles));
+			tournament.AddEvent(CreateTestEvent(EventType.MixedDoubles));
 
 			tournament.Events.Count.Should().Be(5);
 		}
@@ -88,32 +77,25 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanRemoveAnEventFromATournament()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
-
-			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
-			tournament.AddEvent(Event.Create(EventType.WomensSingles, 64, 16,
-				MatchFormat.ThreeSetMatchWithTwoGamesClear));
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
 
 			tournament.Events.Count.Should().Be(2);
 
 			tournament.RemoveEvent(EventType.MensSingles);
 
 			tournament.Events.Count.Should().Be(1);
-			tournament.Events[EventType.WomensSingles].EventSize.EntrantsLimit.Should().Be(64);
+			tournament.Events[EventType.WomensSingles].EventSize.EntrantsLimit.Should().Be(128);
 		}
 
 		[Fact]
 		public void CannnotAddASecondEventIfTheSameTypeToATournament()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
-			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
-			Action act = () => tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
+			Action act = () => tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
 			act.Should()
 				.Throw<Exception>()
@@ -123,11 +105,8 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CannotRemoveAnEventTypeFromATournamentIfItDoesNotExist()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
-
-			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
 			tournament.Events.Count.Should().Be(1);
 
@@ -141,13 +120,10 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanClearTheEventsForTheTournament()
 		{
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = CreateTestTournament();
 
-			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.FiveSetMatchWithTwoGamesClear));
-			tournament.AddEvent(Event.Create(EventType.WomensSingles, 128, 32,
-				MatchFormat.ThreeSetMatchWithTwoGamesClear));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
 
 			tournament.Events.Count.Should().Be(2);
 
@@ -161,20 +137,14 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var events = new List<Event>()
 			{
-				Event.Create(EventType.MensSingles, 128, 32,
-					MatchFormat.FiveSetMatchWithTwoGamesClear),
-				Event.Create(EventType.WomensSingles, 128, 32,
-					MatchFormat.FiveSetMatchWithTwoGamesClear),
-				Event.Create(EventType.MensDoubles, 64, 16,
-					MatchFormat.FiveSetMatchWithFinalSetTieBreak),
-				Event.Create(EventType.WomensDoubles, 64, 16,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak),
-					Event.Create(EventType.MixedDoubles, 32, 8,
-				new MatchFormat(3, FinalSetType.ChampionsTieBreak))
+				CreateTestEvent(EventType.MensSingles),
+				CreateTestEvent(EventType.WomensSingles),
+				CreateTestEvent(EventType.MensDoubles),
+				CreateTestEvent(EventType.WomensDoubles),
+				CreateTestEvent(EventType.MixedDoubles)
 			};
 
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = CreateTestTournament();
 
 			tournament.SetEvents(events);
 
@@ -186,14 +156,11 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var events = new List<Event>()
 			{
-				Event.Create(EventType.MensSingles, 128, 32,
-					MatchFormat.FiveSetMatchWithTwoGamesClear),
-				Event.Create(EventType.MensSingles, 128, 32,
-					MatchFormat.FiveSetMatchWithTwoGamesClear)
+				CreateTestEvent(EventType.MensSingles),
+				CreateTestEvent(EventType.MensSingles)
 			};
 
-			var tournament = Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+			var tournament = CreateTestTournament();
 
 			Action act = () => tournament.SetEvents(events);
 
@@ -202,6 +169,172 @@ namespace TournamentManagement.Domain.UnitTests
 				.WithMessage("Tournament already has an event of type MensSingles");
 
 			tournament.Events.Count.Should().Be(0);
+		}
+
+		[Fact]
+		public void CanTransitionThroughTheStatesOfATournament()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+
+			tournament.OpenForEntries();
+			tournament.State.Should().Be(TournamentState.AcceptingEntries);
+
+			tournament.CloseEntries();
+			tournament.State.Should().Be(TournamentState.EntriesClosed);
+
+			tournament.DrawTheEvents();
+			tournament.State.Should().Be(TournamentState.DrawComplete);
+
+			tournament.StartTournament();
+			tournament.State.Should().Be(TournamentState.InProgress);
+
+			tournament.EventCompleted(EventType.MensSingles);
+			tournament.State.Should().Be(TournamentState.InProgress);
+
+			tournament.EventCompleted(EventType.WomensSingles);
+			tournament.State.Should().Be(TournamentState.Complete);
+		}
+
+		[Fact]
+		public void CannotUpdateTournamentDetailsIfItIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotAddEventIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var tennisEvent = CreateTestEvent(EventType.WomensSingles);
+
+			void act() => tournament.AddEvent(tennisEvent);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "AddEvent", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotRemoveEventIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.RemoveEvent(EventType.MensSingles);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "RemoveEvent", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotClearEventsIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.ClearEvents();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "ClearEvents", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotSetEventsIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.SetEvents(null);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "SetEvents", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotOpenForEntriesIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.OpenForEntries();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "OpenForEntries", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotOpenForEntriesIfTournamentHasNoEvents()
+		{
+			var tournament = CreateTestTournament();
+
+			Action act = () => tournament.OpenForEntries();
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Tournament must have at least one event to open it for entries");
+		}
+
+		[Fact]
+		public void CannotCloseEntriesIfTournamentIsNotInAcceptingEntriesState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.CloseEntries();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "CloseEntries", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotDrawTheEventsIfTournamentIsNotInEntriesClosedState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.DrawTheEvents();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "DrawTheEvents", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotStartTournamentIfTournamentIsNotInDrawCompleteState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.StartTournament();
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "StartTournament", TournamentState.BeingDefined);
+		}
+
+		[Fact]
+		public void CannotCompleteAnEventIfTournamentIsNotInInProgressState()
+		{
+			var tournament = CreateTestTournament();
+
+			void act() => tournament.EventCompleted(EventType.MensSingles);
+
+			VeifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", TournamentState.BeingDefined);
+		}
+
+		private static Tournament CreateTestTournament()
+		{
+			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+		}
+
+		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)
+		{
+			return Event.Create(eventtype, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+		}
+
+		private static Tournament CreateTestTournamentAndOpenForEntries()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.OpenForEntries();
+			return tournament;
+		}
+
+		private static void VeifyExceptionThrownWhenNotInCorrectState(Action act, string action, TournamentState state)
+		{
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Action {action} not allowed for a tournament in the state {state}");
 		}
 	}
 }

@@ -9,6 +9,7 @@ namespace TournamentManagement.Domain
 		public bool IsSinglesEvent { get; private set; }
 		public MatchFormat MatchFormat { get; private set; }
 		public EventSize EventSize { get; private set; }
+		public bool IsCompleted { get; private set; }
 
 
 		private Event(Guid id) : base(id)
@@ -25,6 +26,11 @@ namespace TournamentManagement.Domain
 		public void UpdateDetails(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
 			SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
+		}
+
+		public void MarkEventCompleted()
+		{
+			IsCompleted = true;
 		}
 
 		private void SetAttributeDetails(EventType eventType, int entrantsLimit,

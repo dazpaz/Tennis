@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace TournamentManagement.Domain
 {
@@ -95,11 +96,68 @@ namespace TournamentManagement.Domain
 			}
 		}
 
+		public void OpenForEntries()
+		{
+			GuardForActionInCorrectState(TournamentState.BeingDefined, "OpenForEntries");
+			GuardForAtLeastOneEvent();
+			
+			// Raise event to get notifications out to players telling them they can enter
+
+			TransitionToState(TournamentState.AcceptingEntries);
+		}
+
+		public void CloseEntries()
+		{
+			GuardForActionInCorrectState(TournamentState.AcceptingEntries, "CloseEntries");
+
+			// Raise event to get notification out to players saying if they are in or not
+
+			TransitionToState(TournamentState.EntriesClosed);
+		}
+
+		public void DrawTheEvents()
+		{
+			GuardForActionInCorrectState(TournamentState.EntriesClosed, "DrawTheEvents");
+
+			// Raise event to perform the draw for each event 
+
+			TransitionToState(TournamentState.DrawComplete);
+		}
+
+		public void StartTournament()
+		{
+			GuardForActionInCorrectState(TournamentState.DrawComplete, "StartTournament");
+
+			// Need to think about this one
+
+			TransitionToState(TournamentState.InProgress);
+		}
+
+		public void EventCompleted(EventType eventType)
+		{
+			GuardForActionInCorrectState(TournamentState.InProgress, "EventCompleted");
+			GuardForMissingEventType(eventType);
+
+			_events[eventType].MarkEventCompleted();
+
+			if (_events.Values.All(e => e.IsCompleted))
+			{
+				TransitionToState(TournamentState.Complete);
+
+				// Raise Event to update players details with their points and prize money
+			}
+		}
+
+		private void TransitionToState(TournamentState newState)
+		{
+			State = newState;
+		}
+
 		private void GuardForActionInCorrectState(TournamentState state, string action)
 		{
 			if (State != state)
 			{
-				throw new Exception($"Action {action} not allowed for a tournament if the state {state}");
+				throw new Exception($"Action {action} not allowed for a tournament in the state {State}");
 			}
 		}
 
@@ -116,6 +174,14 @@ namespace TournamentManagement.Domain
 			if (!_events.ContainsKey(eventType))
 			{
 				throw new Exception($"Tournament does not have an event of type {eventType}");
+			}
+		}
+
+		private void GuardForAtLeastOneEvent()
+		{
+			if (_events.Count == 0)
+			{
+				throw new Exception($"Tournament must have at least one event to open it for entries");
 			}
 		}
 	}
