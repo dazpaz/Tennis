@@ -11,7 +11,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(EventType.MensDoubles, 2, 0)]
 		[InlineData(EventType.WomensDoubles, 0, 2)]
 		[InlineData(EventType.MixedDoubles, 1, 1)]
-		public void ValidatorReturnsTrueIfCountsMatch(EventType eventType, ushort maleCount, ushort femaleCount)
+		public void ValidatorReturnsTrueIfCountsMatch(EventType eventType, int maleCount, int femaleCount)
 		{
 			var result = EventGenderValidator.IsValid(eventType, maleCount, femaleCount);
 
@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(EventType.WomensDoubles, 0, 1)]
 		[InlineData(EventType.MixedDoubles, 1, 2)]
 		[InlineData(EventType.MixedDoubles, 2, 1)]
-		public void ValidatorReturnsFalseIfCountsDoNotMatch(EventType eventType, ushort maleCount, ushort femaleCount)
+		public void ValidatorReturnsFalseIfCountsDoNotMatch(EventType eventType, int maleCount, int femaleCount)
 		{
 			var result = EventGenderValidator.IsValid(eventType, maleCount, femaleCount);
 

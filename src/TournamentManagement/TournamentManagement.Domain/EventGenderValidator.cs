@@ -6,8 +6,8 @@ namespace TournamentManagement.Domain
 	{
 		class GenderCounts
 		{
-			public ushort MaleCount { get; set; }
-			public ushort FemaleCount { get; set; }
+			public int MaleCount { get; set; }
+			public int FemaleCount { get; set; }
 		}
 
 		private static readonly IDictionary<EventType, GenderCounts> ValidCounts =
@@ -20,7 +20,7 @@ namespace TournamentManagement.Domain
 			{ EventType.MixedDoubles, new GenderCounts { MaleCount = 1 , FemaleCount = 1 } }
 		};
 
-		public static bool IsValid(EventType eventType, ushort maleCount, ushort femaleCount)
+		public static bool IsValid(EventType eventType, int maleCount, int femaleCount)
 		{
 			var expected = ValidCounts[eventType];
 			return expected.MaleCount == maleCount && expected.FemaleCount == femaleCount;

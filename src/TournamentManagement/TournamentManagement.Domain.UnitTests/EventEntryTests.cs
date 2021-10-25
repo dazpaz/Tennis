@@ -7,12 +7,12 @@ namespace TournamentManagement.Domain.UnitTests
 	public class EventEntryTests
 	{
 		[Theory]
-		[InlineData(EventType.MensSingles)]
-		[InlineData(EventType.WomensSingles)]
-		public void CanUseFactoryMethodToCreateEntryToSinglesEvent(EventType eventType)
+		[InlineData(EventType.MensSingles, Gender.Male)]
+		[InlineData(EventType.WomensSingles, Gender.Female)]
+		public void CanUseFactoryMethodToCreateEntryToSinglesEvent(EventType eventType, Gender gender)
 		{
 			var tournamentId = Guid.NewGuid();
-			var player = Player.Create("Steve Server", 20, 100, Gender.Male);
+			var player = Player.Create("Steve Server", 20, 100, gender);
 
 			var entry = EventEntry.CreateSinglesEntry(tournamentId, eventType, player);
 
@@ -24,14 +24,15 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Theory]
-		[InlineData(EventType.MensDoubles)]
-		[InlineData(EventType.WomensDoubles)]
-		[InlineData(EventType.MixedDoubles)]
-		public void CanUseFactoryMethodToCreateEntryToDoublesEvent(EventType eventType)
+		[InlineData(EventType.MensDoubles, Gender.Male, Gender.Male)]
+		[InlineData(EventType.WomensDoubles, Gender.Female, Gender.Female)]
+		[InlineData(EventType.MixedDoubles, Gender.Male, Gender.Female)]
+		public void CanUseFactoryMethodToCreateEntryToDoublesEvent(EventType eventType,
+			Gender genderOne, Gender genderTwo)
 		{
 			var tournamentId = Guid.NewGuid();
-			var playerOne = Player.Create("Steve Server", 20, 100, Gender.Male);
-			var playerTwo = Player.Create("Gary Groundstroke", 30, 50, Gender.Male);
+			var playerOne = Player.Create("Steve Server", 20, 100, genderOne);
+			var playerTwo = Player.Create("Gary Groundstroke", 30, 50, genderTwo);
 
 			var entry = EventEntry.CreateDoublesEntry(tournamentId, eventType, playerOne, playerTwo);
 
@@ -85,6 +86,39 @@ namespace TournamentManagement.Domain.UnitTests
 			act.Should()
 				.Throw<ArgumentException>()
 				.WithMessage("Guid cannot have empty value (Parameter 'tournamentId')");
+		}
+
+		[Theory]
+		[InlineData(EventType.MensSingles, Gender.Female)]
+		[InlineData(EventType.WomensSingles, Gender.Male)]
+		public void IfGenderDoesNotMatchSinglesEventThenExceptionIsThrown(EventType eventType, Gender gender)
+		{
+			var tournamentId = Guid.NewGuid();
+			var player = Player.Create("Steve Server", 20, 100, gender);
+
+			Action act = () => EventEntry.CreateSinglesEntry(tournamentId, eventType, player);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Gender of players does not match the event type {eventType}");
+		}
+
+		[Theory]
+		[InlineData(EventType.MensDoubles, Gender.Male, Gender.Female)]
+		[InlineData(EventType.WomensDoubles, Gender.Male, Gender.Female)]
+		[InlineData(EventType.MixedDoubles, Gender.Male, Gender.Male)]
+		public void IfGenderDoesNotMatchDoubleEventThenExceptionIsThrown(EventType eventType,
+			Gender genderOne, Gender genderTwo)
+		{
+			var tournamentId = Guid.NewGuid();
+			var playerOne = Player.Create("Steve Server", 20, 100, genderOne);
+			var playerTwo = Player.Create("Gary Groundstroke", 30, 50, genderTwo);
+
+			Action act = () => EventEntry.CreateDoublesEntry(tournamentId, eventType, playerOne, playerTwo);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage($"Gender of players does not match the event type {eventType}");
 		}
 	}
 }

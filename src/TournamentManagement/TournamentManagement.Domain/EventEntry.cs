@@ -25,6 +25,7 @@ namespace TournamentManagement.Domain
 			Player player)
 		{
 			GuardIsSinglesEvent(eventType);
+			GuardForValidPlayerGender(eventType, new List<Player> { player });
 
 			var entry = CreateEntry(tournamentId, eventType);
 			entry._players.Add(player);
@@ -36,6 +37,7 @@ namespace TournamentManagement.Domain
 			Player playerOne, Player playerTwo)
 		{
 			GuardIsDoublesEvent(eventType);
+			GuardForValidPlayerGender(eventType, new List<Player> { playerOne, playerTwo });
 
 			var entry = CreateEntry(tournamentId, eventType);
 			entry._players.Add(playerOne);
@@ -71,6 +73,17 @@ namespace TournamentManagement.Domain
 			};
 
 			return entry;
+		}
+
+		private static void GuardForValidPlayerGender(EventType eventtype, IEnumerable<Player> players)
+		{
+			var maleCount = players.Count(p => p.Gender == Gender.Male);
+			var femaleCount = players.Count(p => p.Gender == Gender.Female);
+
+			if (!EventGenderValidator.IsValid(eventtype, maleCount, femaleCount))
+			{
+				throw new Exception($"Gender of players does not match the event type {eventtype}");
+			}
 		}
 	}
 }
