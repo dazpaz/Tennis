@@ -31,7 +31,7 @@ namespace TournamentManagement.Domain.UnitTests
 			var tennisEvent = Event.Create(eventType, 128, 32,
 				new MatchFormat(1, FinalSetType.TieBreak));
 
-			tennisEvent.IsSinglesEvent.Should().Be(isSingles);
+			tennisEvent.SinglesEvent.Should().Be(isSingles);
 		}
 
 		[Fact]

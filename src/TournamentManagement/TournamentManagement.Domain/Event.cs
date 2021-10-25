@@ -6,7 +6,7 @@ namespace TournamentManagement.Domain
 	public class Event : Entity<Guid>
 	{
 		public EventType EventType { get; private set; }
-		public bool IsSinglesEvent { get; private set; }
+		public bool SinglesEvent { get; private set; }
 		public MatchFormat MatchFormat { get; private set; }
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
@@ -21,6 +21,11 @@ namespace TournamentManagement.Domain
 			var tennisEvent = new Event(Guid.NewGuid());
 			tennisEvent.SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 			return tennisEvent;
+		}
+
+		public static bool IsSinglesEvent(EventType eventType)
+		{
+			return eventType == EventType.MensSingles || eventType == EventType.WomensSingles;
 		}
 
 		public void UpdateDetails(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
@@ -38,7 +43,7 @@ namespace TournamentManagement.Domain
 		{
 			EventType = eventType;
 			MatchFormat = matchFormat;
-			IsSinglesEvent = (eventType == EventType.MensSingles || eventType == EventType.WomensSingles);
+			SinglesEvent = IsSinglesEvent(eventType);
 			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
 		}
 	}
