@@ -28,5 +28,13 @@ namespace DomainDesign.Common
 				throw new ArgumentOutOfRangeException(parameterName, $"Value {value} must be between {lowLimit} and {highLimit}");
 			}
 		}
+
+		public static void ForGuidIsNotEmpty(Guid guid, string parameterName)
+		{
+			if (guid == Guid.Empty)
+			{
+				throw new ArgumentException("Guid cannot have empty value", parameterName);
+			}
+		}
 	}
 }
