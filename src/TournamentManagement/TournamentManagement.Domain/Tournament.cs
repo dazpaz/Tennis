@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace TournamentManagement.Domain
 {
-	public class Tournament : Entity<Guid>
+	public class Tournament : Entity<TournamentId>
 	{
 		public string Title { get; private set; }
 		public TournamentDates Dates { get; private set; }
@@ -21,7 +21,7 @@ namespace TournamentManagement.Domain
 
 		private readonly IDictionary<EventType, Event> _events;
 
-		private Tournament(Guid id) : base(id)
+		private Tournament(TournamentId id) : base(id)
 		{
 			_events = new Dictionary<EventType, Event>();
 			Events = new ReadOnlyDictionary<EventType, Event>(_events);
@@ -31,7 +31,7 @@ namespace TournamentManagement.Domain
 		{
 			Guard.ForNullOrEmptyString(title, "title");
 
-			var tournament = new Tournament(Guid.NewGuid())
+			var tournament = new Tournament(new TournamentId())
 			{
 				Title = title,
 				Level = level,

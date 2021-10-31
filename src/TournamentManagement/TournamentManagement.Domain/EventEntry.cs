@@ -8,7 +8,7 @@ namespace TournamentManagement.Domain
 {
 	public class EventEntry : Entity<Guid>
 	{
-		public Guid TournamentId { get; private set; }
+		public TournamentId TournamentId { get; private set; }
 		public EventType EventType { get; private set; }
 		public IReadOnlyCollection<Player> Players { get; private set; }
 		public ushort Rank { get; private set; }
@@ -21,7 +21,7 @@ namespace TournamentManagement.Domain
 			Players = new ReadOnlyCollection<Player>(_players);
 		}
 
-		public static EventEntry CreateSinglesEntry(Guid tournamentId, EventType eventType,
+		public static EventEntry CreateSinglesEventEntry(TournamentId tournamentId, EventType eventType,
 			Player player)
 		{
 			GuardIsSinglesEvent(eventType);
@@ -33,7 +33,7 @@ namespace TournamentManagement.Domain
 			return entry;
 		}
 
-		public static EventEntry CreateDoublesEntry(Guid tournamentId, EventType eventType,
+		public static EventEntry CreateDoublesEventEntry(TournamentId tournamentId, EventType eventType,
 			Player playerOne, Player playerTwo)
 		{
 			GuardIsDoublesEvent(eventType);
@@ -62,13 +62,11 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private static EventEntry CreateEntry(Guid tournamentId, EventType eventType)
+		private static EventEntry CreateEntry(TournamentId tournamentId, EventType eventType)
 		{
-			Guard.ForGuidIsNotEmpty(tournamentId, "tournamentId");
-
 			var entry = new EventEntry(Guid.NewGuid())
 			{
-				TournamentId = tournamentId,
+				TournamentId = new TournamentId(tournamentId.Id),
 				EventType = eventType,
 			};
 
