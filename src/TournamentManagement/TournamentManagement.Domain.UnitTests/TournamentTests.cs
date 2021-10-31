@@ -12,7 +12,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var tournament = CreateTestTournament();
 
-			tournament.Id.Should().NotBe(Guid.Empty);
+			tournament.Id.Id.Should().NotBe(Guid.Empty);
 			tournament.Title.Should().Be("Wimbledon");
 			tournament.Year.Should().Be(2019);
 			tournament.Level.Should().Be(TournamentLevel.GrandSlam);
