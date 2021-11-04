@@ -32,5 +32,16 @@ namespace TournamentManagement.Domain.UnitTests
 				.Throw<ArgumentException>()
 				.WithMessage("Guid cannot have empty value (Parameter 'id')");
 		}
+
+		[Fact]
+		public void ThereIsAByeCompetitorId()
+		{
+			CompetitorId.Bye.Id.Should().NotBe(Guid.Empty);
+
+			var c1 = CompetitorId.Bye;
+			var c2 = CompetitorId.Bye;
+
+			(c1 == c2).Should().BeTrue();
+		}
 	}
 }
