@@ -149,5 +149,19 @@ namespace DomainDesign.Common.UnitTests
 
 			hashCode1.Should().NotBe(hashCode2);
 		}
+
+		[Fact]
+		public void AddressOperatorsWorkWithNullValues()
+		{
+			Address address1 = null;
+			Address address2 = null;
+			Address address3 = new("Address2", "Austin", "TX");
+			Address address4 = new("Address2", "Austin", "TX");
+
+			(address1 == address2).Should().BeTrue();
+			(address1 == address3).Should().BeFalse();
+			(address3 == address1).Should().BeFalse();
+			(address3 == address4).Should().BeTrue();
+		}
 	}
 }
