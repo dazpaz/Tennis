@@ -3,7 +3,7 @@ using System;
 
 namespace TournamentManagement.Domain
 {
-	public class Event : Entity<Guid>
+	public class Event : Entity<EventId>
 	{
 		public EventType EventType { get; private set; }
 		public bool SinglesEvent { get; private set; }
@@ -12,13 +12,13 @@ namespace TournamentManagement.Domain
 		public bool IsCompleted { get; private set; }
 
 
-		private Event(Guid id) : base(id)
+		private Event(EventId id) : base(id)
 		{
 		}
 
 		public static Event Create(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
-			var tennisEvent = new Event(Guid.NewGuid());
+			var tennisEvent = new Event(new EventId());
 			tennisEvent.SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 			return tennisEvent;
 		}
