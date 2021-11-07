@@ -12,7 +12,7 @@ namespace TournamentManagement.Domain.UnitTests
 			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			tennisEvent.Id.Should().NotBe(Guid.Empty);
+			tennisEvent.Id.Id.Should().NotBe(Guid.Empty);
 			tennisEvent.IsCompleted.Should().BeFalse();
 			tennisEvent.EventType.Should().Be(EventType.MensSingles);
 			tennisEvent.MatchFormat.Should().Be(MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
