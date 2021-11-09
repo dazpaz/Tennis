@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace TournamentManagement.Domain
 {
-	public class EventEntry : Entity<Guid>
+	public class EventEntry : Entity<EventEntryId>
 	{
 		public TournamentId TournamentId { get; private set; }
 		public EventType EventType { get; private set; }
@@ -15,7 +15,7 @@ namespace TournamentManagement.Domain
 
 		private readonly IList<Player> _players;
 
-		private EventEntry(Guid id) : base(id)
+		private EventEntry(EventEntryId id) : base(id)
 		{
 			_players = new List<Player>();
 			Players = new ReadOnlyCollection<Player>(_players);
@@ -64,7 +64,7 @@ namespace TournamentManagement.Domain
 
 		private static EventEntry CreateEntry(TournamentId tournamentId, EventType eventType)
 		{
-			var entry = new EventEntry(Guid.NewGuid())
+			var entry = new EventEntry(new EventEntryId())
 			{
 				TournamentId = new TournamentId(tournamentId.Id),
 				EventType = eventType,
