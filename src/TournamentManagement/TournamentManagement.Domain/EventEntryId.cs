@@ -3,19 +3,9 @@ using System;
 
 namespace TournamentManagement.Domain
 {
-	public class EventEntryId : ValueObject<EventEntryId>
+	public class EventEntryId : EntityId
 	{
-		public readonly Guid Id;
-
-		public EventEntryId()
-		{
-			Id = Guid.NewGuid();
-		}
-
-		public EventEntryId(Guid id)
-		{
-			Guard.ForGuidIsNotEmpty(id, "id");
-			Id = id;
-		}
+		public EventEntryId() : base() { }
+		public EventEntryId(Guid id) : base(id) { }
 	}
 }
