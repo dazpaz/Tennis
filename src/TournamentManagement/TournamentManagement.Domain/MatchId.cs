@@ -3,19 +3,9 @@ using System;
 
 namespace TournamentManagement.Domain
 {
-	public class MatchId : ValueObject<MatchId>
+	public class MatchId : EntityId
 	{
-		public readonly Guid Id;
-
-		public MatchId()
-		{
-			Id = Guid.NewGuid();
-		}
-
-		public MatchId(Guid id)
-		{
-			Guard.ForGuidIsNotEmpty(id, "id");
-			Id = id;
-		}
+		public MatchId() : base() { }
+		public MatchId(Guid id) : base(id) { }
 	}
 }
