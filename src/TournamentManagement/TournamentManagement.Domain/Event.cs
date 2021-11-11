@@ -11,7 +11,6 @@ namespace TournamentManagement.Domain
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
 
-
 		private Event(EventId id) : base(id)
 		{
 		}
@@ -30,6 +29,7 @@ namespace TournamentManagement.Domain
 
 		public void UpdateDetails(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
+			GuardAgainstUpdatingCompletedEvent();
 			SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 		}
 
@@ -45,6 +45,14 @@ namespace TournamentManagement.Domain
 			MatchFormat = matchFormat;
 			SinglesEvent = IsSinglesEvent(eventType);
 			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
+		}
+
+		private void GuardAgainstUpdatingCompletedEvent()
+		{
+			if (IsCompleted)
+			{
+				throw new Exception("Cannot update the details of an event that is completed");
+			}
 		}
 	}
 }
