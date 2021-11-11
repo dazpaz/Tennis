@@ -46,6 +46,17 @@ namespace TournamentManagement.Domain
 			return entry;
 		}
 
+		private static EventEntry CreateEntry(TournamentId tournamentId, EventType eventType)
+		{
+			var entry = new EventEntry(new EventEntryId())
+			{
+				TournamentId = new TournamentId(tournamentId.Id),
+				EventType = eventType,
+			};
+
+			return entry;
+		}
+
 		private static void GuardIsSinglesEvent(EventType eventType)
 		{
 			if (!Event.IsSinglesEvent(eventType))
@@ -60,17 +71,6 @@ namespace TournamentManagement.Domain
 			{
 				throw new ArgumentException($"{eventType} is not a doubles event");
 			}
-		}
-
-		private static EventEntry CreateEntry(TournamentId tournamentId, EventType eventType)
-		{
-			var entry = new EventEntry(new EventEntryId())
-			{
-				TournamentId = new TournamentId(tournamentId.Id),
-				EventType = eventType,
-			};
-
-			return entry;
 		}
 
 		private static void GuardForValidPlayerGender(EventType eventtype, IEnumerable<Player> players)

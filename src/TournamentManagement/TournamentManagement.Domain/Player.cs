@@ -19,9 +19,9 @@ namespace TournamentManagement.Domain
 
 		public static Player Create(string name, ushort singlesRank, ushort doublesRank, Gender gender)
 		{
-			Guard.ForNullOrEmptyString(name, "Name");
-			GuardForRankInRange(singlesRank, "Singles Rank");
-			GuardForRankInRange(doublesRank, "Doubles Rank");
+			Guard.ForNullOrEmptyString(name, nameof(name));
+			GuardForRankInRange(singlesRank, nameof(singlesRank));
+			GuardForRankInRange(doublesRank, nameof(doublesRank));
 
 			var player = new Player(Guid.NewGuid())
 			{

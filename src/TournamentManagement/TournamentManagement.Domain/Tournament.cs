@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain
 
 		public static Tournament Create(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
 		{
-			Guard.ForNullOrEmptyString(title, "title");
+			Guard.ForNullOrEmptyString(title, nameof(title));
 
 			var tournament = new Tournament(new TournamentId())
 			{

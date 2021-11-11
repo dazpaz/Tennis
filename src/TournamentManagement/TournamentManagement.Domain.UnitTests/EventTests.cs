@@ -64,5 +64,20 @@ namespace TournamentManagement.Domain.UnitTests
 
 			tennisEvent.IsCompleted.Should().BeTrue();
 		}
+
+		[Fact]
+		public void CannotUpdateAnventThatIsCompleted()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			tennisEvent.MarkEventCompleted();
+
+			Action act = () => tennisEvent.UpdateDetails(EventType.WomensSingles, 64, 16,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Cannot update the details of an event that is completed");
+		}
 	}
 }
