@@ -42,7 +42,7 @@ namespace TournamentManagement.Domain
 			var expectedPlayerCount = Event.IsSinglesEvent(eventType) ? 1 : 2;
 			if (playerCount != expectedPlayerCount)
 			{
-				throw new Exception("Wrong number of players for this event type");
+				throw new Exception($"Competitor for {eventType} event must have {expectedPlayerCount} players");
 			}
 		}
 	}

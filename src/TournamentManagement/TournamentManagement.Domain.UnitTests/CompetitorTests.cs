@@ -52,6 +52,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var tournamentId = new TournamentId();
 			var eventEntryId = new EventEntryId();
+			var expectedPlayerCount = numberOfPlayers == 2 ? 1 : 2;
 			var playersNames = new List<string>();
 			for (int i = 0; i < numberOfPlayers; i++)
 			{
@@ -63,7 +64,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 			act.Should()
 				.Throw<Exception>()
-				.WithMessage("Wrong number of players for this event type");
+				.WithMessage($"Competitor for {eventType} event must have {expectedPlayerCount} players");
 		}
 	}
 }
