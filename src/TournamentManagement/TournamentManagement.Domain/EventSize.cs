@@ -1,5 +1,4 @@
 ﻿using DomainDesign.Common;
-using System;
 
 namespace TournamentManagement.Domain
 {
@@ -17,8 +16,8 @@ namespace TournamentManagement.Domain
 
 		public EventSize(int entrantsLimit, int numberOfSeeds)
 		{
-			Guard.ForValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, "numberOfSeeds");
-			Guard.ForIntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, "entrantsLimit");
+			Guard.ForValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, nameof(numberOfSeeds));
+			Guard.ForIntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, nameof(entrantsLimit));
 
 			EntrantsLimit = entrantsLimit;
 			NumberOfSeeds = numberOfSeeds;

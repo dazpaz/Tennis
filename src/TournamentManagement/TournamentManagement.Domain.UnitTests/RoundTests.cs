@@ -44,7 +44,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage($"{competitorCount} is not one of the allowed values (Parameter 'playerCount')");
+				.WithMessage($"{competitorCount} is not one of the allowed values (Parameter 'competitorCount')");
 		}
 
 		[Theory]

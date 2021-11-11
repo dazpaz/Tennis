@@ -19,8 +19,8 @@ namespace TournamentManagement.Domain
 		public static Round Create(TournamentId tournamentId, EventType eventType,
 			int roundNumber, int competitorCount)
 		{
-			Guard.ForIntegerOutOfRange(roundNumber, 1, 7, "roundNumber");
-			Guard.ForValueNotInSetOfAllowedValues(competitorCount, AllowedCompetitorCount, "playerCount");
+			Guard.ForIntegerOutOfRange(roundNumber, 1, 7, nameof(roundNumber));
+			Guard.ForValueNotInSetOfAllowedValues(competitorCount, AllowedCompetitorCount, nameof(competitorCount));
 
 			var round = new Round(new RoundId())
 			{
