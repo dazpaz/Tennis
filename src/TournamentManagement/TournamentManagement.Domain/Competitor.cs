@@ -7,10 +7,10 @@ namespace TournamentManagement.Domain
 {
 	public class Competitor : Entity<CompetitorId>
 	{
+		public EventEntryId EventEntryId { get; private set; }
 		public TournamentId TournamentId { get; private set; }
 		public EventType EventType { get; private set; }
-		public Guid EventEntryId { get; private set; }
-		public int Seeding { get; private set; }
+		public Seeding Seeding { get; private set; }
 		public ReadOnlyCollection<string> PlayerNames { get; private set; }
 
 		private IList<string> _playersNames { get; set; }
@@ -22,9 +22,8 @@ namespace TournamentManagement.Domain
 		}
 
 		public static Competitor Create(TournamentId tournamentId, EventType eventType,
-			Guid eventEntryId, int seeding, ICollection<string> playersNames)
+			EventEntryId eventEntryId, Seeding seeding, ICollection<string> playersNames)
 		{
-			Guard.ForIntegerOutOfRange(seeding, 0, 32, "seeding");
 			GuardAgainstWrongNumberOfPlayers(eventType, playersNames.Count);
 
 			var competitor = new Competitor(new CompetitorId(), playersNames)
