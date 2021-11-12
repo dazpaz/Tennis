@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void TheIsSinglesEventPropertyIsSetCorrectlyBasedOnEventType(EventType eventType, bool isSingles)
 		{
 			var tennisEvent = Event.Create(eventType, 128, 32,
-				new MatchFormat(1, FinalSetType.TieBreak));
+				new MatchFormat(1, SetType.TieBreak));
 
 			tennisEvent.SinglesEvent.Should().Be(isSingles);
 		}

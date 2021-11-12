@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests
@@ -20,10 +21,10 @@ namespace TournamentManagement.Domain.UnitTests
 			match.Competitors[0].Should().BeNull();
 			match.Competitors[1].Should().BeNull();
 
-			match.SetScores.Count.Should().Be(0);
+			match.MatchScore.Should().BeNull();
 
 			match.Court.Should().BeNull();
-			match.Winner.Should().BeNull();
+			match.MatchWinner.Should().BeNull();
 		}
 
 		[Fact]
@@ -187,14 +188,79 @@ namespace TournamentManagement.Domain.UnitTests
 				.WithMessage("Action Unschedule not allowed for a tournament in the state Created");
 		}
 
+
+		[Fact]
+		public void CanAddMatchResultWhenTheOutcomeWasABye()
+		{
+			var match = CreateScheduledMatch();
+
+			match.RecordMatchResult(MatchOutcome.Bye, Winner.Competitor2);
+
+			match.Outcome.Should().Be(MatchOutcome.Bye);
+			match.State.Should().Be(MatchState.Completed);
+			match.MatchWinner.Should().Be(match.Competitors[1]);
+		}
+
+		[Fact]
+		public void CanAddMatchResultWhenTheOutcomeWasAWalkover()
+		{
+			var match = CreateScheduledMatch();
+
+			match.RecordMatchResult(MatchOutcome.Walkover, Winner.Competitor1);
+
+			match.Outcome.Should().Be(MatchOutcome.Walkover);
+			match.State.Should().Be(MatchState.Completed);
+			match.MatchWinner.Should().Be(match.Competitors[0]);
+		}
+
+		[Theory]
+		[InlineData(MatchOutcome.Bye)]
+		[InlineData(MatchOutcome.Walkover)]
+		[InlineData(MatchOutcome.Retired)]
+		public void WhenOutcomeIsByeOrWalkoverOrRetiredTheWinnerCannotBeUnknown(MatchOutcome outcome)
+		{
+			var match = CreateScheduledMatch();
+
+			Action act = () => match.RecordMatchResult(outcome, Winner.Unknown);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Winner cannot be Unkown");
+		}
+
+		[Fact]
+		public void CanAddMatchResultWhenTheOutcomeWasRetired()
+		{
+			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(4, 0)
+			};
+
+			match.RecordMatchResult(MatchOutcome.Retired, Winner.Competitor2, setScores);
+
+			match.Outcome.Should().Be(MatchOutcome.Retired);
+			match.State.Should().Be(MatchState.Completed);
+			match.MatchWinner.Should().Be(match.Competitors[1]);
+			match.MatchScore.Winner.Should().Be(Winner.Unknown);
+		}
+
 		[Fact]
 		public void CanAddMatchResultToAMatchWhereCompetitor1WasTheWinner()
 		{
 			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(7, 5)
+			};
 
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, null);
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, setScores);
 
-			match.Winner.Should().Be(match.Competitors[0]);
+			match.MatchWinner.Should().Be(match.Competitors[0]);
+			match.MatchScore.Sets[0].Should().Be(2);
+			match.MatchScore.Sets[1].Should().Be(0);
+			match.MatchScore.Winner.Should().Be(Winner.Competitor1);
 			match.State.Should().Be(MatchState.Completed);
 		}
 
@@ -202,10 +268,19 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CanAddMatchResultToAMatchWhereCompetitor2WasTheWinner()
 		{
 			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(5, 7),
+				new SetScore(2, 6)
+			};
 
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, null);
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, setScores);
 
-			match.Winner.Should().Be(match.Competitors[1]);
+			match.MatchWinner.Should().Be(match.Competitors[1]);
+			match.MatchScore.Sets[0].Should().Be(1);
+			match.MatchScore.Sets[1].Should().Be(2);
+			match.MatchScore.Winner.Should().Be(Winner.Competitor2);
 			match.State.Should().Be(MatchState.Completed);
 		}
 
@@ -225,9 +300,15 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CannotAddMatchResultToAMatchThatAlreadyHasAResult()
 		{
 			var match = CreateScheduledMatch();
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, null);
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(5, 7),
+				new SetScore(2, 6)
+			};
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, setScores);
 
-			Action act = () => match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, null);
+			Action act = () => match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, setScores);
 
 			act.Should()
 				.Throw<Exception>()
@@ -252,8 +333,13 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var competitor = new CompetitorId();
 			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(6, 0)
+			};
 
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, null);
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, setScores);
 
 			Action act = () => match.AddCompetitor(competitor, 1);
 
@@ -263,10 +349,15 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CannotScheduleToAMatchAlreadyCompleted()
+		public void CannotScheduleAMatchAlreadyCompleted()
 		{
 			var match = CreateScheduledMatch();
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, null);
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(6, 0)
+			};
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, setScores);
 
 			Action act = () => match.Schedule("Court One");
 
@@ -276,10 +367,15 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CannotUnscheduleToAMatchAlreadyCompleted()
+		public void CannotUnscheduleAMatchAlreadyCompleted()
 		{
 			var match = CreateScheduledMatch();
-			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, null);
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(6, 0)
+			};
+			match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor1, setScores);
 
 			Action act = () => match.Unschedule();
 
@@ -299,7 +395,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var competitor1 = new CompetitorId();
 			var competitor2 = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.ThreeSetMatchWithTwoGamesClear);
 
 			match.AddCompetitor(competitor1, 1);
 			match.AddCompetitor(competitor2, 2);
