@@ -12,7 +12,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Theory]
 		public void CanCreateMatchFormatWithValidNumberOfSets(int numberOfSets)
 		{
-			MatchFormat format = new(numberOfSets, FinalSetType.TwoGamesClear);
+			MatchFormat format = new(numberOfSets, SetType.TwoGamesClear);
 			format.NumberOfSets.Should().Be(numberOfSets);
 		}
 
@@ -21,7 +21,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.OneSetMatchWithFinalSetTieBreak;
 			format.NumberOfSets.Should().Be(1);
-			format.FinalSetType.Should().Be(FinalSetType.TieBreak);
+			format.FinalSetType.Should().Be(SetType.TieBreak);
 		}
 
 		[Fact]
@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.ThreeSetMatchWithFinalSetTieBreak;
 			format.NumberOfSets.Should().Be(3);
-			format.FinalSetType.Should().Be(FinalSetType.TieBreak);
+			format.FinalSetType.Should().Be(SetType.TieBreak);
 		}
 
 		[Fact]
@@ -37,7 +37,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.FiveSetMatchWithFinalSetTieBreak;
 			format.NumberOfSets.Should().Be(5);
-			format.FinalSetType.Should().Be(FinalSetType.TieBreak);
+			format.FinalSetType.Should().Be(SetType.TieBreak);
 		}
 
 		[Fact]
@@ -45,7 +45,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.OneSetMatchWithTwoGamesClear;
 			format.NumberOfSets.Should().Be(1);
-			format.FinalSetType.Should().Be(FinalSetType.TwoGamesClear);
+			format.FinalSetType.Should().Be(SetType.TwoGamesClear);
 		}
 
 		[Fact]
@@ -53,7 +53,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.ThreeSetMatchWithTwoGamesClear;
 			format.NumberOfSets.Should().Be(3);
-			format.FinalSetType.Should().Be(FinalSetType.TwoGamesClear);
+			format.FinalSetType.Should().Be(SetType.TwoGamesClear);
 		}
 
 		[Fact]
@@ -61,7 +61,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			MatchFormat format = MatchFormat.FiveSetMatchWithTwoGamesClear;
 			format.NumberOfSets.Should().Be(5);
-			format.FinalSetType.Should().Be(FinalSetType.TwoGamesClear);
+			format.FinalSetType.Should().Be(SetType.TwoGamesClear);
 		}
 
 		[InlineData(0)]
@@ -72,7 +72,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Theory]
 		public void EnsureInvalidNumberOfSetsThrowsException(int numberOfSets)
 		{
-			Action act = () => new MatchFormat(numberOfSets, FinalSetType.TieBreak);
+			Action act = () => new MatchFormat(numberOfSets, SetType.TieBreak);
 
 			act.Should()
 				.Throw<ArgumentException>()

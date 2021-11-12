@@ -1,6 +1,6 @@
 ﻿namespace TournamentManagement.Domain
 {
-	public enum FinalSetType
+	public enum SetType
 	{
 		TwoGamesClear,
 		TieBreak,
