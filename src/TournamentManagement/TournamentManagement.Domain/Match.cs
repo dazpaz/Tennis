@@ -11,20 +11,15 @@ namespace TournamentManagement.Domain
 		public MatchFormat Format { get; private set; }
 		public MatchState State { get; private set; }
 		public MatchOutcome Outcome { get; private set; }
-		public CompetitorId Winner { get; private set; }
+		public CompetitorId MatchWinner { get; private set; }
 		public string Court { get; private set; }
-
-		public ReadOnlyCollection<SetScore> SetScores { get; }
+		public MatchScore MatchScore { get; private set; }
 		public ReadOnlyCollection<CompetitorId> Competitors { get; }
 
-		private List<SetScore> _setScores;
 		private CompetitorId[] _competitors;
 
 		private Match(MatchId id) : base(id)
 		{
-			_setScores = new List<SetScore>();
-			SetScores = new ReadOnlyCollection<SetScore>(_setScores);
-
 			_competitors = new CompetitorId[2];
 			Competitors = new ReadOnlyCollection<CompetitorId>(_competitors);
 		}
@@ -52,7 +47,7 @@ namespace TournamentManagement.Domain
 
 		public void Schedule(string court)
 		{
-			Guard.ForNullOrEmptyString(court, "court");
+			Guard.ForNullOrEmptyString(court, nameof(court));
 			GuardAgainstMatchAlreadyCompleted();
 			GuardAgainstMatchIsMissingCompetitors();
 
@@ -76,20 +71,49 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		public void RecordMatchResult(MatchOutcome outcome, Winner winner, ICollection<SetScore> setScores)
+		public void RecordMatchResult(MatchOutcome outcome, Winner winner, ICollection<SetScore> setScores = null)
 		{
 			GuardAgainstActionInInvalidState(MatchState.Scheduled, "Record Match Result");
+			GuardAgainstOutcomeIsAwaitingOutcome(outcome);
 
-			// if outcome == AwaitingOutcome --- throw exception
-			// if outcome == completed --- make sure scores has correct number of sets and score inicate correct winner
-			// if outcome == Retired --- should have at least 1 set score
-			// if outcome == walkover --- setScores scores should be empty
-			// if outcome == MatchOutcome.Bye --- setScores scores should be empty
+			if (outcome == MatchOutcome.Bye || outcome == MatchOutcome.Walkover)
+			{
+				GuardAgainstUnknownWinner(winner);
+			}
+
+			if (outcome == MatchOutcome.Retired)
+			{
+				GuardAgainstUnknownWinner(winner);
+				MatchScore = new MatchScore(Format, setScores);
+			}
+
+			if (outcome == MatchOutcome.Completed)
+			{
+				MatchScore = new MatchScore(Format, setScores);
+				GuardAgainstUnknownWinner(MatchScore.Winner);
+				GuardAgainstMismatchOfWinners(winner, MatchScore.Winner);
+			}
 
 			Outcome = outcome;
-			Winner = _competitors[(int)winner];
+			MatchWinner = _competitors[(int)winner];
 
 			TransitionToState(MatchState.Completed);
+		}
+
+		private static void GuardAgainstMismatchOfWinners(Winner winner1, Winner winner2)
+		{
+			if (winner1 != winner2)
+			{
+				throw new Exception("The winner and the scores do not match");
+			}
+		}
+
+		private static void GuardAgainstUnknownWinner(Winner winner)
+		{
+			if (winner == Winner.Unknown)
+			{
+				throw new Exception("Winner cannot be Unkown");
+			}
 		}
 
 		private void TransitionToState(MatchState newState)
@@ -128,6 +152,14 @@ namespace TournamentManagement.Domain
 			if (position < 1 || position > 2)
 			{
 				throw new Exception($"Invalid Competitor Position {position}, it must be 1 or 2");
+			}
+		}
+
+		private void GuardAgainstOutcomeIsAwaitingOutcome(MatchOutcome outcome)
+		{
+			if (outcome == MatchOutcome.AwaitingOutcome)
+			{
+				throw new Exception("Cannot record match result with an outcome of 'awaiting outcome'");
 			}
 		}
 	}
