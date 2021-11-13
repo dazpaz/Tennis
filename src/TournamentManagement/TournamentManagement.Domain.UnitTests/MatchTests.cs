@@ -10,12 +10,14 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUseFactoryMethodToCreateMatchAndItIsCreatedCorrectly()
 		{
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var matchSlot = new MatchSlot(new MatchId(), 2);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, matchSlot);
 
 			match.Id.Id.Should().NotBe(Guid.Empty);
 			match.Format.Should().Be(MatchFormat.OneSetMatchWithTwoGamesClear);
 			match.State.Should().Be(MatchState.Created);
 			match.Outcome.Should().Be(MatchOutcome.AwaitingOutcome);
+			match.WinnersNextMatch.Should().Be(matchSlot);
 
 			match.Competitors.Count.Should().Be(2);
 			match.Competitors[0].Should().BeNull();
@@ -31,7 +33,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CanAddACompetitorInPositionOneOfTheMatch()
 		{
 			var competitor = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor, 1);
 
@@ -43,7 +45,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CanAddACompetitorInPositionTwoOfTheMatch()
 		{
 			var competitor = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor, 2);
 
@@ -57,7 +59,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var competitor1 = new CompetitorId();
 			var competitor2 = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor1, 1);
 			match.AddCompetitor(competitor2, 2);
@@ -72,7 +74,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CannotAddACompetitorIntoAnInvalidPosition(int position)
 		{
 			var competitor = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			Action act = () => match.AddCompetitor(competitor, position);
 
@@ -85,7 +87,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CannotAddTheSameCompetitorTwiceToTheSameMatch()
 		{
 			var competitor = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 			match.AddCompetitor(competitor, 1);
 
 			Action act = () => match.AddCompetitor(competitor, 2);
@@ -98,7 +100,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanAddByeAsBothCompetitorsToAMatch()
 		{
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(CompetitorId.Bye, 1);
 			match.AddCompetitor(CompetitorId.Bye, 2);
@@ -122,7 +124,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CannotScheduleAMatchIfItDoesNotHaveTwoCompetitors()
 		{
 			var competitor = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor, 2);
 
@@ -163,7 +165,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var competitor1 = new CompetitorId();
 			var competitor2 = new CompetitorId();
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor1, 1);
 			match.AddCompetitor(competitor2, 2);
@@ -336,7 +338,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CannotAddMatchResultToAMatchThatHasNotBeenScheduled()
 		{
-			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
 			Action act = () => match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, null);
 
@@ -444,7 +446,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var competitor1 = new CompetitorId();
 			var competitor2 = new CompetitorId();
-			var match = Match.Create(MatchFormat.ThreeSetMatchWithTwoGamesClear);
+			var match = Match.Create(MatchFormat.ThreeSetMatchWithTwoGamesClear, null);
 
 			match.AddCompetitor(competitor1, 1);
 			match.AddCompetitor(competitor2, 2);
