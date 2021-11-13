@@ -3,7 +3,7 @@ using System;
 
 namespace TournamentManagement.Domain
 {
-	public class Player : Entity<Guid>
+	public class Player : Entity<PlayerId>
 	{
 		private const uint MinRank = 1;
 		private const uint MaxRank = 9999;
@@ -13,7 +13,7 @@ namespace TournamentManagement.Domain
 		public ushort DoublesRank { get; private set; }
 		public Gender Gender { get; private set; }
 
-		private Player(Guid id) : base(id)
+		private Player(PlayerId id) : base(id)
 		{
 		}
 
@@ -23,7 +23,7 @@ namespace TournamentManagement.Domain
 			GuardForRankInRange(singlesRank, nameof(singlesRank));
 			GuardForRankInRange(doublesRank, nameof(doublesRank));
 
-			var player = new Player(Guid.NewGuid())
+			var player = new Player(new PlayerId())
 			{
 				Name = name,
 				SinglesRank = singlesRank,
