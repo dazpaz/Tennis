@@ -11,7 +11,7 @@ namespace TournamentManagement.Domain.UnitTests
 		{
 			var player = Player.Create("Steve Serve", 10, 200, Gender.Male);
 
-			player.Id.Should().NotBe(Guid.Empty);
+			player.Id.Id.Should().NotBe(Guid.Empty);
 			player.Name.Should().Be("Steve Serve");
 			player.SinglesRank.Should().Be(10);
 			player.DoublesRank.Should().Be(200);

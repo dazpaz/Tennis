@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("ss");
+				.WithMessage($"Invalid Slot {slot}, it must be 1 or 2");
 		}
 	}
 }
