@@ -14,9 +14,10 @@ namespace TournamentManagement.Domain
 		public CompetitorId MatchWinner { get; private set; }
 		public string Court { get; private set; }
 		public MatchScore MatchScore { get; private set; }
+		public MatchSlot WinnersNextMatch { get; private set; }
 		public ReadOnlyCollection<CompetitorId> Competitors { get; }
 
-		private CompetitorId[] _competitors;
+		private readonly CompetitorId[] _competitors;
 
 		private Match(MatchId id) : base(id)
 		{
@@ -24,13 +25,14 @@ namespace TournamentManagement.Domain
 			Competitors = new ReadOnlyCollection<CompetitorId>(_competitors);
 		}
 
-		public static Match Create(MatchFormat format)
+		public static Match Create(MatchFormat format, MatchSlot winnersNextMatch)
 		{
 			var match = new Match(new MatchId())
 			{
 				Format = format,
 				State = MatchState.Created,
-				Outcome = MatchOutcome.AwaitingOutcome
+				Outcome = MatchOutcome.AwaitingOutcome,
+				WinnersNextMatch = winnersNextMatch
 			};
 
 			return match;
@@ -104,7 +106,7 @@ namespace TournamentManagement.Domain
 		{
 			if (winner1 != winner2)
 			{
-				throw new Exception("The winner and the scores do not match");
+				throw new Exception("The winner and the set scores do not have the same winner");
 			}
 		}
 
