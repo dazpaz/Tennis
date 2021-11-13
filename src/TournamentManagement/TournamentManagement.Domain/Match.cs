@@ -104,7 +104,7 @@ namespace TournamentManagement.Domain
 		{
 			if (winner1 != winner2)
 			{
-				throw new Exception("The winner and the scores do not match");
+				throw new Exception("The winner and the set scores do not have the same winner");
 			}
 		}
 

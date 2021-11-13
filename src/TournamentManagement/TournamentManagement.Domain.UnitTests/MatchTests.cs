@@ -190,6 +190,18 @@ namespace TournamentManagement.Domain.UnitTests
 
 
 		[Fact]
+		public void CannotAddMatchResultWhereTheOutcomeIsAwaitingOutcome()
+		{
+			var match = CreateScheduledMatch();
+
+			Action act = () => match.RecordMatchResult(MatchOutcome.AwaitingOutcome, Winner.Unknown);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Cannot record match result with an outcome of 'awaiting outcome'");
+		}
+
+		[Fact]
 		public void CanAddMatchResultWhenTheOutcomeWasABye()
 		{
 			var match = CreateScheduledMatch();
@@ -229,17 +241,20 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanAddMatchResultWhenTheOutcomeWasRetired()
+		public void CanAddMatchResultSpecifyingTheWinnerWhenTheOutcomeWasRetired()
 		{
 			var match = CreateScheduledMatch();
 			var setScores = new List<SetScore>
 			{
+				new SetScore(6, 4),
 				new SetScore(4, 0)
 			};
 
 			match.RecordMatchResult(MatchOutcome.Retired, Winner.Competitor2, setScores);
 
 			match.Outcome.Should().Be(MatchOutcome.Retired);
+			match.MatchScore.Sets[0].Should().Be(1);
+			match.MatchScore.Sets[1].Should().Be(0);
 			match.State.Should().Be(MatchState.Completed);
 			match.MatchWinner.Should().Be(match.Competitors[1]);
 			match.MatchScore.Winner.Should().Be(Winner.Unknown);
@@ -282,6 +297,40 @@ namespace TournamentManagement.Domain.UnitTests
 			match.MatchScore.Sets[1].Should().Be(2);
 			match.MatchScore.Winner.Should().Be(Winner.Competitor2);
 			match.State.Should().Be(MatchState.Completed);
+		}
+
+		[Fact]
+		public void CannotAddMatchResultWhereTheOutcomeWasCompletedIfTheSetScoresDontDefineAWinner()
+		{
+			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(5, 7)
+			};
+
+			Action act = () => match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, setScores);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Winner cannot be Unkown");
+		}
+
+		[Fact]
+		public void WhenAddingMatchResultWhereTheOutcomeWasCompletedTheSetScoresWhouldHaveTheCorrectWinner()
+		{
+			var match = CreateScheduledMatch();
+			var setScores = new List<SetScore>
+			{
+				new SetScore(6, 4),
+				new SetScore(7, 5)
+			};
+
+			Action act = () => match.RecordMatchResult(MatchOutcome.Completed, Winner.Competitor2, setScores);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("The winner and the set scores do not have the same winner");
 		}
 
 		[Fact]
