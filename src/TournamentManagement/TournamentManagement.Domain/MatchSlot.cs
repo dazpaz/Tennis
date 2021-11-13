@@ -20,7 +20,7 @@ namespace TournamentManagement.Domain
 		{
 			if (slot < 1 || slot > 2)
 			{
-				throw new Exception($"Invalid Competitor Position {slot}, it must be 1 or 2");
+				throw new ArgumentException($"Invalid Slot {slot}, it must be 1 or 2");
 			}
 		}
 	}
