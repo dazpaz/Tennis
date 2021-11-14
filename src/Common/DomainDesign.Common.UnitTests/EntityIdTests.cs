@@ -51,6 +51,7 @@ namespace DomainDesign.Common.UnitTests
 			var id = Guid.NewGuid();
 
 			PersonId nullPerson = null;
+			PlaceId nullPlace = null;
 			var person1 = new PersonId(id);
 			var person2 = new PersonId(id);
 			var person3 = new PersonId();
@@ -64,6 +65,8 @@ namespace DomainDesign.Common.UnitTests
 			(person1 != person2).Should().BeFalse();
 			(person1 == person3).Should().BeFalse();
 			(person1 == place).Should().BeFalse();
+
+			person1.Equals(nullPlace);
 		}
 
 		[Fact]
