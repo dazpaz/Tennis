@@ -13,7 +13,7 @@ namespace DomainDesign.Common
 
 		public EntityId(Guid id)
 		{
-			Guard.ForGuidIsNotEmpty(id, nameof(id));
+			Guard.AgainstEmptyGuid(id, nameof(id));
 			Id = id;
 		}
 

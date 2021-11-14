@@ -16,8 +16,8 @@ namespace TournamentManagement.Domain
 
 		public TournamentDates(DateTime startDate, DateTime endDate)
 		{
-			GuardForDurationOutOfRange(endDate.Date - startDate.Date);
-			Guard.ForIntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, "year");
+			GuardAgainstDurationOutOfRange(endDate.Date - startDate.Date);
+			Guard.AgainstIntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, "year");
 
 			StartDate = startDate.Date;
 			EndDate = endDate.Date;
@@ -47,7 +47,7 @@ namespace TournamentManagement.Domain
 			return new TournamentDates(startDate, startDate);
 		}
 
-		private static void GuardForDurationOutOfRange(TimeSpan timespan)
+		private static void GuardAgainstDurationOutOfRange(TimeSpan timespan)
 		{
 			if (timespan.TotalDays < 0 || timespan.TotalDays >= MaxDurationInDays)
 			{

@@ -16,8 +16,8 @@ namespace TournamentManagement.Domain
 
 		public EventSize(int entrantsLimit, int numberOfSeeds)
 		{
-			Guard.ForValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, nameof(numberOfSeeds));
-			Guard.ForIntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, nameof(entrantsLimit));
+			Guard.AgainstValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, nameof(numberOfSeeds));
+			Guard.AgainstIntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, nameof(entrantsLimit));
 
 			EntrantsLimit = entrantsLimit;
 			NumberOfSeeds = numberOfSeeds;

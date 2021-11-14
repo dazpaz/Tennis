@@ -8,7 +8,7 @@ namespace TournamentManagement.Domain
 
 		public Seeding(int seed)
 		{
-			Guard.ForIntegerOutOfRange(seed, 1, 32, nameof(seed));
+			Guard.AgainstIntegerOutOfRange(seed, 1, 32, nameof(seed));
 			Seed = seed;
 		}
 	}

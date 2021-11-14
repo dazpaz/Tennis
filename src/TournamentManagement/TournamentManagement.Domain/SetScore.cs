@@ -9,8 +9,8 @@ namespace TournamentManagement.Domain
 
 		public SetScore(int gamesOne, int gamesTwo)
 		{
-			Guard.ForIntegerOutOfRange(gamesOne, 0, 99, nameof(gamesOne));
-			Guard.ForIntegerOutOfRange(gamesTwo, 0, 99, nameof(gamesTwo));
+			Guard.AgainstIntegerOutOfRange(gamesOne, 0, 99, nameof(gamesOne));
+			Guard.AgainstIntegerOutOfRange(gamesTwo, 0, 99, nameof(gamesTwo));
 
 			GamesOne = gamesOne;
 			GamesTwo = gamesTwo;
