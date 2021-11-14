@@ -49,7 +49,7 @@ namespace TournamentManagement.Domain
 
 		public void Schedule(string court)
 		{
-			Guard.ForNullOrEmptyString(court, nameof(court));
+			Guard.AgainstNullOrEmptyString(court, nameof(court));
 			GuardAgainstMatchAlreadyCompleted();
 			GuardAgainstMatchIsMissingCompetitors();
 
@@ -102,6 +102,11 @@ namespace TournamentManagement.Domain
 			TransitionToState(MatchState.Completed);
 		}
 
+		private void TransitionToState(MatchState newState)
+		{
+			State = newState;
+		}
+
 		private static void GuardAgainstMismatchOfWinners(Winner winner1, Winner winner2)
 		{
 			if (winner1 != winner2)
@@ -116,11 +121,6 @@ namespace TournamentManagement.Domain
 			{
 				throw new Exception("Winner cannot be Unkown");
 			}
-		}
-
-		private void TransitionToState(MatchState newState)
-		{
-			State = newState;
 		}
 
 		private void GuardAgainstMatchIsMissingCompetitors()
@@ -157,7 +157,7 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private void GuardAgainstOutcomeIsAwaitingOutcome(MatchOutcome outcome)
+		private static void GuardAgainstOutcomeIsAwaitingOutcome(MatchOutcome outcome)
 		{
 			if (outcome == MatchOutcome.AwaitingOutcome)
 			{

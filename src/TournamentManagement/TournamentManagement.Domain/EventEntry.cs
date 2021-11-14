@@ -24,8 +24,8 @@ namespace TournamentManagement.Domain
 		public static EventEntry CreateSinglesEventEntry(TournamentId tournamentId, EventType eventType,
 			Player player)
 		{
-			GuardIsSinglesEvent(eventType);
-			GuardForValidPlayerGender(eventType, new List<Player> { player });
+			GuardAgainstDoublesEvent(eventType);
+			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { player });
 
 			var entry = CreateEntry(tournamentId, eventType);
 			entry._players.Add(player);
@@ -36,8 +36,8 @@ namespace TournamentManagement.Domain
 		public static EventEntry CreateDoublesEventEntry(TournamentId tournamentId, EventType eventType,
 			Player playerOne, Player playerTwo)
 		{
-			GuardIsDoublesEvent(eventType);
-			GuardForValidPlayerGender(eventType, new List<Player> { playerOne, playerTwo });
+			GuardAgainstSinglesEvent(eventType);
+			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { playerOne, playerTwo });
 
 			var entry = CreateEntry(tournamentId, eventType);
 			entry._players.Add(playerOne);
@@ -57,15 +57,7 @@ namespace TournamentManagement.Domain
 			return entry;
 		}
 
-		private static void GuardIsSinglesEvent(EventType eventType)
-		{
-			if (!Event.IsSinglesEvent(eventType))
-			{
-				throw new ArgumentException($"{eventType} is not a singles event");
-			}
-		}
-
-		private static void GuardIsDoublesEvent(EventType eventType)
+		private static void GuardAgainstSinglesEvent(EventType eventType)
 		{
 			if (Event.IsSinglesEvent(eventType))
 			{
@@ -73,7 +65,15 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private static void GuardForValidPlayerGender(EventType eventtype, IEnumerable<Player> players)
+		private static void GuardAgainstDoublesEvent(EventType eventType)
+		{
+			if (!Event.IsSinglesEvent(eventType))
+			{
+				throw new ArgumentException($"{eventType} is not a singles event");
+			}
+		}
+
+		private static void GuardAgainstWrongGenderForEventType(EventType eventtype, IEnumerable<Player> players)
 		{
 			var maleCount = players.Count(p => p.Gender == Gender.Male);
 			var femaleCount = players.Count(p => p.Gender == Gender.Female);

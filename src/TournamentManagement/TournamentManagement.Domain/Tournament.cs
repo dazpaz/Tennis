@@ -29,7 +29,7 @@ namespace TournamentManagement.Domain
 
 		public static Tournament Create(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
 		{
-			Guard.ForNullOrEmptyString(title, nameof(title));
+			Guard.AgainstNullOrEmptyString(title, nameof(title));
 
 			var tournament = new Tournament(new TournamentId())
 			{
@@ -44,8 +44,8 @@ namespace TournamentManagement.Domain
 
 		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "UpdateDetails");
-			Guard.ForNullOrEmptyString(title, "title");
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "UpdateDetails");
+			Guard.AgainstNullOrEmptyString(title, "title");
 
 			Title = title;
 			Level = level;
@@ -54,30 +54,30 @@ namespace TournamentManagement.Domain
 
 		public void AddEvent(Event tennisEvent)
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "AddEvent");
-			GuardForDuplicateEventType(tennisEvent.EventType);
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "AddEvent");
+			GuardAgainstDuplicateEventType(tennisEvent.EventType);
 
 			_events.Add(tennisEvent.EventType, tennisEvent);
 		}
 
 		public void RemoveEvent(EventType eventType)
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "RemoveEvent");
-			GuardForMissingEventType(eventType);
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "RemoveEvent");
+			GuardAgainstMissingEventType(eventType);
 
 			_events.Remove(eventType);
 		}
 
 		public void ClearEvents()
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "ClearEvents");
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "ClearEvents");
 
 			_events.Clear();
 		}
 
 		public void SetEvents(IEnumerable<Event> events)
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "SetEvents");
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "SetEvents");
 
 			_events.Clear();
 
@@ -85,7 +85,7 @@ namespace TournamentManagement.Domain
 			{
 				foreach (var tennisEvent in events)
 				{
-					GuardForDuplicateEventType(tennisEvent.EventType);
+					GuardAgainstDuplicateEventType(tennisEvent.EventType);
 					_events.Add(tennisEvent.EventType, tennisEvent);
 				}
 			}
@@ -98,8 +98,8 @@ namespace TournamentManagement.Domain
 
 		public void OpenForEntries()
 		{
-			GuardForActionInCorrectState(TournamentState.BeingDefined, "OpenForEntries");
-			GuardForAtLeastOneEvent();
+			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "OpenForEntries");
+			GuardAgainstNoEvents();
 			
 			// Raise event to get notifications out to players telling them they can enter
 
@@ -108,7 +108,7 @@ namespace TournamentManagement.Domain
 
 		public void CloseEntries()
 		{
-			GuardForActionInCorrectState(TournamentState.AcceptingEntries, "CloseEntries");
+			GuardAgainstActionInWrongState(TournamentState.AcceptingEntries, "CloseEntries");
 
 			// Raise event to get notification out to players saying if they are in or not
 
@@ -117,7 +117,7 @@ namespace TournamentManagement.Domain
 
 		public void DrawTheEvents()
 		{
-			GuardForActionInCorrectState(TournamentState.EntriesClosed, "DrawTheEvents");
+			GuardAgainstActionInWrongState(TournamentState.EntriesClosed, "DrawTheEvents");
 
 			// Raise event to perform the draw for each event 
 
@@ -126,7 +126,7 @@ namespace TournamentManagement.Domain
 
 		public void StartTournament()
 		{
-			GuardForActionInCorrectState(TournamentState.DrawComplete, "StartTournament");
+			GuardAgainstActionInWrongState(TournamentState.DrawComplete, "StartTournament");
 
 			// Need to think about this one
 
@@ -135,8 +135,8 @@ namespace TournamentManagement.Domain
 
 		public void EventCompleted(EventType eventType)
 		{
-			GuardForActionInCorrectState(TournamentState.InProgress, "EventCompleted");
-			GuardForMissingEventType(eventType);
+			GuardAgainstActionInWrongState(TournamentState.InProgress, "EventCompleted");
+			GuardAgainstMissingEventType(eventType);
 
 			_events[eventType].MarkEventCompleted();
 
@@ -153,7 +153,7 @@ namespace TournamentManagement.Domain
 			State = newState;
 		}
 
-		private void GuardForActionInCorrectState(TournamentState state, string action)
+		private void GuardAgainstActionInWrongState(TournamentState state, string action)
 		{
 			if (State != state)
 			{
@@ -161,7 +161,7 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private void GuardForDuplicateEventType(EventType eventType)
+		private void GuardAgainstDuplicateEventType(EventType eventType)
 		{
 			if (_events.ContainsKey(eventType))
 			{
@@ -169,7 +169,7 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private void GuardForMissingEventType(EventType eventType)
+		private void GuardAgainstMissingEventType(EventType eventType)
 		{
 			if (!_events.ContainsKey(eventType))
 			{
@@ -177,7 +177,7 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private void GuardForAtLeastOneEvent()
+		private void GuardAgainstNoEvents()
 		{
 			if (_events.Count == 0)
 			{

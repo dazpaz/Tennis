@@ -5,7 +5,7 @@ namespace DomainDesign.Common
 {
 	public static class Guard
 	{
-		public static void ForNullOrEmptyString(string value, string parameterName)
+		public static void AgainstNullOrEmptyString(string value, string parameterName)
 		{
 			if (string.IsNullOrEmpty(value))
 			{
@@ -13,7 +13,7 @@ namespace DomainDesign.Common
 			}
 		}
 
-		public static void ForValueNotInSetOfAllowedValues<T>(T value, T[] allowedValues, string parameterName)
+		public static void AgainstValueNotInSetOfAllowedValues<T>(T value, T[] allowedValues, string parameterName)
 		{
 			if (!allowedValues.Contains(value))
 			{
@@ -21,7 +21,7 @@ namespace DomainDesign.Common
 			}
 		}
 
-		public static void ForIntegerOutOfRange(int value, int lowLimit, int highLimit, string parameterName)
+		public static void AgainstIntegerOutOfRange(int value, int lowLimit, int highLimit, string parameterName)
 		{
 			if (value < lowLimit || value > highLimit)
 			{
@@ -29,7 +29,7 @@ namespace DomainDesign.Common
 			}
 		}
 
-		public static void ForGuidIsNotEmpty(Guid guid, string parameterName)
+		public static void AgainstEmptyGuid(Guid guid, string parameterName)
 		{
 			if (guid == Guid.Empty)
 			{

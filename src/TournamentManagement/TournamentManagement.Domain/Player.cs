@@ -19,9 +19,9 @@ namespace TournamentManagement.Domain
 
 		public static Player Create(string name, ushort singlesRank, ushort doublesRank, Gender gender)
 		{
-			Guard.ForNullOrEmptyString(name, nameof(name));
-			GuardForRankInRange(singlesRank, nameof(singlesRank));
-			GuardForRankInRange(doublesRank, nameof(doublesRank));
+			Guard.AgainstNullOrEmptyString(name, nameof(name));
+			GuardAgainstRankOutOfRange(singlesRank, nameof(singlesRank));
+			GuardAgainstRankOutOfRange(doublesRank, nameof(doublesRank));
 
 			var player = new Player(new PlayerId())
 			{
@@ -34,7 +34,7 @@ namespace TournamentManagement.Domain
 			return player;
 		}
 
-		private static void GuardForRankInRange(ushort rank, string rankName)
+		private static void GuardAgainstRankOutOfRange(ushort rank, string rankName)
 		{
 			if (rank < MinRank || rank > MaxRank)
 			{
