@@ -153,6 +153,7 @@ namespace DomainDesign.Common.UnitTests
 		[Fact]
 		public void AddressOperatorsWorkWithNullValues()
 		{
+			string stringAddress = null;
 			Address address1 = null;
 			Address address2 = null;
 			Address address3 = new("Address2", "Austin", "TX");
@@ -162,6 +163,9 @@ namespace DomainDesign.Common.UnitTests
 			(address1 == address3).Should().BeFalse();
 			(address3 == address1).Should().BeFalse();
 			(address3 == address4).Should().BeTrue();
+
+			address3.Equals(address1).Should().BeFalse();
+			address3.Equals(stringAddress).Should().BeFalse();
 		}
 	}
 }

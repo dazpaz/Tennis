@@ -19,6 +19,7 @@ namespace TournamentManagement.Domain.UnitTests
 			competitor.Id.Id.Should().NotBe(Guid.Empty);
 			competitor.TournamentId.Should().Be(tournamentId);
 			competitor.EventType.Should().Be(EventType.MensSingles);
+			competitor.EventEntryId.Should().Be(eventEntryId);
 			competitor.Seeding.Should().Be(seeding);
 			competitor.PlayerNames.Count.Should().Be(1);
 			competitor.PlayerNames[0].Should().Be("Steve Serve");
@@ -36,6 +37,7 @@ namespace TournamentManagement.Domain.UnitTests
 			competitor.Id.Id.Should().NotBe(Guid.Empty);
 			competitor.TournamentId.Should().Be(tournamentId);
 			competitor.EventType.Should().Be(EventType.MensDoubles);
+			competitor.EventEntryId.Should().Be(eventEntryId);
 			competitor.Seeding.Should().Be(seeding);
 			competitor.PlayerNames.Count.Should().Be(2);
 			competitor.PlayerNames[0].Should().Be("Steve Serve");
