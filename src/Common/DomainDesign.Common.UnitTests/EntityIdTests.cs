@@ -4,35 +4,41 @@ using Xunit;
 
 namespace DomainDesign.Common.UnitTests
 {
-	public class DomainEntityId : EntityId
+	public sealed class PersonId : EntityId<PersonId>
 	{
-		public DomainEntityId() : base() { }
-		public DomainEntityId(Guid id) : base(id) { }
+		public PersonId() : base() { }
+		public PersonId(Guid id) : base(id) { }
+	}
+
+	public sealed class PlaceId : EntityId<PersonId>
+	{
+		public PlaceId() : base() { }
+		public PlaceId(Guid id) : base(id) { }
 	}
 
 	public class EntityIdTests
 	{
 		[Fact]
-		public void CanCreateDomainEntityIdWithNoParameters()
+		public void CanCreateEntityIdWithNoParameters()
 		{
-			var entityId = new DomainEntityId();
+			var entityId = new PersonId();
 
 			entityId.Id.Should().NotBe(Guid.Empty);
 		}
 
 		[Fact]
-		public void CanCreateDomainEntityIdUsingASpecifiedGuid()
+		public void CanCreateEntityIdUsingASpecifiedGuid()
 		{
 			var id = Guid.NewGuid();
-			var matchId = new DomainEntityId(id);
+			var matchId = new PersonId(id);
 
 			matchId.Id.Should().Be(id);
 		}
 
 		[Fact]
-		public void CannotCreateDomainEntityIdUsingAnEmptyGuid()
+		public void CannotCreateEntityIdUsingAnEmptyGuid()
 		{
-			Action act = () => new DomainEntityId(Guid.Empty);
+			Action act = () => new PersonId(Guid.Empty);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -40,17 +46,24 @@ namespace DomainDesign.Common.UnitTests
 		}
 
 		[Fact]
-		public void EqualityWorksForDomainEntityIds()
+		public void EqualityOperatorsWorkForEntityIds()
 		{
 			var id = Guid.NewGuid();
 
-			var id1 = new DomainEntityId(id);
-			var id2 = new DomainEntityId(id);
+			PersonId nullPerson = null;
+			var person1 = new PersonId(id);
+			var person2 = new PersonId(id);
+			var person3 = new PersonId();
+			var place = new PlaceId(id);
 
-			(id1 == id2).Should().BeTrue();
-			(id1 != id2).Should().BeFalse();
-			id1.Equals(id2).Should().BeTrue();
-			id1.Equals(null).Should().BeFalse();
+			(person1 == nullPerson).Should().BeFalse();
+			(nullPerson == person1).Should().BeFalse();
+			(nullPerson == null).Should().BeTrue();
+			(null == nullPerson).Should().BeTrue();
+			(person1 == person2).Should().BeTrue();
+			(person1 != person2).Should().BeFalse();
+			(person1 == person3).Should().BeFalse();
+			(person1 == place).Should().BeFalse();
 		}
 
 		[Fact]
@@ -58,10 +71,14 @@ namespace DomainDesign.Common.UnitTests
 		{
 			var id = Guid.NewGuid();
 
-			var id1 = new DomainEntityId(id);
-			var id2 = new DomainEntityId(id);
+			var person1 = new PersonId(id);
+			var person2 = new PersonId(id);
+			var person3 = new PersonId();
+			var place = new PlaceId(id);
 
-			id1.GetHashCode().Should().Be(id2.GetHashCode());
+			person1.GetHashCode().Should().Be(person2.GetHashCode());
+			person1.GetHashCode().Should().NotBe(person3.GetHashCode());
+			person1.GetHashCode().Should().NotBe(place.GetHashCode());
 		}
 	}
 }

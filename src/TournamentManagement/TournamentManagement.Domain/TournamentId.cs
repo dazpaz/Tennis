@@ -3,7 +3,7 @@ using System;
 
 namespace TournamentManagement.Domain
 {
-	public class TournamentId : EntityId
+	public sealed class TournamentId : EntityId<TournamentId>
 	{
 		public TournamentId() : base() { }
 		public TournamentId(Guid id) : base(id) { }
