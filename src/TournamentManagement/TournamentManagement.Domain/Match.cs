@@ -38,13 +38,13 @@ namespace TournamentManagement.Domain
 			return match;
 		}
 
-		public void AddCompetitor(CompetitorId competitorId, int position)
+		public void AddCompetitor(CompetitorId competitorId, int slot)
 		{
 			GuardAgainstActionInInvalidState(MatchState.Created, "Add Competitor");
-			GuardAgainstInvalidCompetitorPosition(position);
+			GuardAgainstInvalidCompetitorSlot(slot);
 			GuardAgainstDuplicateCompetitors(competitorId);
 
-			_competitors[position - 1] = competitorId;
+			_competitors[slot - 1] = competitorId;
 		}
 
 		public void Schedule(string court)
@@ -149,11 +149,11 @@ namespace TournamentManagement.Domain
 			}
 		}
 
-		private static void GuardAgainstInvalidCompetitorPosition(int position)
+		private static void GuardAgainstInvalidCompetitorSlot(int slot)
 		{
-			if (position < 1 || position > 2)
+			if (slot < 1 || slot > 2)
 			{
-				throw new Exception($"Invalid Competitor Position {position}, it must be 1 or 2");
+				throw new Exception($"Invalid Competitor Slot {slot}, it must be 1 or 2");
 			}
 		}
 

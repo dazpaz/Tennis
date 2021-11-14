@@ -30,7 +30,7 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanAddACompetitorInPositionOneOfTheMatch()
+		public void CanAddACompetitorInSlotOneOfTheMatch()
 		{
 			var competitor = new CompetitorId();
 			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
@@ -42,7 +42,7 @@ namespace TournamentManagement.Domain.UnitTests
 		}
 
 		[Fact]
-		public void CanAddACompetitorInPositionTwoOfTheMatch()
+		public void CanAddACompetitorInSlotTwoOfTheMatch()
 		{
 			var competitor = new CompetitorId();
 			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
@@ -71,16 +71,16 @@ namespace TournamentManagement.Domain.UnitTests
 		[Theory]
 		[InlineData(0)]
 		[InlineData(3)]
-		public void CannotAddACompetitorIntoAnInvalidPosition(int position)
+		public void CannotAddACompetitorIntoAnInvalidSlot(int slot)
 		{
 			var competitor = new CompetitorId();
 			var match = Match.Create(MatchFormat.OneSetMatchWithTwoGamesClear, null);
 
-			Action act = () => match.AddCompetitor(competitor, position);
+			Action act = () => match.AddCompetitor(competitor, slot);
 
 			act.Should()
 				.Throw<Exception>()
-				.WithMessage($"Invalid Competitor Position {position}, it must be 1 or 2");
+				.WithMessage($"Invalid Competitor Slot {slot}, it must be 1 or 2");
 		}
 
 		[Fact]
