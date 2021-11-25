@@ -19,6 +19,7 @@ namespace TournamentManagement.Domain.UnitTests
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 1));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 14));
+			tournament.VenueId.Id.Should().NotBe(Guid.Empty);
 		}
 
 		[Theory]
@@ -27,7 +28,7 @@ namespace TournamentManagement.Domain.UnitTests
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
 			Action act = () => Tournament.Create(title, TournamentLevel.Masters125,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), new VenueId());
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -314,7 +315,7 @@ namespace TournamentManagement.Domain.UnitTests
 		private static Tournament CreateTestTournament()
 		{
 			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), new VenueId());
 		}
 
 		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)
