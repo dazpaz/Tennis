@@ -12,6 +12,7 @@ namespace TournamentManagement.Domain
 		public TournamentDates Dates { get; private set; }
 		public TournamentState State { get; private set; }
 		public TournamentLevel Level { get; private set; }
+		public VenueId VenueId { get; private set; }
 
 		public int Year => Dates.Year;
 		public DateTime StartDate => Dates.StartDate;
@@ -27,7 +28,8 @@ namespace TournamentManagement.Domain
 			Events = new ReadOnlyDictionary<EventType, Event>(_events);
 		}
 
-		public static Tournament Create(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
+		public static Tournament Create(string title, TournamentLevel level,
+			DateTime startDate, DateTime endDate, VenueId venueId)
 		{
 			Guard.AgainstNullOrEmptyString(title, nameof(title));
 
@@ -36,7 +38,8 @@ namespace TournamentManagement.Domain
 				Title = title,
 				Level = level,
 				State = TournamentState.BeingDefined,
-				Dates = new TournamentDates(startDate, endDate)
+				Dates = new TournamentDates(startDate, endDate),
+				VenueId = venueId
 			};
 
 			return tournament;
