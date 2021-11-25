@@ -30,7 +30,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 		[Theory]
 		[InlineData(0)]
-		[InlineData(20000)]
+		[InlineData(25000)]
 		public void CanCreateACourtWithCapacityValuesAtTheLimitsOfTheValidRange(int capacity)
 		{
 			var court = Court.Create("Centre Court", capacity);
@@ -41,7 +41,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 		[Theory]
 		[InlineData(-1)]
-		[InlineData(20001)]
+		[InlineData(25001)]
 		public void CannotCreateCourtWithCapacityValuesOutsideTheValidRange(int capacity)
 		{
 			Action act = () => Court.Create("Centre Court", capacity);
@@ -67,7 +67,6 @@ namespace TournamentManagement.Domain.UnitTests
 
 			court.UpdateCapacity(200);
 
-			
 			court.Capacity.Should().Be(200);
 		}
 
@@ -87,7 +86,7 @@ namespace TournamentManagement.Domain.UnitTests
 
 		[Theory]
 		[InlineData(-1)]
-		[InlineData(20001)]
+		[InlineData(25001)]
 		public void CannotUpdateCapacityWithValueOutsideTheValidRange(int capacity)
 		{
 			var court = Court.Create("Court 4", 100);

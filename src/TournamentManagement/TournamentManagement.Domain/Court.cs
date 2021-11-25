@@ -4,6 +4,9 @@ namespace TournamentManagement.Domain
 {
 	public class Court : Entity<CourtId>
 	{
+		public const int MinCapacity = 0;
+		public const int MaxCapacity = 25000;
+
 		public string Name { get; private set; }
 		public int Capacity { get; private set; } 
 
@@ -14,7 +17,7 @@ namespace TournamentManagement.Domain
 		public static Court Create(string name, int capacity)
 		{
 			Guard.AgainstNullOrEmptyString(name, nameof(name));
-			Guard.AgainstIntegerOutOfRange(capacity, 0, 20000, nameof(capacity));
+			Guard.AgainstIntegerOutOfRange(capacity, MinCapacity, MaxCapacity, nameof(capacity));
 
 			var court = new Court(new CourtId())
 			{
@@ -27,7 +30,7 @@ namespace TournamentManagement.Domain
 
 		public void UpdateCapacity(int newCapacity)
 		{
-			Guard.AgainstIntegerOutOfRange(newCapacity, 0, 20000, nameof(newCapacity));
+			Guard.AgainstIntegerOutOfRange(newCapacity, MinCapacity, MaxCapacity, nameof(newCapacity));
 			Capacity = newCapacity;
 		}
 
