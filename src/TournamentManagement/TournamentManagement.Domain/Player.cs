@@ -17,13 +17,14 @@ namespace TournamentManagement.Domain
 		{
 		}
 
-		public static Player Create(string name, ushort singlesRank, ushort doublesRank, Gender gender)
+		public static Player Create(PlayerId id, string name, ushort singlesRank,
+			ushort doublesRank, Gender gender)
 		{
 			Guard.AgainstNullOrEmptyString(name, nameof(name));
 			GuardAgainstRankOutOfRange(singlesRank, nameof(singlesRank));
 			GuardAgainstRankOutOfRange(doublesRank, nameof(doublesRank));
 
-			var player = new Player(new PlayerId())
+			var player = new Player(id)
 			{
 				Name = name,
 				SinglesRank = singlesRank,

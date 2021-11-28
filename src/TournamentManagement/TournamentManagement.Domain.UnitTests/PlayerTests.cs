@@ -9,9 +9,10 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUseFactoryMethodToCreatePlayerAndItIsCreatedCorrectly()
 		{
-			var player = Player.Create("Steve Serve", 10, 200, Gender.Male);
+			var playerId = new PlayerId();
+			var player = Player.Create(playerId, "Steve Serve", 10, 200, Gender.Male);
 
-			player.Id.Id.Should().NotBe(Guid.Empty);
+			player.Id.Should().Be(playerId);
 			player.Name.Should().Be("Steve Serve");
 			player.SinglesRank.Should().Be(10);
 			player.DoublesRank.Should().Be(200);
@@ -23,7 +24,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData("")]
 		public void CannotCreateAPlayerWithEmptyName(string name)
 		{
-			Action act = () => Player.Create(name, 100, 200, Gender.Female);
+			Action act = () => Player.Create(new PlayerId(), name, 100, 200, Gender.Female);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -35,7 +36,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(9999)]
 		public void CanCreateAPlayerWithRankValuesAtTheLimitsOfTheValidRange(ushort rank)
 		{
-			var player = Player.Create("Steve Serve", rank, rank, Gender.Male);
+			var player = Player.Create(new PlayerId(), "Steve Serve", rank, rank, Gender.Male);
 
 			player.SinglesRank.Should().Be(rank);
 			player.DoublesRank.Should().Be(rank);
@@ -48,7 +49,8 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(100, 10000)]
 		public void CanCreatePlayerWithRankValuesOutsideTheValidRange(ushort singlesRank, ushort doublesRank)
 		{
-			Action act = () => Player.Create("Steve Serve", singlesRank, doublesRank, Gender.Female);
+			Action act = () => Player.Create(new PlayerId(), "Steve Serve", singlesRank, doublesRank,
+				Gender.Female);
 
 			act.Should()
 				.Throw<ArgumentException>();
