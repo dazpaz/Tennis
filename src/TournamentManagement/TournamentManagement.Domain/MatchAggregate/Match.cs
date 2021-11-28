@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.MatchAggregate
 {
 	public class Match : Entity<MatchId>
 	{

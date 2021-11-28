@@ -1,6 +1,6 @@
 ﻿using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.MatchAggregate
 {
 	public class SetWinnerCalculator
 	{

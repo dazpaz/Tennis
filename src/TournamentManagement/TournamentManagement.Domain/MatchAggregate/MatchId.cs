@@ -1,7 +1,7 @@
 ﻿using DomainDesign.Common;
 using System;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.MatchAggregate
 {
 	public sealed class MatchId : EntityId<MatchId>
 	{

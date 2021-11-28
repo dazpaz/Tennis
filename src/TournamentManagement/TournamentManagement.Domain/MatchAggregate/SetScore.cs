@@ -1,6 +1,6 @@
 ﻿using DomainDesign.Common;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.MatchAggregate
 {
 	public class SetScore : ValueObject<SetScore>
 	{

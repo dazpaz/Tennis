@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.MatchAggregate
 {
 	public class MatchScore : ValueObject<MatchScore>
 	{
