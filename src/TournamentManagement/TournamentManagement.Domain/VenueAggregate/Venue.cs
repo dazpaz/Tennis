@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace TournamentManagement.Domain.VenueAggregate
 {
-	public class Venue : Entity<VenueId>
+	public class Venue : Entity<VenueId>, IAggregateRoot
 	{
 		public string Name { get; private set; }
 		public Surface Surface { get; private set; }

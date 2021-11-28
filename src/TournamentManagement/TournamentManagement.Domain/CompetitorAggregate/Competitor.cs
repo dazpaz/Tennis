@@ -6,7 +6,7 @@ using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.CompetitorAggregate
 {
-	public class Competitor : Entity<CompetitorId>
+	public class Competitor : Entity<CompetitorId>, IAggregateRoot
 	{
 		public EventEntryId EventEntryId { get; private set; }
 		public TournamentId TournamentId { get; private set; }
