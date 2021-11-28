@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using System;
-using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.Common;
 using Xunit;
 
-namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
+namespace TournamentManagement.Domain.UnitTests.Common
 {
 	public class MatchFormatTests
 	{

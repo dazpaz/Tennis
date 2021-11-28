@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.CompetitorAggregate;
-using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.MatchAggregate
 {

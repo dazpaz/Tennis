@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.CompetitorAggregate;
 using TournamentManagement.Domain.MatchAggregate;
-using TournamentManagement.Domain.TournamentAggregate;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests.MatchAggregate

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 using Xunit;

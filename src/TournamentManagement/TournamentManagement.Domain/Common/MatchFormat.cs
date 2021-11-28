@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace TournamentManagement.Domain.TournamentAggregate
+namespace TournamentManagement.Domain.Common
 {
 	public class MatchFormat : ValueObject<MatchFormat>
 	{

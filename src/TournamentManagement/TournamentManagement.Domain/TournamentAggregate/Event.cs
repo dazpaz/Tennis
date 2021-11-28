@@ -1,5 +1,6 @@
 ﻿using DomainDesign.Common;
 using System;
+using TournamentManagement.Domain.Common;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {

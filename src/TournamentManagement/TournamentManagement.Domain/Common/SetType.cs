@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Domain.TournamentAggregate
+﻿namespace TournamentManagement.Domain.Common
 {
 	public enum SetType
 	{
