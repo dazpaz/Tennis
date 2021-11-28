@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
 using System;
+using TournamentManagement.Domain.CompetitorAggregate;
 using Xunit;
 
-namespace TournamentManagement.Domain.UnitTests
+namespace TournamentManagement.Domain.UnitTests.CompetitorAggregate
 {
 	public class CompetitorIdTests
 	{

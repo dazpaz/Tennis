@@ -1,7 +1,7 @@
 ﻿using DomainDesign.Common;
 using System;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.CompetitorAggregate
 {
 	public sealed class CompetitorId : EntityId<CompetitorId>
 	{

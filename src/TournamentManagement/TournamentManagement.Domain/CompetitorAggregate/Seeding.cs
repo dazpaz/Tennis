@@ -1,6 +1,6 @@
 ﻿using DomainDesign.Common;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.CompetitorAggregate
 {
 	public class Seeding : ValueObject<Seeding>
 	{
