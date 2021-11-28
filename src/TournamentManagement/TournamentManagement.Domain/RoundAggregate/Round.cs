@@ -1,7 +1,7 @@
 ﻿using DomainDesign.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.RoundAggregate
 {
 	public class Round : Entity<RoundId>
 	{

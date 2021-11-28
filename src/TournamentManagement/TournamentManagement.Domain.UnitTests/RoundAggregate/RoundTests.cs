@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using System;
+using TournamentManagement.Domain.RoundAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using Xunit;
 
-namespace TournamentManagement.Domain.UnitTests
+namespace TournamentManagement.Domain.UnitTests.RoundAggregate
 {
 	public class RoundTests
 	{
