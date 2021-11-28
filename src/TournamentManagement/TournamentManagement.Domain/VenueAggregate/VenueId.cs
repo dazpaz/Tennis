@@ -2,7 +2,7 @@
 using System;
 
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.VenueAggregate
 {
 	public class VenueId : EntityId<VenueId>
 	{

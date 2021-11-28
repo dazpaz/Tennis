@@ -1,8 +1,9 @@
 ﻿using FluentAssertions;
 using System;
+using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
 
-namespace TournamentManagement.Domain.UnitTests
+namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 {
 	public class CourtTests
 	{

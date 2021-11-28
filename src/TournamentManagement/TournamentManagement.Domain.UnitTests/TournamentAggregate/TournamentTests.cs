@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
