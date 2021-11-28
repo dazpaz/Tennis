@@ -5,7 +5,7 @@ using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using Xunit;
 
-namespace TournamentManagement.Domain.UnitTests
+namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 {
 	public class EventEntryTests
 	{
