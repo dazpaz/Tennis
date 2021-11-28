@@ -9,9 +9,10 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUseFactoryMethodToCreateCourtAndItIsCreatedCorrectly()
 		{
-			var court = Court.Create("Centre Court", 14979);
+			var courtId = new CourtId();
+			var court = Court.Create(courtId, "Centre Court", 14979);
 
-			court.Id.Id.Should().NotBe(Guid.Empty);
+			court.Id.Should().Be(courtId);
 			court.Name.Should().Be("Centre Court");
 			court.Capacity.Should().Be(14979);
 		}
@@ -21,7 +22,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData("")]
 		public void CannotCreateACourtWithEmptyName(string name)
 		{
-			Action act = () => Court.Create(name, 100);
+			Action act = () => Court.Create(new CourtId(), name, 100);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -33,7 +34,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(25000)]
 		public void CanCreateACourtWithCapacityValuesAtTheLimitsOfTheValidRange(int capacity)
 		{
-			var court = Court.Create("Centre Court", capacity);
+			var court = Court.Create(new CourtId(), "Centre Court", capacity);
 
 			court.Name.Should().Be("Centre Court");
 			court.Capacity.Should().Be(capacity);
@@ -44,7 +45,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(25001)]
 		public void CannotCreateCourtWithCapacityValuesOutsideTheValidRange(int capacity)
 		{
-			Action act = () => Court.Create("Centre Court", capacity);
+			Action act = () => Court.Create(new CourtId(), "Centre Court", capacity);
 
 			act.Should()
 				.Throw<ArgumentException>();
@@ -53,7 +54,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanRenameACourt()
 		{
-			var court = Court.Create("Centre Court", 14979);
+			var court = Court.Create(new CourtId(), "Centre Court", 14979);
 
 			court.RenameCourt("Murray Court");
 
@@ -63,7 +64,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[Fact]
 		public void CanUpdateTheCapacityOfACourt()
 		{
-			var court = Court.Create("Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100);
 
 			court.UpdateCapacity(200);
 
@@ -75,7 +76,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData("")]
 		public void CannotRenameACourtWithEmptyName(string newName)
 		{
-			var court = Court.Create("Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100);
 
 			Action act = () => court.RenameCourt(newName);
 
@@ -89,7 +90,7 @@ namespace TournamentManagement.Domain.UnitTests
 		[InlineData(25001)]
 		public void CannotUpdateCapacityWithValueOutsideTheValidRange(int capacity)
 		{
-			var court = Court.Create("Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100);
 
 			Action act = () => court.UpdateCapacity(capacity);
 
