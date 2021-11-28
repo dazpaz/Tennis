@@ -7,7 +7,7 @@ using TournamentManagement.Domain.VenueAggregate;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
-	public class Tournament : Entity<TournamentId>
+	public class Tournament : Entity<TournamentId>, IAggregateRoot
 	{
 		public string Title { get; private set; }
 		public TournamentDates Dates { get; private set; }

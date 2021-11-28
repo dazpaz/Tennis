@@ -4,7 +4,7 @@ using TournamentManagement.Domain.Common;
 
 namespace TournamentManagement.Domain.PlayerAggregate
 {
-	public class Player : Entity<PlayerId>
+	public class Player : Entity<PlayerId>, IAggregateRoot
 	{
 		private const uint MinRank = 1;
 		private const uint MaxRank = 9999;

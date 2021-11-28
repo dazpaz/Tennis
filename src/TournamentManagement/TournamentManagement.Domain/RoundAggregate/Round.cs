@@ -3,7 +3,7 @@ using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.RoundAggregate
 {
-	public class Round : Entity<RoundId>
+	public class Round : Entity<RoundId>, IAggregateRoot
 	{
 		private static readonly int[] AllowedCompetitorCount = { 128, 64, 32, 16, 8, 4 ,2 };
 

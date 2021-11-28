@@ -8,7 +8,7 @@ using TournamentManagement.Domain.CompetitorAggregate;
 
 namespace TournamentManagement.Domain.MatchAggregate
 {
-	public class Match : Entity<MatchId>
+	public class Match : Entity<MatchId>, IAggregateRoot
 	{
 		public MatchFormat Format { get; private set; }
 		public MatchState State { get; private set; }
