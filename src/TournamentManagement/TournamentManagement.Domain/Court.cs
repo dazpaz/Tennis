@@ -14,12 +14,12 @@ namespace TournamentManagement.Domain
 		{
 		}
 
-		public static Court Create(string name, int capacity)
+		public static Court Create(CourtId id, string name, int capacity)
 		{
 			Guard.AgainstNullOrEmptyString(name, nameof(name));
 			Guard.AgainstIntegerOutOfRange(capacity, MinCapacity, MaxCapacity, nameof(capacity));
 
-			var court = new Court(new CourtId())
+			var court = new Court(id)
 			{
 				Name = name,
 				Capacity = capacity

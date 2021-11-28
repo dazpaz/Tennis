@@ -20,11 +20,11 @@ namespace TournamentManagement.Domain
 			Courts = new ReadOnlyCollection<Court>(_courts);
 		}
 
-		public static Venue Create(string name, Surface surface)
+		public static Venue Create(VenueId id, string name, Surface surface)
 		{
 			Guard.AgainstNullOrEmptyString(name, nameof(name));
 
-			var venue = new Venue(new VenueId())
+			var venue = new Venue(id)
 			{
 				Name = name,
 				Surface = surface
