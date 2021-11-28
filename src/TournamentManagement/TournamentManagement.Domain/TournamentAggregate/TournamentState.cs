@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Domain
+﻿namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public enum TournamentState
 	{

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain
 {

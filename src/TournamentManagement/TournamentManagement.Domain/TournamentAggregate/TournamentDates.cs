@@ -1,7 +1,7 @@
 ﻿using DomainDesign.Common;
 using System;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class TournamentDates : ValueObject<TournamentDates>
 	{

@@ -1,6 +1,6 @@
 ﻿using DomainDesign.Common;
 
-namespace TournamentManagement.Domain
+namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class EventSize : ValueObject<EventSize>
 	{

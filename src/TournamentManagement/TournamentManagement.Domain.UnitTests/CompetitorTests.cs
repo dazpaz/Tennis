@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using TournamentManagement.Domain.TournamentAggregate;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests

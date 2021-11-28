@@ -1,4 +1,6 @@
-﻿namespace TournamentManagement.Domain
+﻿using TournamentManagement.Domain.TournamentAggregate;
+
+namespace TournamentManagement.Domain
 {
 	public class SetWinnerCalculator
 	{
