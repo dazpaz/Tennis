@@ -22,7 +22,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			var tennisEvent = new Event(new EventId())
 			{
-				TournamentId = tournamentId
+				TournamentId = new TournamentId(tournamentId.Id)
 			};
 			tennisEvent.SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 			return tennisEvent;
