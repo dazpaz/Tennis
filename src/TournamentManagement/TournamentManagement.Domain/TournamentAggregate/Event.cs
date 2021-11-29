@@ -6,6 +6,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class Event : Entity<EventId>
 	{
+		public TournamentId TournamentId { get; private set; }
 		public EventType EventType { get; private set; }
 		public bool SinglesEvent { get; private set; }
 		public MatchFormat MatchFormat { get; private set; }
@@ -16,9 +17,13 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 		}
 
-		public static Event Create(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		public static Event Create(TournamentId tournamentId, EventType eventType, int entrantsLimit,
+			int numberOfSeeds, MatchFormat matchFormat)
 		{
-			var tennisEvent = new Event(new EventId());
+			var tennisEvent = new Event(new EventId())
+			{
+				TournamentId = tournamentId
+			};
 			tennisEvent.SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 			return tennisEvent;
 		}

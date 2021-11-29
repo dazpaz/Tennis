@@ -323,7 +323,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)
 		{
-			return Event.Create(eventtype, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			return Event.Create(new TournamentId(), eventtype, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 		}
 
 		private static Tournament CreateTestTournamentAndOpenForEntries()
