@@ -60,6 +60,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "AddEvent");
 			GuardAgainstDuplicateEventType(tennisEvent.EventType);
+			GuardAgainstWrongTournamentId(tennisEvent.TournamentId);
 
 			_events.Add(tennisEvent.EventType, tennisEvent);
 		}
@@ -170,6 +171,14 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			if (_events.ContainsKey(eventType))
 			{
 				throw new Exception($"Tournament already has an event of type {eventType}");
+			}
+		}
+
+		private void GuardAgainstWrongTournamentId(TournamentId tournamentId)
+		{
+			if (tournamentId != Id)
+			{
+				throw new Exception("Cannot add Event with the wrong Tournament Id");
 			}
 		}
 
