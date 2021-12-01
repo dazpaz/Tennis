@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using TournamentManagement.Domain.Common;
+using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using Xunit;
 
@@ -70,7 +71,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CannotUpdateAnventThatIsCompleted()
+		public void CannotUpdateAnEventThatIsCompleted()
 		{
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
@@ -82,6 +83,88 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			act.Should()
 				.Throw<Exception>()
 				.WithMessage("Cannot update the details of an event that is completed");
+		}
+
+		[Fact]
+		public void CanAddEntriesToAnEvent()
+		{
+			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
+
+			tennisEvent.AddEventEntry(entry);
+
+			tennisEvent.Entries.Count.Should().Be(1);
+			tennisEvent.Entries[0].Id.Should().Be(entry.Id);
+		}
+
+		[Fact]
+		public void CanRemoveAnEnryFromAnEvent()
+		{
+			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
+			tennisEvent.AddEventEntry(entry);
+			player = Player.Create(new PlayerId(), "Dave", 101, 52, Gender.Male);
+			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
+			tennisEvent.AddEventEntry(entry);
+			tennisEvent.Entries.Count.Should().Be(2);
+
+			tennisEvent.RemoveEntry(entry.Id);
+
+			tennisEvent.Entries.Count.Should().Be(1);
+		}
+
+		[Fact]
+		public void CanClearAllEntriesFromAnEvent()
+		{
+			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
+			tennisEvent.AddEventEntry(entry);
+			player = Player.Create(new PlayerId(), "Dave", 101, 52, Gender.Male);
+			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
+			tennisEvent.AddEventEntry(entry);
+			tennisEvent.Entries.Count.Should().Be(2);
+
+			tennisEvent.ClearEntries();
+
+			tennisEvent.Entries.Count.Should().Be(0);
+		}
+
+		[Fact]
+		public void CannotAddAnEntryToEventIfEventTypeDoesNotMatch()
+		{
+			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var player = Player.Create(new PlayerId(), "Venus", 100, 50, Gender.Female);
+			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, EventType.WomensSingles, player);
+
+			Action act = () => tennisEvent.AddEventEntry(entry);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Cannot add Entry to this Event as details do not match");
+		}
+
+		[Fact]
+		public void CannotAddAnEntryToEventIfEventIdDoesNotMatch()
+		{
+			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var entry = EventEntry.CreateSinglesEventEntry(new EventId(), EventType.MensSingles, player);
+
+			Action act = () => tennisEvent.AddEventEntry(entry);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Cannot add Entry to this Event as details do not match");
 		}
 	}
 }
