@@ -10,7 +10,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class EventEntry : Entity<EventEntryId>
 	{
-		public TournamentId TournamentId { get; private set; }
+		public EventId EventId { get; private set; }
 		public EventType EventType { get; private set; }
 		public IReadOnlyCollection<Player> Players { get; private set; }
 		public ushort Rank { get; private set; }
@@ -23,36 +23,36 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			Players = new ReadOnlyCollection<Player>(_players);
 		}
 
-		public static EventEntry CreateSinglesEventEntry(TournamentId tournamentId, EventType eventType,
+		public static EventEntry CreateSinglesEventEntry(EventId eventId, EventType eventType,
 			Player player)
 		{
 			GuardAgainstDoublesEvent(eventType);
 			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { player });
 
-			var entry = CreateEntry(tournamentId, eventType);
+			var entry = CreateEntry(eventId, eventType);
 			entry._players.Add(player);
 			entry.Rank = player.SinglesRank;
 			return entry;
 		}
 
-		public static EventEntry CreateDoublesEventEntry(TournamentId tournamentId, EventType eventType,
+		public static EventEntry CreateDoublesEventEntry(EventId eventId, EventType eventType,
 			Player playerOne, Player playerTwo)
 		{
 			GuardAgainstSinglesEvent(eventType);
 			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { playerOne, playerTwo });
 
-			var entry = CreateEntry(tournamentId, eventType);
+			var entry = CreateEntry(eventId, eventType);
 			entry._players.Add(playerOne);
 			entry._players.Add(playerTwo);
 			entry.Rank = entry._players.Min(p => p.DoublesRank);
 			return entry;
 		}
 
-		private static EventEntry CreateEntry(TournamentId tournamentId, EventType eventType)
+		private static EventEntry CreateEntry(EventId eventId, EventType eventType)
 		{
 			var entry = new EventEntry(new EventEntryId())
 			{
-				TournamentId = new TournamentId(tournamentId.Id),
+				EventId = new EventId(eventId.Id),
 				EventType = eventType,
 			};
 
