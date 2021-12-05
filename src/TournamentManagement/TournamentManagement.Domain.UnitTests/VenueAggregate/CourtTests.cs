@@ -20,6 +20,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 
 		[Theory]
 		[InlineData(null)]
+		[InlineData("     ")]
 		[InlineData("")]
 		public void CannotCreateACourtWithEmptyName(string name)
 		{
@@ -27,7 +28,9 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value can not be null or empty string (Parameter 'name')");
+				.WithMessage(name == null
+					? "Value cannot be null. (Parameter 'name')"
+					: "Required input name was empty. (Parameter 'name')");
 		}
 
 		[Theory]
@@ -83,7 +86,9 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value can not be null or empty string (Parameter 'newName')");
+				.WithMessage(newName == null
+					? "Value cannot be null. (Parameter 'newName')"
+					: "Required input newName was empty. (Parameter 'newName')");
 		}
 
 		[Theory]

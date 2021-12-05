@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.RoundAggregate
@@ -20,8 +21,8 @@ namespace TournamentManagement.Domain.RoundAggregate
 		public static Round Create(TournamentId tournamentId, EventType eventType,
 			int roundNumber, int competitorCount)
 		{
-			Guard.AgainstIntegerOutOfRange(roundNumber, 1, 7, nameof(roundNumber));
-			Guard.AgainstValueNotInSetOfAllowedValues(competitorCount, AllowedCompetitorCount, nameof(competitorCount));
+			Guard.Against.IntegerOutOfRange(roundNumber, 1, 7, nameof(roundNumber));
+			Guard.Against.ValueNotInSetOfAllowedValues(competitorCount, AllowedCompetitorCount, nameof(competitorCount));
 
 			var round = new Round(new RoundId())
 			{

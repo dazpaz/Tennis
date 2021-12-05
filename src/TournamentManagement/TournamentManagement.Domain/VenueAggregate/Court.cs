@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 
 namespace TournamentManagement.Domain.VenueAggregate
 {
@@ -16,8 +17,8 @@ namespace TournamentManagement.Domain.VenueAggregate
 
 		public static Court Create(CourtId id, string name, int capacity)
 		{
-			Guard.AgainstNullOrEmptyString(name, nameof(name));
-			Guard.AgainstIntegerOutOfRange(capacity, MinCapacity, MaxCapacity, nameof(capacity));
+			Guard.Against.NullOrWhiteSpace(name, nameof(name));
+			Guard.Against.IntegerOutOfRange(capacity, MinCapacity, MaxCapacity, nameof(capacity));
 
 			var court = new Court(id)
 			{
@@ -30,14 +31,12 @@ namespace TournamentManagement.Domain.VenueAggregate
 
 		public void UpdateCapacity(int newCapacity)
 		{
-			Guard.AgainstIntegerOutOfRange(newCapacity, MinCapacity, MaxCapacity, nameof(newCapacity));
-			Capacity = newCapacity;
+			Capacity = Guard.Against.IntegerOutOfRange(newCapacity, MinCapacity, MaxCapacity, nameof(newCapacity));
 		}
 
 		public void RenameCourt(string newName)
 		{
-			Guard.AgainstNullOrEmptyString(newName, nameof(newName));
-			Name = newName;
+			Name = Guard.Against.NullOrWhiteSpace(newName, nameof(newName));
 		}
 	}
 }

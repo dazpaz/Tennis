@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 
 namespace TournamentManagement.Domain.MatchAggregate
 {
@@ -9,8 +10,8 @@ namespace TournamentManagement.Domain.MatchAggregate
 
 		public SetScore(int gamesOne, int gamesTwo)
 		{
-			Guard.AgainstIntegerOutOfRange(gamesOne, 0, 99, nameof(gamesOne));
-			Guard.AgainstIntegerOutOfRange(gamesTwo, 0, 99, nameof(gamesTwo));
+			Guard.Against.IntegerOutOfRange(gamesOne, 0, 99, nameof(gamesOne));
+			Guard.Against.IntegerOutOfRange(gamesTwo, 0, 99, nameof(gamesTwo));
 
 			GamesOne = gamesOne;
 			GamesTwo = gamesTwo;

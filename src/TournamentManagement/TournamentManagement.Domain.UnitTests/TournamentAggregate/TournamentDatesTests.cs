@@ -78,7 +78,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Tournament duration must be 1 - 14 days");
+				.WithMessage("Duration must be 1 - 14 days");
 		}
 
 		[Theory]

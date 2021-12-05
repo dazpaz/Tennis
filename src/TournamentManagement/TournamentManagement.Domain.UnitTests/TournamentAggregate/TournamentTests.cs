@@ -27,6 +27,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		[Theory]
 		[InlineData(null)]
+		[InlineData("     ")]
 		[InlineData("")]
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
@@ -35,7 +36,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value can not be null or empty string (Parameter 'title')");
+				.WithMessage(title == null
+					? "Value cannot be null. (Parameter 'title')"
+					: "Required input title was empty. (Parameter 'title')");
 		}
 
 		[Fact]
@@ -223,7 +226,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			void act() => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -234,7 +237,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.AddEvent(tennisEvent);
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "AddEvent", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "AddEvent", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -244,7 +247,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.RemoveEvent(EventType.MensSingles);
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "RemoveEvent", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "RemoveEvent", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -254,7 +257,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.ClearEvents();
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "ClearEvents", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "ClearEvents", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -264,7 +267,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.SetEvents(null);
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "SetEvents", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "SetEvents", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -274,7 +277,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.OpenForEntries();
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "OpenForEntries", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "OpenForEntries", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
@@ -296,7 +299,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.CloseEntries();
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "CloseEntries", TournamentState.BeingDefined);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "CloseEntries", tournament.State);
 		}
 
 		[Fact]
@@ -306,7 +309,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.DrawTheEvents();
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "DrawTheEvents", TournamentState.BeingDefined);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "DrawTheEvents", tournament.State);
 		}
 
 		[Fact]
@@ -316,7 +319,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.StartTournament();
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "StartTournament", TournamentState.BeingDefined);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "StartTournament", tournament.State);
 		}
 
 		[Fact]
@@ -326,7 +329,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.EventCompleted(EventType.MensSingles);
 
-			VeifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", TournamentState.BeingDefined);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", tournament.State);
 		}
 
 		private static Tournament CreateTestTournament()
@@ -349,7 +352,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			return tournament;
 		}
 
-		private static void VeifyExceptionThrownWhenNotInCorrectState(Action act, string action, TournamentState state)
+		private static void VerifyExceptionThrownWhenNotInCorrectState(Action act, string action, TournamentState state)
 		{
 			act.Should()
 				.Throw<Exception>()

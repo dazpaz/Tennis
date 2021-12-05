@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,7 +33,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public static Tournament Create(string title, TournamentLevel level,
 			DateTime startDate, DateTime endDate, VenueId venueId)
 		{
-			Guard.AgainstNullOrEmptyString(title, nameof(title));
+			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 
 			var tournament = new Tournament(new TournamentId())
 			{
@@ -48,8 +49,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "UpdateDetails");
-			Guard.AgainstNullOrEmptyString(title, "title");
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(UpdateDetails));
+			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 
 			Title = title;
 			Level = level;
@@ -58,31 +59,32 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void AddEvent(Event tennisEvent)
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "AddEvent");
-			GuardAgainstDuplicateEventType(tennisEvent.EventType);
-			GuardAgainstWrongTournamentId(tennisEvent.TournamentId);
+			const string WrongTournamentIdMessage = "Cannot add Event with the wrong Tournament Id";
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));
+			Guard.Against.DuplicateEventType<EventType, Event>(_events, tennisEvent.EventType); 
+			Guard.Against.KeyValuesDoNotMatch(tennisEvent.TournamentId, Id, WrongTournamentIdMessage);
 
 			_events.Add(tennisEvent.EventType, tennisEvent);
 		}
 
 		public void RemoveEvent(EventType eventType)
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "RemoveEvent");
-			GuardAgainstMissingEventType(eventType);
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(RemoveEvent));
+			Guard.Against.MissingEventType<EventType, Event>(_events, eventType);
 
 			_events.Remove(eventType);
 		}
 
 		public void ClearEvents()
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "ClearEvents");
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(ClearEvents));
 
 			_events.Clear();
 		}
 
 		public void SetEvents(IEnumerable<Event> events)
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "SetEvents");
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(SetEvents));
 
 			_events.Clear();
 
@@ -90,7 +92,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			{
 				foreach (var tennisEvent in events)
 				{
-					GuardAgainstDuplicateEventType(tennisEvent.EventType);
+					Guard.Against.DuplicateEventType<EventType, Event>(_events, tennisEvent.EventType);
 					_events.Add(tennisEvent.EventType, tennisEvent);
 				}
 			}
@@ -103,8 +105,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void OpenForEntries()
 		{
-			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "OpenForEntries");
-			GuardAgainstNoEvents();
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(OpenForEntries));
+			Guard.Against.NoEvents(_events);
 			
 			// Raise event to get notifications out to players telling them they can enter
 
@@ -113,7 +115,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void CloseEntries()
 		{
-			GuardAgainstActionInWrongState(TournamentState.AcceptingEntries, "CloseEntries");
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(CloseEntries));
 
 			// Raise event to get notification out to players saying if they are in or not
 
@@ -122,7 +124,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void DrawTheEvents()
 		{
-			GuardAgainstActionInWrongState(TournamentState.EntriesClosed, "DrawTheEvents");
+			Guard.Against.TournamentActionInWrongState(TournamentState.EntriesClosed, State, nameof(DrawTheEvents));
 
 			// Raise event to perform the draw for each event 
 
@@ -131,7 +133,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void StartTournament()
 		{
-			GuardAgainstActionInWrongState(TournamentState.DrawComplete, "StartTournament");
+			Guard.Against.TournamentActionInWrongState(TournamentState.DrawComplete, State, nameof(StartTournament));
 
 			// Need to think about this one
 
@@ -140,8 +142,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void EventCompleted(EventType eventType)
 		{
-			GuardAgainstActionInWrongState(TournamentState.InProgress, "EventCompleted");
-			GuardAgainstMissingEventType(eventType);
+			Guard.Against.TournamentActionInWrongState(TournamentState.InProgress, State, nameof(EventCompleted));
+			Guard.Against.MissingEventType<EventType, Event>(_events, eventType);
 
 			_events[eventType].MarkEventCompleted();
 
@@ -156,46 +158,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		private void TransitionToState(TournamentState newState)
 		{
 			State = newState;
-		}
-
-		private void GuardAgainstActionInWrongState(TournamentState state, string action)
-		{
-			if (State != state)
-			{
-				throw new Exception($"Action {action} not allowed for a tournament in the state {State}");
-			}
-		}
-
-		private void GuardAgainstDuplicateEventType(EventType eventType)
-		{
-			if (_events.ContainsKey(eventType))
-			{
-				throw new Exception($"Tournament already has an event of type {eventType}");
-			}
-		}
-
-		private void GuardAgainstWrongTournamentId(TournamentId tournamentId)
-		{
-			if (tournamentId != Id)
-			{
-				throw new Exception("Cannot add Event with the wrong Tournament Id");
-			}
-		}
-
-		private void GuardAgainstMissingEventType(EventType eventType)
-		{
-			if (!_events.ContainsKey(eventType))
-			{
-				throw new Exception($"Tournament does not have an event of type {eventType}");
-			}
-		}
-
-		private void GuardAgainstNoEvents()
-		{
-			if (_events.Count == 0)
-			{
-				throw new Exception($"Tournament must have at least one event to open it for entries");
-			}
 		}
 	}
 }

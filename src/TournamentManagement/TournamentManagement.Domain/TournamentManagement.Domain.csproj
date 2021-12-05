@@ -8,4 +8,8 @@
     <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" Version="3.3.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
@@ -16,8 +17,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public EventSize(int entrantsLimit, int numberOfSeeds)
 		{
-			Guard.AgainstValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, nameof(numberOfSeeds));
-			Guard.AgainstIntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, nameof(entrantsLimit));
+			Guard.Against.ValueNotInSetOfAllowedValues(numberOfSeeds, AllowedNumberOfSeeds, nameof(numberOfSeeds));
+			Guard.Against.IntegerOutOfRange(entrantsLimit, numberOfSeeds, MaxNumberOfEntrants, nameof(entrantsLimit));
 
 			EntrantsLimit = entrantsLimit;
 			NumberOfSeeds = numberOfSeeds;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardalis.GuardClauses;
+using System;
 
 namespace DomainDesign.Common
 {
@@ -13,7 +14,7 @@ namespace DomainDesign.Common
 
 		public EntityId(Guid id)
 		{
-			Guard.AgainstEmptyGuid(id, nameof(id));
+			Guard.Against.EmptyGuid(id, nameof(id));
 			Id = id;
 		}
 
