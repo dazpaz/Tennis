@@ -60,14 +60,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			_entries.Add(entry);
 		}
 
-		private void GuardAgainstEntryNotMatchingTheEvent(EventEntry entry)
-		{
-			if (entry.EventType != EventType || entry.EventId != Id)
-			{
-				throw new Exception("Cannot add Entry to this Event as details do not match");
-			}
-		}
-
 		public void RemoveEntry(EventEntryId entryId)
 		{
 			var entry = _entries.FirstOrDefault(e => e.Id == entryId);
@@ -93,6 +85,14 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			if (IsCompleted)
 			{
 				throw new Exception("Cannot update the details of an event that is completed");
+			}
+		}
+
+		private void GuardAgainstEntryNotMatchingTheEvent(EventEntry entry)
+		{
+			if (entry.EventType != EventType || entry.EventId != Id)
+			{
+				throw new Exception("Cannot add Entry to this Event as details do not match");
 			}
 		}
 	}
