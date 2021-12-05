@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DomainDesign.Common;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ardalis.GuardClauses
@@ -37,6 +39,42 @@ namespace Ardalis.GuardClauses
 			}
 
 			return value;
+		}
+
+		public static void KeyValuesDoNotMatch<T>(this IGuardClause guardClause,
+			T actualKey, T expectedKey, string message = null) where T : EntityId<T>
+		{
+			if (actualKey != expectedKey)
+			{
+				throw new Exception(message ?? "Cannot add Event with the wrong Tournament Id");
+			}
+		}
+
+		public static void CollectionIsEmpty<T>(this IGuardClause guardClause, ICollection<T> collection,
+			string message = null)
+		{
+			if (collection.Count == 0)
+			{
+				throw new Exception(message ?? "Collection does not contain any elements");
+			}
+		}
+
+		public static void DictionaryAlreadyContainsKey<TKey, TValue>(this IGuardClause guardClause,
+			IDictionary<TKey, TValue> dictionary, TKey key, string message = null)
+		{
+			if (dictionary.ContainsKey(key))
+			{
+				throw new Exception(message ?? $"Dictionary already contains key, {key}");
+			}
+		}
+
+		public static void DictionaryDoesNotContainKey<TKey, TValue>(this IGuardClause guardClause,
+			IDictionary<TKey, TValue> dictionary, TKey key, string message = null)
+		{
+			if (!dictionary.ContainsKey(key))
+			{
+				throw new Exception(message ?? $"Dictionary does not contain key, {key}");
+			}
 		}
 	}
 }
