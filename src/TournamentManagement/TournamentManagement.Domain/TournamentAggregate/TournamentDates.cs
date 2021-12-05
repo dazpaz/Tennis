@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 
 namespace TournamentManagement.Domain.TournamentAggregate
@@ -17,7 +18,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public TournamentDates(DateTime startDate, DateTime endDate)
 		{
 			GuardAgainstDurationOutOfRange(endDate.Date - startDate.Date);
-			Guard.AgainstIntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, "year");
+			Guard.Against.IntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, "year");
 
 			StartDate = startDate.Date;
 			EndDate = endDate.Date;

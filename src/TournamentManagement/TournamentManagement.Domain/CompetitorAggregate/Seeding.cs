@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 
 namespace TournamentManagement.Domain.CompetitorAggregate
 {
@@ -8,8 +9,7 @@ namespace TournamentManagement.Domain.CompetitorAggregate
 
 		public Seeding(int seed)
 		{
-			Guard.AgainstIntegerOutOfRange(seed, 1, 32, nameof(seed));
-			Seed = seed;
+			Seed = Guard.Against.IntegerOutOfRange(seed, 1, 32, nameof(seed));
 		}
 	}
 }

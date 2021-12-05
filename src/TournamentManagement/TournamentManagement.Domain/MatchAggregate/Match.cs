@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -51,7 +52,7 @@ namespace TournamentManagement.Domain.MatchAggregate
 
 		public void Schedule(string court)
 		{
-			Guard.AgainstNullOrEmptyString(court, nameof(court));
+			Guard.Against.NullOrWhiteSpace(court, nameof(court));
 			GuardAgainstMatchAlreadyCompleted();
 			GuardAgainstMatchIsMissingCompetitors();
 

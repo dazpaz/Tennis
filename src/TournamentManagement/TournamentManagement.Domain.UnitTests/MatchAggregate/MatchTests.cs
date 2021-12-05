@@ -140,6 +140,7 @@ namespace TournamentManagement.Domain.UnitTests.MatchAggregate
 
 		[Theory]
 		[InlineData("")]
+		[InlineData("     ")]
 		[InlineData(null)]
 		public void MustSpecifyACourtWhenSchedulingAMatch(string court)
 		{
@@ -149,7 +150,9 @@ namespace TournamentManagement.Domain.UnitTests.MatchAggregate
 
 			act.Should()
 				.Throw<Exception>()
-				.WithMessage("Value can not be null or empty string (Parameter 'court')");
+				.WithMessage(court == null
+					? "Value cannot be null. (Parameter 'court')"
+					: "Required input court was empty. (Parameter 'court')");
 		}
 
 		[Fact]

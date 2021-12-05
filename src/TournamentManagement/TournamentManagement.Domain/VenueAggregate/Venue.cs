@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,7 @@ namespace TournamentManagement.Domain.VenueAggregate
 
 		public static Venue Create(VenueId id, string name, Surface surface)
 		{
-			Guard.AgainstNullOrEmptyString(name, nameof(name));
+			Guard.Against.NullOrWhiteSpace(name, nameof(name));
 
 			var venue = new Venue(id)
 			{

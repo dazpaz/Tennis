@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using TournamentManagement.Domain.Common;
 
@@ -21,7 +22,7 @@ namespace TournamentManagement.Domain.PlayerAggregate
 		public static Player Create(PlayerId id, string name, ushort singlesRank,
 			ushort doublesRank, Gender gender)
 		{
-			Guard.AgainstNullOrEmptyString(name, nameof(name));
+			Guard.Against.NullOrWhiteSpace(name, nameof(name));
 			GuardAgainstRankOutOfRange(singlesRank, nameof(singlesRank));
 			GuardAgainstRankOutOfRange(doublesRank, nameof(doublesRank));
 

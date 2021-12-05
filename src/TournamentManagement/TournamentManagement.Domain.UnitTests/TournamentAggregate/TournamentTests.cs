@@ -27,6 +27,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		[Theory]
 		[InlineData(null)]
+		[InlineData("     ")]
 		[InlineData("")]
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
@@ -35,7 +36,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value can not be null or empty string (Parameter 'title')");
+				.WithMessage(title == null
+					? "Value cannot be null. (Parameter 'title')"
+					: "Required input title was empty. (Parameter 'title')");
 		}
 
 		[Fact]

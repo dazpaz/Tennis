@@ -23,6 +23,7 @@ namespace TournamentManagement.Domain.UnitTests.PlayerAggregate
 
 		[Theory]
 		[InlineData(null)]
+		[InlineData("     ")]
 		[InlineData("")]
 		public void CannotCreateAPlayerWithEmptyName(string name)
 		{
@@ -30,7 +31,9 @@ namespace TournamentManagement.Domain.UnitTests.PlayerAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("Value can not be null or empty string (Parameter 'name')");
+				.WithMessage(name == null
+				? "Value cannot be null. (Parameter 'name')"
+				: "Required input name was empty. (Parameter 'name')");
 		}
 
 		[Theory]

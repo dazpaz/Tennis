@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,7 +33,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public static Tournament Create(string title, TournamentLevel level,
 			DateTime startDate, DateTime endDate, VenueId venueId)
 		{
-			Guard.AgainstNullOrEmptyString(title, nameof(title));
+			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 
 			var tournament = new Tournament(new TournamentId())
 			{
@@ -49,7 +50,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
 		{
 			GuardAgainstActionInWrongState(TournamentState.BeingDefined, "UpdateDetails");
-			Guard.AgainstNullOrEmptyString(title, "title");
+			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 
 			Title = title;
 			Level = level;
