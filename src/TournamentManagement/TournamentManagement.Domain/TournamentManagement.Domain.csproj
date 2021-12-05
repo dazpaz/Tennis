@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TournamentAggregate\Guards\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Ardalis.GuardClauses" Version="3.3.0" />
   </ItemGroup>
 

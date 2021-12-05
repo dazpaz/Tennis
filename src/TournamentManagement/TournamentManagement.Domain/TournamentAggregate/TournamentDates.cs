@@ -17,8 +17,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public TournamentDates(DateTime startDate, DateTime endDate)
 		{
-			GuardAgainstDurationOutOfRange(endDate.Date - startDate.Date);
-			Guard.Against.IntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, "year");
+			Guard.Against.DurationOutOfRange(endDate.Date - startDate.Date, MaxDurationInDays);
+			Guard.Against.IntegerOutOfRange(startDate.Year, MinAllowedYear, MaxAllowedYear, nameof(Year));
 
 			StartDate = startDate.Date;
 			EndDate = endDate.Date;
@@ -46,14 +46,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public static TournamentDates CreateSingleDayTournament(DateTime startDate)
 		{
 			return new TournamentDates(startDate, startDate);
-		}
-
-		private static void GuardAgainstDurationOutOfRange(TimeSpan timespan)
-		{
-			if (timespan.TotalDays < 0 || timespan.TotalDays >= MaxDurationInDays)
-			{
-				throw new ArgumentException($"Tournament duration must be 1 - {MaxDurationInDays} days");
-			}
 		}
 	}
 }
