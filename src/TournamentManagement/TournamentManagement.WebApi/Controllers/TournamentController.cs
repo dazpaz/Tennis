@@ -37,7 +37,7 @@ namespace TournamentManagement.WebApi.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult CreateTournament([FromBody] CreateTournamentDto tournament)
+		public IActionResult AddTournament([FromBody] AddTournamentDto tournament)
 		{
 			// if not valid request return bad request
 			// call to create tournament command to create the tournament
@@ -48,7 +48,7 @@ namespace TournamentManagement.WebApi.Controllers
 		}
 
 		[HttpPut("{id}")]
-		public IActionResult UpdateTournament(Guid id, [FromBody] UpdateTournamentDto tournament)
+		public IActionResult AmmendTournament(Guid id, [FromBody] AmendTournamentDto tournament)
 		{
 			// call to update tournament command to update the tournament
 			// if tournament does not exist - 404

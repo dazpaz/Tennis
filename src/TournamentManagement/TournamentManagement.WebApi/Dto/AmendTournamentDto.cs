@@ -2,7 +2,7 @@
 
 namespace TournamentManagement.WebApi.Dto
 {
-	public class UpdateTournamentDto
+	public class AmendTournamentDto
 	{
 		public string Title { get; set; }
 		public int TournamentLevel { get; set; }
