@@ -5,8 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ardalis.GuardClauses" Version="3.3.0" />
     <PackageReference Include="CSharpFunctionalExtensions" Version="2.26.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Domain\TournamentManagement.Domain.csproj" />
   </ItemGroup>
 
 </Project>
