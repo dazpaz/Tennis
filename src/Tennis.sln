@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.WebApi", "TournamentManagement\TournamentManagement.WebApi\TournamentManagement.WebApi.csproj", "{5E9DCE74-EE23-47B7-B14D-E9BDDE6EBA81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManagement.Application", "TournamentManagement\TournamentManagement.Application\TournamentManagement.Application.csproj", "{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Application", "TournamentManagement\TournamentManagement.Application\TournamentManagement.Application.csproj", "{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManagement.Common", "TournamentManagement\TournamentManagement.Common\TournamentManagement.Common.csproj", "{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,18 @@ Global
 		{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}.Release|x64.Build.0 = Release|Any CPU
 		{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}.Release|x86.ActiveCfg = Release|Any CPU
 		{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}.Release|x86.Build.0 = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|x64.Build.0 = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Debug|x86.Build.0 = Debug|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|x64.ActiveCfg = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|x64.Build.0 = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|x86.ActiveCfg = Release|Any CPU
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +126,7 @@ Global
 		{BDE642C0-E002-464B-94E4-36023720CB8C} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 		{5E9DCE74-EE23-47B7-B14D-E9BDDE6EBA81} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 		{3761695D-06BD-4A09-A9C9-3FD5A420FBBE} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
+		{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A0BBE81-6905-4BD2-86DB-44B6D43B4DEF}

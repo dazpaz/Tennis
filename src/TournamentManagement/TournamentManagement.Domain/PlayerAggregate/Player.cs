@@ -1,14 +1,13 @@
 ﻿using Ardalis.GuardClauses;
 using DomainDesign.Common;
-using System;
-using TournamentManagement.Domain.Common;
+using TournamentManagement.Common;
 
 namespace TournamentManagement.Domain.PlayerAggregate
 {
 	public class Player : Entity<PlayerId>, IAggregateRoot
 	{
-		private const uint MinRank = 1;
-		private const uint MaxRank = 9999;
+		private const ushort MinRank = 1;
+		private const ushort MaxRank = 9999;
 
 		public string Name { get; private set; }
 		public ushort SinglesRank { get; private set; }
@@ -19,7 +18,7 @@ namespace TournamentManagement.Domain.PlayerAggregate
 		{
 		}
 
-		public static Player Create(PlayerId id, string name, ushort singlesRank,
+		public static Player Register(PlayerId id, string name, ushort singlesRank,
 			ushort doublesRank, Gender gender)
 		{
 			Guard.Against.NullOrWhiteSpace(name, nameof(name));
@@ -37,12 +36,16 @@ namespace TournamentManagement.Domain.PlayerAggregate
 			return player;
 		}
 
-		private static void GuardAgainstRankOutOfRange(ushort rank, string rankName)
+		public void UpdateRankings(ushort singlesRank, ushort doublesRank)
 		{
-			if (rank < MinRank || rank > MaxRank)
-			{
-				throw new ArgumentException($"{rankName} {rank} is outside allowed range, {MinRank} - {MaxRank}");
-			}
+			SinglesRank = GuardAgainstRankOutOfRange(singlesRank, nameof(singlesRank));
+			DoublesRank = GuardAgainstRankOutOfRange(doublesRank, nameof(doublesRank));
+		}
+
+		private static ushort GuardAgainstRankOutOfRange(ushort rank, string rankName)
+		{
+			return Guard.Against.OutOfRange(rank, rankName, MinRank, MaxRank,
+				$"{rankName} {rank} is outside allowed range, {MinRank} - {MaxRank}");
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TournamentManagement.Domain.Common;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 
 namespace TournamentManagement.Domain.TournamentAggregate
