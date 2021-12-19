@@ -90,7 +90,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 
 			tennisEvent.AddEventEntry(entry);
@@ -105,10 +105,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 			tennisEvent.AddEventEntry(entry);
-			player = Player.Create(new PlayerId(), "Dave", 101, 52, Gender.Male);
+			player = Player.Register(new PlayerId(), "Dave", 101, 52, Gender.Male);
 			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 			tennisEvent.AddEventEntry(entry);
 			tennisEvent.Entries.Count.Should().Be(2);
@@ -124,10 +124,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 			tennisEvent.AddEventEntry(entry);
-			player = Player.Create(new PlayerId(), "Dave", 101, 52, Gender.Male);
+			player = Player.Register(new PlayerId(), "Dave", 101, 52, Gender.Male);
 			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 			tennisEvent.AddEventEntry(entry);
 			tennisEvent.Entries.Count.Should().Be(2);
@@ -142,7 +142,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			var player = Player.Create(new PlayerId(), "Venus", 100, 50, Gender.Female);
+			var player = Player.Register(new PlayerId(), "Venus", 100, 50, Gender.Female);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, EventType.WomensSingles, player);
 
 			Action act = () => tennisEvent.AddEventEntry(entry);
@@ -157,7 +157,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			var player = Player.Create(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(new EventId(), EventType.MensSingles, player);
 
 			Action act = () => tennisEvent.AddEventEntry(entry);

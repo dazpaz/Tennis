@@ -16,7 +16,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var eventId = new EventId();
 			var playerId = new PlayerId();
-			var player = Player.Create(playerId, "Steve Server", 20, 100, gender);
+			var player = Player.Register(playerId, "Steve Server", 20, 100, gender);
 
 			var entry = EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
 
@@ -35,8 +35,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			Gender genderOne, Gender genderTwo)
 		{
 			var eventId = new EventId();
-			var playerOne = Player.Create(new PlayerId(), "Steve Server", 20, 100, genderOne);
-			var playerTwo = Player.Create(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
+			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, genderOne);
+			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
 
 			var entry = EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
 
@@ -53,8 +53,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotCreateSinglesEntryForADoublesEventType(EventType eventType)
 		{
 			var eventId = new EventId();
-			var playerOne = Player.Create(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
-			var playerTwo = Player.Create(new PlayerId(), "Gary Groundstroke", 30, 50, Gender.Male);
+			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, Gender.Male);
 
 			Action act = () => EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
 
@@ -70,7 +70,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotCreateDoublesEntryToSinglesEvent(EventType eventType)
 		{
 			var eventId = new EventId();
-			var player = Player.Create(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
+			var player = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
 
 			Action act = () => EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
 
@@ -85,7 +85,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void IfGenderDoesNotMatchSinglesEventThenExceptionIsThrown(EventType eventType, Gender gender)
 		{
 			var eventId = new EventId();
-			var player = Player.Create(new PlayerId(), "Steve Server", 20, 100, gender);
+			var player = Player.Register(new PlayerId(), "Steve Server", 20, 100, gender);
 
 			Action act = () => EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
 
@@ -102,8 +102,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			Gender genderOne, Gender genderTwo)
 		{
 			var eventId = new EventId();
-			var playerOne = Player.Create(new PlayerId(), "Steve Server", 20, 100, genderOne);
-			var playerTwo = Player.Create(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
+			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, genderOne);
+			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
 
 			Action act = () => EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
 
