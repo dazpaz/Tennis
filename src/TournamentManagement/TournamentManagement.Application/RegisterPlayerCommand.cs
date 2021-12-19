@@ -16,7 +16,7 @@ namespace TournamentManagement.Application
 		public Gender Gender { get; set; }
 	}
 
-	public sealed class RegisterPlayerCommandHandler : ICommandHandler<RegisterPlayerCommand, Guid>
+	public sealed class RegisterPlayerCommandHandler : ICommandHandler<RegisterPlayerCommand>
 	{
 		private IPlayerRepository _playerRepository;
 
@@ -25,16 +25,16 @@ namespace TournamentManagement.Application
 			_playerRepository = tournamentRepository;
 		}
 
-		public Result<Guid> Handle(RegisterPlayerCommand command)
+		public Result Handle(RegisterPlayerCommand command)
 		{
 			var playerId = new PlayerId(command.Id);
 			var player = Player.Register(playerId, command.Name, command.SinglesRank,
 				command.DoublesRank, command.Gender);
 
 			// add player to the repository
-			// save the repository (or nit of work
+			// save the repository (or unit of work)
 
-			return Result.Success(player.Id.Id);
+			return Result.Success();
 		}
 	}
 }
