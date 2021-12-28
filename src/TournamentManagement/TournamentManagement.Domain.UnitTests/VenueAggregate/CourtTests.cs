@@ -11,11 +11,13 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		public void CanUseFactoryMethodToCreateCourtAndItIsCreatedCorrectly()
 		{
 			var courtId = new CourtId();
-			var court = Court.Create(courtId, "Centre Court", 14979);
+			var venueId = new VenueId();
+			var court = Court.Create(courtId, "Centre Court", 14979, venueId);
 
 			court.Id.Should().Be(courtId);
 			court.Name.Should().Be("Centre Court");
 			court.Capacity.Should().Be(14979);
+			court.VenueId.Should().Be(venueId);
 		}
 
 		[Theory]
@@ -24,7 +26,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[InlineData("")]
 		public void CannotCreateACourtWithEmptyName(string name)
 		{
-			Action act = () => Court.Create(new CourtId(), name, 100);
+			Action act = () => Court.Create(new CourtId(), name, 100, new VenueId());
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -38,7 +40,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[InlineData(25000)]
 		public void CanCreateACourtWithCapacityValuesAtTheLimitsOfTheValidRange(int capacity)
 		{
-			var court = Court.Create(new CourtId(), "Centre Court", capacity);
+			var court = Court.Create(new CourtId(), "Centre Court", capacity, new VenueId());
 
 			court.Name.Should().Be("Centre Court");
 			court.Capacity.Should().Be(capacity);
@@ -49,7 +51,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[InlineData(25001)]
 		public void CannotCreateCourtWithCapacityValuesOutsideTheValidRange(int capacity)
 		{
-			Action act = () => Court.Create(new CourtId(), "Centre Court", capacity);
+			Action act = () => Court.Create(new CourtId(), "Centre Court", capacity, new VenueId());
 
 			act.Should()
 				.Throw<ArgumentException>();
@@ -58,7 +60,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[Fact]
 		public void CanRenameACourt()
 		{
-			var court = Court.Create(new CourtId(), "Centre Court", 14979);
+			var court = Court.Create(new CourtId(), "Centre Court", 14979, new VenueId());
 
 			court.RenameCourt("Murray Court");
 
@@ -68,7 +70,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[Fact]
 		public void CanUpdateTheCapacityOfACourt()
 		{
-			var court = Court.Create(new CourtId(), "Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100, new VenueId());
 
 			court.UpdateCapacity(200);
 
@@ -80,7 +82,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[InlineData("")]
 		public void CannotRenameACourtWithEmptyName(string newName)
 		{
-			var court = Court.Create(new CourtId(), "Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100, new VenueId());
 
 			Action act = () => court.RenameCourt(newName);
 
@@ -96,7 +98,7 @@ namespace TournamentManagement.Domain.UnitTests.VenueAggregate
 		[InlineData(25001)]
 		public void CannotUpdateCapacityWithValueOutsideTheValidRange(int capacity)
 		{
-			var court = Court.Create(new CourtId(), "Court 4", 100);
+			var court = Court.Create(new CourtId(), "Court 4", 100, new VenueId());
 
 			Action act = () => court.UpdateCapacity(capacity);
 
