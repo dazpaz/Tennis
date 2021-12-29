@@ -34,9 +34,10 @@ namespace TournamentManagement.Domain.VenueAggregate
 			return venue;
 		}
 
-		public void AddCourt(Court court)
+		public void AddCourt(CourtId id, string name, int capacity)
 		{
-			GuardAgainstDuplicateCourtName(court.Name);
+			GuardAgainstDuplicateCourtName(name);
+			var court = Court.Create(id, name, capacity, Id);
 			_courts.Add(court);
 		}
 
