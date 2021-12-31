@@ -130,10 +130,8 @@ namespace TournamentManagement.Data
 				.HasMaxLength(50)
 				.IsRequired();
 			builder.Property(p => p.Surface);
-
-			//To Do: Solve this problem
-			//var navigation = builder.Metadata.FindNavigation(nameof(Venue.Courts));
-			//navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+			builder.HasMany(b => b.Courts).WithOne()
+				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 
@@ -148,11 +146,6 @@ namespace TournamentManagement.Data
 				.HasMaxLength(50)
 				.IsRequired();
 			builder.Property(p => p.Capacity);
-			builder.HasOne<Venue>()
-				.WithMany()
-				.HasForeignKey(p => p.VenueId);
-			builder.Property(p => p.VenueId)
-				.HasConversion(p => p.Id, p => new VenueId(p));
 		}
 	}
 }

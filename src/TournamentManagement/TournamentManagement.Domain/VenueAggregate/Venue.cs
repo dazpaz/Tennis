@@ -2,7 +2,6 @@
 using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TournamentManagement.Domain.VenueAggregate
@@ -11,14 +10,16 @@ namespace TournamentManagement.Domain.VenueAggregate
 	{
 		public string Name { get; private set; }
 		public Surface Surface { get; private set; }
-		public ReadOnlyCollection<Court> Courts { get; }
 
-		private readonly IList<Court> _courts;
+		private readonly List<Court> _courts = new();
+		public virtual IReadOnlyList<Court> Courts => _courts.ToList();
+
+		protected Venue()
+		{
+		}
 
 		private Venue(VenueId id) : base(id)
 		{
-			_courts = new List<Court>();
-			Courts = new ReadOnlyCollection<Court>(_courts);
 		}
 
 		public static Venue Create(VenueId id, string name, Surface surface)
@@ -37,7 +38,7 @@ namespace TournamentManagement.Domain.VenueAggregate
 		public void AddCourt(CourtId id, string name, int capacity)
 		{
 			GuardAgainstDuplicateCourtName(name);
-			var court = Court.Create(id, name, capacity, Id);
+			var court = Court.Create(id, name, capacity);
 			_courts.Add(court);
 		}
 

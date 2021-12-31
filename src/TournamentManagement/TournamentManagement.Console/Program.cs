@@ -100,10 +100,9 @@ namespace TournamentManagement.Console
 		{
 			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
 
-			// This goes pop at the moment - need to configure to use backing field and not read-only collection
-			//var venue = context.Venues
-			//	.Include(v => v.Courts)
-			//	.First(v => v.Id == new VenueId(venueGuid));
+			var venue = context.Venues
+				.Include(v => v.Courts)
+				.First(v => v.Id == new VenueId(venueGuid));
 		}
 
 		private static Guid CreateTournament(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder,

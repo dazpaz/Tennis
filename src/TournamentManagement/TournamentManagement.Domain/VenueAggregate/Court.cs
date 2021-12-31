@@ -13,13 +13,12 @@ namespace TournamentManagement.Domain.VenueAggregate
 
 		public string Name { get; private set; }
 		public int Capacity { get; private set; }
-		public VenueId VenueId { get; private set; }
 
 		private Court(CourtId id) : base(id)
 		{
 		}
 
-		internal static Court Create(CourtId id, string name, int capacity, VenueId venueId)
+		internal static Court Create(CourtId id, string name, int capacity)
 		{
 			Guard.Against.NullOrWhiteSpace(name, nameof(name));
 			Guard.Against.IntegerOutOfRange(capacity, MinCapacity, MaxCapacity, nameof(capacity));
@@ -27,8 +26,7 @@ namespace TournamentManagement.Domain.VenueAggregate
 			var court = new Court(id)
 			{
 				Name = name,
-				Capacity = capacity,
-				VenueId = venueId
+				Capacity = capacity
 			};
 
 			return court;
