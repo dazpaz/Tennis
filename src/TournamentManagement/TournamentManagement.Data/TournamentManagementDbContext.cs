@@ -1,13 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Logging;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
+using EventId = TournamentManagement.Domain.TournamentAggregate.EventId;
 
 namespace TournamentManagement.Data
 {
 	public class TournamentManagementDbContext : DbContext
 	{
+		private readonly string _connectionString;
+		private readonly bool _useConsoleLogger;
+
 		public DbSet<Tournament> Tournaments { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventEntry> EventEntries { get; set; }
@@ -15,9 +20,31 @@ namespace TournamentManagement.Data
 		public DbSet<Venue> Venues { get; set; }
 		public DbSet<Court> Courts { get; set; }
 
-		public TournamentManagementDbContext(DbContextOptions<TournamentManagementDbContext> options)
-			: base(options)
+		public TournamentManagementDbContext(string connectionString, bool useConsoleLogger)
 		{
+			_connectionString = connectionString;
+			_useConsoleLogger = useConsoleLogger;
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+			{
+				builder
+					.AddFilter((category, level) =>
+						category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
+					.AddConsole();
+			});
+
+			optionsBuilder
+				.UseSqlServer(_connectionString);
+
+			if (_useConsoleLogger)
+			{
+				optionsBuilder
+					.UseLoggerFactory(loggerFactory)
+					.EnableSensitiveDataLogging();
+			}
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

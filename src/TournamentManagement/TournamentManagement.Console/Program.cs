@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -18,39 +17,33 @@ namespace TournamentManagement.Console
 		public static void Main()
 		{
 			string connectionString = GetConnectionString();
-			ILoggerFactory loggerFactory = CreateLoggerFactory();
+			bool useConsoleLogger = true;  // IHostingEnvironment.IsDevelopment();
 
-			var optionsBuilder = new DbContextOptionsBuilder<TournamentManagementDbContext>();
-			optionsBuilder
-				.UseSqlServer(connectionString)
-				.UseLoggerFactory(loggerFactory)
-				.EnableSensitiveDataLogging();
+			EnsureDatabaseIsCreated(connectionString, useConsoleLogger);
 
-			EnsureDatabaseIsCreated(optionsBuilder);
+			var playerGuid = CreatePlayers(connectionString, useConsoleLogger);
+			ReadPlayer(connectionString, useConsoleLogger, playerGuid);
 
-			var playerGuid = CreatePlayers(optionsBuilder);
-			ReadPlayer(optionsBuilder, playerGuid);
+			var venueGuid = CreateVenue(connectionString, useConsoleLogger);
+			ReadVenue(connectionString, useConsoleLogger, venueGuid);
+			ReadVenueAndCourts(connectionString, useConsoleLogger, venueGuid);
 
-			var venueGuid = CreateVenue(optionsBuilder);
-			ReadVenue(optionsBuilder, venueGuid);
-			ReadVenueAndCourts(optionsBuilder, venueGuid);
-
-			var tournamentGuid = CreateTournament(optionsBuilder, venueGuid);
-			ReadTournament(optionsBuilder, tournamentGuid);
+			var tournamentGuid = CreateTournament(connectionString, useConsoleLogger, venueGuid);
+			ReadTournament(connectionString, useConsoleLogger, tournamentGuid);
 		}
 
-		private static void EnsureDatabaseIsCreated(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder)
+		private static void EnsureDatabaseIsCreated(string connectionString, bool useConsoleLogger)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 			context.Database.EnsureCreated();
 		}
 
-		private static Guid CreatePlayers(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder)
+		private static Guid CreatePlayers(string connectionString, bool useConsoleLogger)
 		{
 			var dorisGuid = Guid.NewGuid();
 			var steveGuid = Guid.NewGuid();
 
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 
 			var player1 = Player.Register(new PlayerId(steveGuid), "Steve Serve", 32, 123, Gender.Male);
 			var player2 = Player.Register(new PlayerId(dorisGuid), "Doris Dropshot", 4, 56, Gender.Female);
@@ -63,16 +56,15 @@ namespace TournamentManagement.Console
 			return dorisGuid;
 		}
 
-		private static void ReadPlayer(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder,
-			Guid playerGuid)
+		private static void ReadPlayer(string connectionString, bool useConsoleLogger, Guid playerGuid)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 			var player = context.Players.Find(new PlayerId(playerGuid));
 		}
 
-		private static Guid CreateVenue(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder)
+		private static Guid CreateVenue(string connectionString, bool useConsoleLogger)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 
 			var venueGuid = Guid.NewGuid();
 			var venueId = new VenueId(venueGuid);
@@ -90,25 +82,24 @@ namespace TournamentManagement.Console
 			return venueGuid;
 		}
 
-		private static void ReadVenue(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder, Guid venueGuid)
+		private static void ReadVenue(string connectionString, bool useConsoleLogger, Guid venueGuid)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 			var venue = context.Venues.Find(new VenueId(venueGuid));
 		}
 
-		private static void ReadVenueAndCourts(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder, Guid venueGuid)
+		private static void ReadVenueAndCourts(string connectionString, bool useConsoleLogger, Guid venueGuid)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 
 			var venue = context.Venues
 				.Include(v => v.Courts)
 				.First(v => v.Id == new VenueId(venueGuid));
 		}
 
-		private static Guid CreateTournament(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder,
-			Guid venueGuid)
+		private static Guid CreateTournament(string connectionString, bool useConsoleLogger, Guid venueGuid)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 
 			var tournament = Tournament.Create("Wimbledon 2022", TournamentLevel.GrandSlam,
 				new DateTime(2022, 07, 22), new DateTime(2022, 07, 29), new VenueId(venueGuid));
@@ -119,22 +110,10 @@ namespace TournamentManagement.Console
 			return tournament.Id.Id;
 		}
 
-		private static void ReadTournament(DbContextOptionsBuilder<TournamentManagementDbContext> optionsBuilder,
-			Guid tournamentGuid)
+		private static void ReadTournament(string connectionString, bool useConsoleLogger, Guid tournamentGuid)
 		{
-			using var context = new TournamentManagementDbContext(optionsBuilder.Options);
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 			var tournament = context.Tournaments.Find(new TournamentId(tournamentGuid));
-		}
-
-		private static ILoggerFactory CreateLoggerFactory()
-		{
-			return LoggerFactory.Create(builder =>
-			{
-				builder
-					.AddFilter((category, level) =>
-						category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)
-					.AddConsole();
-			});
 		}
 
 		private static string GetConnectionString()
