@@ -59,10 +59,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void AddEvent(Event tennisEvent)
 		{
-			const string WrongTournamentIdMessage = "Cannot add Event with the wrong Tournament Id";
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));
 			Guard.Against.DuplicateEventType<EventType, Event>(_events, tennisEvent.EventType); 
-			Guard.Against.KeyValuesDoNotMatch(tennisEvent.TournamentId, Id, WrongTournamentIdMessage);
 
 			_events.Add(tennisEvent.EventType, tennisEvent);
 		}
