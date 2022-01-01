@@ -80,7 +80,9 @@ namespace TournamentManagement.Data
 				.HasForeignKey(p => p.VenueId);
 			builder.Property(p => p.VenueId)
 				.HasConversion(p => p.Id, p => new VenueId(p));
-			//builder.HasMany(b => b.Events).WithOne()
+			  
+			builder.HasMany(b => b.Events).WithOne()
+				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 
