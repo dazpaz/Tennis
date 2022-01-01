@@ -10,7 +10,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 	public class Event : Entity<EventId>
 	{
 		public EventType EventType { get; private set; }
-		public bool SinglesEvent { get; private set; }
+		public bool SinglesEvent => IsSinglesEvent(EventType);
 		public MatchFormat MatchFormat { get; private set; }
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
@@ -72,7 +72,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			EventType = eventType;
 			MatchFormat = matchFormat;
-			SinglesEvent = IsSinglesEvent(eventType);
 			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
 		}
 
