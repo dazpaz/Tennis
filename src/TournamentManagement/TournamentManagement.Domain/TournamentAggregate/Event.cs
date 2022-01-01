@@ -9,9 +9,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class Event : Entity<EventId>
 	{
-		public TournamentId TournamentId { get; private set; }
 		public EventType EventType { get; private set; }
-		public bool SinglesEvent { get; private set; }
+		public bool SinglesEvent => IsSinglesEvent(EventType);
 		public MatchFormat MatchFormat { get; private set; }
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
@@ -26,13 +25,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			Entries = new ReadOnlyCollection<EventEntry>(_entries);
 		}
 
-		public static Event Create(TournamentId tournamentId, EventType eventType, int entrantsLimit,
+		public static Event Create(EventType eventType, int entrantsLimit,
 			int numberOfSeeds, MatchFormat matchFormat)
 		{
-			var tennisEvent = new Event(new EventId())
-			{
-				TournamentId = new TournamentId(tournamentId.Id)
-			};
+			var tennisEvent = new Event(new EventId());
 			tennisEvent.SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 			return tennisEvent;
 		}
@@ -76,7 +72,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			EventType = eventType;
 			MatchFormat = matchFormat;
-			SinglesEvent = IsSinglesEvent(eventType);
 			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
 		}
 

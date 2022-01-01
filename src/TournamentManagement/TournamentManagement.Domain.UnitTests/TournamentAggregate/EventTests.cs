@@ -13,12 +13,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanCreateAnEventUsingTheFactory()
 		{
-			var tournamentId = new TournamentId();
-			var tennisEvent = Event.Create(tournamentId, EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.Id.Id.Should().NotBe(Guid.Empty);
-			tennisEvent.TournamentId.Should().Be(tournamentId);
 			tennisEvent.IsCompleted.Should().BeFalse();
 			tennisEvent.EventType.Should().Be(EventType.MensSingles);
 			tennisEvent.MatchFormat.Should().Be(MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
@@ -34,8 +32,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.WomensSingles, true)]
 		public void TheIsSinglesEventPropertyIsSetCorrectlyBasedOnEventType(EventType eventType, bool isSingles)
 		{
-			var tennisEvent = Event.Create(new TournamentId(), eventType, 128, 32,
-				new MatchFormat(1, SetType.TieBreak));
+			var tennisEvent = Event.Create(eventType, 128, 32, new MatchFormat(1, SetType.TieBreak));
 
 			tennisEvent.SinglesEvent.Should().Be(isSingles);
 		}
@@ -43,7 +40,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanUpdateAnEvent()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var id = tennisEvent.Id;
@@ -61,7 +58,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanMarkAnEventAsCompleted()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.IsCompleted.Should().BeFalse();
@@ -74,7 +71,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotUpdateAnEventThatIsCompleted()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			tennisEvent.MarkEventCompleted();
 
@@ -89,7 +86,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanAddEntriesToAnEvent()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
@@ -103,7 +100,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanRemoveAnEnryFromAnEvent()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -122,7 +119,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanClearAllEntriesFromAnEvent()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -141,7 +138,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotAddAnEntryToEventIfEventTypeDoesNotMatch()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Venus", 100, 50, Gender.Female);
 			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, EventType.WomensSingles, player);
@@ -156,7 +153,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotAddAnEntryToEventIfEventIdDoesNotMatch()
 		{
-			var tennisEvent = Event.Create(new TournamentId(), EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var entry = EventEntry.CreateSinglesEventEntry(new EventId(), EventType.MensSingles, player);

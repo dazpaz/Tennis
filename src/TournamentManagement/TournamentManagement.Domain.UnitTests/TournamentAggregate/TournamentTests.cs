@@ -60,61 +60,49 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CanAddAnEventToATournament()
 		{
 			var tournament = CreateTestTournament();
-			var tennisEvent = CreateTestEvent(tournament.Id);
+			var tennisEvent = CreateTestEvent();
 
 			tournament.AddEvent(tennisEvent);
 
 			tournament.Events.Count.Should().Be(1);
-			tournament.Events[EventType.MensSingles].EventSize.EntrantsLimit.Should().Be(128);
+			tournament.Events[0].EventSize.EntrantsLimit.Should().Be(128);
 		}
 
 		[Fact]
 		public void CanAddAllTypesOfEventToATournament()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.WomensSingles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensDoubles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.WomensDoubles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MixedDoubles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensDoubles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensDoubles));
+			tournament.AddEvent(CreateTestEvent(EventType.MixedDoubles));
 
 			tournament.Events.Count.Should().Be(5);
-		}
-
-		[Fact]
-		public void CannotAddAnEventIfTheTournamentIdDoesNotMatch()
-		{
-			var tournament = CreateTestTournament();
-
-			Action act = () => tournament.AddEvent(CreateTestEvent(new TournamentId(), EventType.MensSingles));
-
-			act.Should()
-				.Throw<Exception>()
-				.WithMessage("Cannot add Event with the wrong Tournament Id");
 		}
 
 		[Fact]
 		public void CanRemoveAnEventFromATournament()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.WomensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
 
 			tournament.Events.Count.Should().Be(2);
 
 			tournament.RemoveEvent(EventType.MensSingles);
 
 			tournament.Events.Count.Should().Be(1);
-			tournament.Events[EventType.WomensSingles].EventSize.EntrantsLimit.Should().Be(128);
+			tournament.Events[0].EventType.Should().Be(EventType.WomensSingles);
 		}
 
 		[Fact]
 		public void CannnotAddASecondEventOfTheSameTypeToATournament()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
-			Action act = () => tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
+			Action act = () => tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
 			act.Should()
 				.Throw<Exception>()
@@ -125,7 +113,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotRemoveAnEventTypeFromATournamentIfItDoesNotExist()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 
 			tournament.Events.Count.Should().Be(1);
 
@@ -141,8 +129,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournament();
 
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.WomensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
 
 			tournament.Events.Count.Should().Be(2);
 
@@ -158,11 +146,11 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var events = new List<Event>()
 			{
-				CreateTestEvent(tournament.Id, EventType.MensSingles),
-				CreateTestEvent(tournament.Id, EventType.WomensSingles),
-				CreateTestEvent(tournament.Id, EventType.MensDoubles),
-				CreateTestEvent(tournament.Id, EventType.WomensDoubles),
-				CreateTestEvent(tournament.Id, EventType.MixedDoubles)
+				CreateTestEvent(EventType.MensSingles),
+				CreateTestEvent(EventType.WomensSingles),
+				CreateTestEvent(EventType.MensDoubles),
+				CreateTestEvent(EventType.WomensDoubles),
+				CreateTestEvent(EventType.MixedDoubles)
 			};
 
 			
@@ -179,8 +167,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var events = new List<Event>()
 			{
-				CreateTestEvent(tournament.Id, EventType.MensSingles),
-				CreateTestEvent(tournament.Id, EventType.MensSingles)
+				CreateTestEvent(EventType.MensSingles),
+				CreateTestEvent(EventType.MensSingles)
 			};
 
 			Action act = () => tournament.SetEvents(events);
@@ -196,8 +184,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CanTransitionThroughTheStatesOfATournament()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.WomensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
 
 			tournament.OpenForEntries();
 			tournament.State.Should().Be(TournamentState.AcceptingEntries);
@@ -233,7 +221,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotAddEventIfTournamentIsNotInBeingDefinedState()
 		{
 			var tournament = CreateTestTournamentAndOpenForEntries();
-			var tennisEvent = CreateTestEvent(tournament.Id, EventType.WomensSingles);
+			var tennisEvent = CreateTestEvent(EventType.WomensSingles);
 
 			void act() => tournament.AddEvent(tennisEvent);
 
@@ -338,16 +326,15 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), new VenueId());
 		}
 
-		private static Event CreateTestEvent(TournamentId tournamentId, EventType eventtype = EventType.MensSingles)
+		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)
 		{
-			return Event.Create(tournamentId, eventtype, 128, 32,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			return Event.Create(eventtype, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 		}
 
 		private static Tournament CreateTestTournamentAndOpenForEntries()
 		{
 			var tournament = CreateTestTournament();
-			tournament.AddEvent(CreateTestEvent(tournament.Id, EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
 			tournament.OpenForEntries();
 			return tournament;
 		}

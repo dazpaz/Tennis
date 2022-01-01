@@ -80,7 +80,9 @@ namespace TournamentManagement.Data
 				.HasForeignKey(p => p.VenueId);
 			builder.Property(p => p.VenueId)
 				.HasConversion(p => p.Id, p => new VenueId(p));
-			builder.Ignore(p => p.Events);
+			  
+			builder.HasMany(b => b.Events).WithOne()
+				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 
@@ -106,12 +108,6 @@ namespace TournamentManagement.Data
 				p.Property(pp => pp.NumberOfSets).HasColumnName("NumberOfSets");
 				p.Property(pp => pp.FinalSetType).HasColumnName("FinalSetType");
 			});
-
-			builder.HasOne<Tournament>()
-				.WithMany()
-				.HasForeignKey(p => p.TournamentId);
-			builder.Property(p => p.TournamentId)
-				.HasConversion(p => p.Id, p => new TournamentId(p));
 		}
 	}
 

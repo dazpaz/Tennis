@@ -2,7 +2,6 @@
 using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TournamentManagement.Domain.VenueAggregate;
 
@@ -20,14 +19,15 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public DateTime StartDate => Dates.StartDate;
 		public DateTime EndDate => Dates.EndDate;
 
-		public IReadOnlyDictionary<EventType, Event> Events { get; private set; }
+		private readonly List<Event> _events = new();
+		public virtual IReadOnlyList<Event> Events => _events.ToList();
 
-		private readonly IDictionary<EventType, Event> _events;
+		protected Tournament()
+		{
+		}
 
 		private Tournament(TournamentId id) : base(id)
 		{
-			_events = new Dictionary<EventType, Event>();
-			Events = new ReadOnlyDictionary<EventType, Event>(_events);
 		}
 
 		public static Tournament Create(string title, TournamentLevel level,
@@ -59,20 +59,19 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void AddEvent(Event tennisEvent)
 		{
-			const string WrongTournamentIdMessage = "Cannot add Event with the wrong Tournament Id";
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));
-			Guard.Against.DuplicateEventType<EventType, Event>(_events, tennisEvent.EventType); 
-			Guard.Against.KeyValuesDoNotMatch(tennisEvent.TournamentId, Id, WrongTournamentIdMessage);
+			Guard.Against.DuplicateEventType(_events, tennisEvent.EventType); 
 
-			_events.Add(tennisEvent.EventType, tennisEvent);
+			_events.Add(tennisEvent);
 		}
 
 		public void RemoveEvent(EventType eventType)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(RemoveEvent));
-			Guard.Against.MissingEventType<EventType, Event>(_events, eventType);
+			Guard.Against.MissingEventType(_events, eventType);
 
-			_events.Remove(eventType);
+			var tennisEvent = _events.First(e => e.EventType == eventType);
+			_events.Remove(tennisEvent);
 		}
 
 		public void ClearEvents()
@@ -92,8 +91,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			{
 				foreach (var tennisEvent in events)
 				{
-					Guard.Against.DuplicateEventType<EventType, Event>(_events, tennisEvent.EventType);
-					_events.Add(tennisEvent.EventType, tennisEvent);
+					Guard.Against.DuplicateEventType(_events, tennisEvent.EventType);
+					_events.Add(tennisEvent);
 				}
 			}
 			catch (Exception)
@@ -143,11 +142,11 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public void EventCompleted(EventType eventType)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.InProgress, State, nameof(EventCompleted));
-			Guard.Against.MissingEventType<EventType, Event>(_events, eventType);
+			Guard.Against.MissingEventType(_events, eventType);
 
-			_events[eventType].MarkEventCompleted();
+			_events.First(e => e.EventType == eventType).MarkEventCompleted();
 
-			if (_events.Values.All(e => e.IsCompleted))
+			if (_events.All(e => e.IsCompleted))
 			{
 				TransitionToState(TournamentState.Complete);
 
