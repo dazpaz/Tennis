@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace Ardalis.GuardClauses
@@ -30,18 +31,20 @@ namespace Ardalis.GuardClauses
 				"Tournament must have at least one event to open it for entries");
 		}
 
-		public static void DuplicateEventType<TKey, TValue>(this IGuardClause guardClause,
-			IDictionary<EventType, Event> events, EventType eventType)
+		public static void DuplicateEventType(this IGuardClause guardClause, IEnumerable<Event> events, EventType eventType)
 		{
-			Guard.Against.DictionaryAlreadyContainsKey(events, eventType, 
-				$"Tournament already has an event of type {eventType}");
+			if (events.Any(e => e.EventType == eventType))
+			{
+				throw new Exception($"Tournament already has an event of type {eventType}");
+			}
 		}
 
-		public static void MissingEventType<TKey, TValue>(this IGuardClause guardClause,
-			IDictionary<EventType, Event> events, EventType eventType)
+		public static void MissingEventType(this IGuardClause guardClause, IEnumerable<Event> events, EventType eventType)
 		{
-			Guard.Against.DictionaryDoesNotContainKey(events, eventType,
-				$"Tournament does not have an event of type {eventType}");
+			if (!events.Any(e => e.EventType == eventType))
+			{
+				throw new Exception($"Tournament does not have an event of type {eventType}");
+			}
 		}
 	}
 }

@@ -65,7 +65,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.AddEvent(tennisEvent);
 
 			tournament.Events.Count.Should().Be(1);
-			tournament.Events[EventType.MensSingles].EventSize.EntrantsLimit.Should().Be(128);
+			tournament.Events[0].EventSize.EntrantsLimit.Should().Be(128);
 		}
 
 		[Fact]
@@ -93,7 +93,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.RemoveEvent(EventType.MensSingles);
 
 			tournament.Events.Count.Should().Be(1);
-			tournament.Events[EventType.WomensSingles].EventSize.EntrantsLimit.Should().Be(128);
+			tournament.Events[0].EventType.Should().Be(EventType.WomensSingles);
 		}
 
 		[Fact]
