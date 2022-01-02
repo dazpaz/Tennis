@@ -22,7 +22,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 1));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 14));
-			tournament.VenueId.Id.Should().NotBe(Guid.Empty);
+			tournament.Venue.Name.Should().Be("Roland Garros");
 		}
 
 		[Theory]
@@ -31,8 +31,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData("")]
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
+			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
 			Action act = () => Tournament.Create(title, TournamentLevel.Masters125,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), new VenueId());
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), venue);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -322,8 +323,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		private static Tournament CreateTestTournament()
 		{
+			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
+
 			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), new VenueId());
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), venue);
 		}
 
 		private static Event CreateTestEvent(EventType eventtype = EventType.MensSingles)

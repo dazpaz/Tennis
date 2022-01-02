@@ -32,6 +32,7 @@ namespace TournamentManagement.Console
 			var tournamentGuid = CreateTournament(connectionString, useConsoleLogger, venueGuid);
 			ReadTournament(connectionString, useConsoleLogger, tournamentGuid);
 			ReadTournamentAndEvents(connectionString, useConsoleLogger, tournamentGuid);
+			ReadTournamentAndVenue(connectionString, useConsoleLogger, tournamentGuid);
 		}
 
 		private static void EnsureDatabaseIsCreated(string connectionString, bool useConsoleLogger)
@@ -103,8 +104,10 @@ namespace TournamentManagement.Console
 		{
 			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 
+			var venue = context.Venues.Find(new VenueId(venueGuid));
+
 			var tournament = Tournament.Create("Wimbledon 2022", TournamentLevel.GrandSlam,
-				new DateTime(2022, 07, 22), new DateTime(2022, 07, 29), new VenueId(venueGuid));
+				new DateTime(2022, 07, 22), new DateTime(2022, 07, 29), venue);
 
 			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32, new MatchFormat(5, SetType.TieBreakAtTwelveAll)));
 			tournament.AddEvent(Event.Create(EventType.WomensSingles, 128, 32, new MatchFormat(3, SetType.TieBreakAtTwelveAll)));
@@ -126,6 +129,14 @@ namespace TournamentManagement.Console
 			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
 			var tournament = context.Tournaments
 				.Include(t => t.Events)
+				.First(t => t.Id == new TournamentId(tournamentGuid));
+		}
+
+		private static void ReadTournamentAndVenue(string connectionString, bool useConsoleLogger, Guid tournamentGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var tournament = context.Tournaments
+				.Include(t => t.Venue)
 				.First(t => t.Id == new TournamentId(tournamentGuid));
 		}
 

@@ -27,8 +27,11 @@ namespace TournamentManagement.Application
 
 		public Result<Guid> Handle(AddTournamentCommand command)
 		{
+			// retrieve the Venue based on its ID
+			var venue = Venue.Create(new VenueId(command.VenueId), "Roland Garros", Domain.Surface.Clay);
+
 			var tournament = Tournament.Create(command.Title, TournamentLevel.GrandSlam,
-					command.StartDate, command.EndDate, new VenueId(command.VenueId));
+					command.StartDate, command.EndDate, venue);
 
 			// add tournament to the repository
 			// save the repository
