@@ -14,6 +14,10 @@ namespace TournamentManagement.Domain.VenueAggregate
 		public string Name { get; private set; }
 		public int Capacity { get; private set; }
 
+		protected Court()
+		{
+		}
+
 		private Court(CourtId id) : base(id)
 		{
 		}

@@ -37,7 +37,8 @@ namespace TournamentManagement.Data
 			});
 
 			optionsBuilder
-				.UseSqlServer(_connectionString);
+				.UseSqlServer(_connectionString)
+				.UseLazyLoadingProxies();
 
 			if (_useConsoleLogger)
 			{

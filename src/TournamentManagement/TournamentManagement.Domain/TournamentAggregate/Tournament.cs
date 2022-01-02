@@ -13,7 +13,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public TournamentDates Dates { get; private set; }
 		public TournamentState State { get; private set; }
 		public TournamentLevel Level { get; private set; }
-		public Venue Venue { get; private set; }
+		public virtual Venue Venue { get; private set; }
 
 		public int Year => Dates.Year;
 		public DateTime StartDate => Dates.StartDate;
@@ -21,6 +21,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		private readonly List<Event> _events = new();
 		public virtual IReadOnlyList<Event> Events => _events.ToList();
+
+		protected Tournament()
+		{
+		}
 
 		private Tournament(TournamentId id) : base(id)
 		{

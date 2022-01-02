@@ -15,9 +15,13 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
 
-		public ReadOnlyCollection<EventEntry> Entries { get; private set; }
+		public virtual ReadOnlyCollection<EventEntry> Entries { get; private set; }
 
 		private readonly IList<EventEntry> _entries;
+
+		protected Event()
+		{
+		}
 
 		private Event(EventId id) : base(id)
 		{
