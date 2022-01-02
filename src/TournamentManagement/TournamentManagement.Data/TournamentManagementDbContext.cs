@@ -75,12 +75,9 @@ namespace TournamentManagement.Data
 				p.Property(pp => pp.StartDate).HasColumnName("StartDate");
 				p.Property(pp => pp.EndDate).HasColumnName("EndDate");
 			});
-			builder.HasOne<Venue>()
-				.WithMany()
-				.HasForeignKey(p => p.VenueId);
-			builder.Property(p => p.VenueId)
-				.HasConversion(p => p.Id, p => new VenueId(p));
-			  
+
+			builder.HasOne(p => p.Venue).WithMany();
+
 			builder.HasMany(b => b.Events).WithOne()
 				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
