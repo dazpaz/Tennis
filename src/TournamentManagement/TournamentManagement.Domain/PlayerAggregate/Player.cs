@@ -14,6 +14,10 @@ namespace TournamentManagement.Domain.PlayerAggregate
 		public ushort DoublesRank { get; private set; }
 		public Gender Gender { get; private set; }
 
+		protected Player()
+		{
+		}
+
 		private Player(PlayerId id) : base(id)
 		{
 		}

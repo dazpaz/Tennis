@@ -17,6 +17,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		private readonly IList<Player> _players;
 
+		protected EventEntry()
+		{
+		}
+
 		private EventEntry(EventEntryId id) : base(id)
 		{
 			_players = new List<Player>();
