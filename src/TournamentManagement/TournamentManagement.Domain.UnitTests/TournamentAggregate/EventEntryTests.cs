@@ -14,16 +14,15 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.WomensSingles, Gender.Female)]
 		public void CanUseFactoryMethodToCreateEntryToSinglesEvent(EventType eventType, Gender gender)
 		{
-			var eventId = new EventId();
 			var playerId = new PlayerId();
 			var player = Player.Register(playerId, "Steve Server", 20, 100, gender);
 
-			var entry = EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
+			var entry = EventEntry.CreateSinglesEventEntry(eventType, player);
 
 			entry.Id.Should().NotBe(Guid.Empty);
-			entry.EventId.Should().Be(eventId);
 			entry.EventType.Should().Be(eventType);
-			entry.Players.Count.Should().Be(1);
+			entry.PlayerOne.Should().Be(player);
+			entry.PlayerTwo.Should().BeNull();
 			entry.Rank.Should().Be(player.SinglesRank);
 		}
 
@@ -34,16 +33,15 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CanUseFactoryMethodToCreateEntryToDoublesEvent(EventType eventType,
 			Gender genderOne, Gender genderTwo)
 		{
-			var eventId = new EventId();
 			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, genderOne);
 			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
 
-			var entry = EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
+			var entry = EventEntry.CreateDoublesEventEntry(eventType, playerOne, playerTwo);
 
-			entry.Id.Should().NotBe(Guid.Empty);
-			entry.EventId.Should().Be(eventId);
+			entry.Id.Id.Should().NotBe(Guid.Empty);
 			entry.EventType.Should().Be(eventType);
-			entry.Players.Count.Should().Be(2);
+			entry.PlayerOne.Should().Be(playerOne);
+			entry.PlayerTwo.Should().Be(playerTwo);
 			entry.Rank.Should().Be(playerTwo.DoublesRank);
 		}
 
@@ -52,11 +50,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.WomensSingles)]
 		public void CannotCreateSinglesEntryForADoublesEventType(EventType eventType)
 		{
-			var eventId = new EventId();
 			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, Gender.Male);
 
-			Action act = () => EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
+			Action act = () => EventEntry.CreateDoublesEventEntry(eventType, playerOne, playerTwo);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -69,10 +66,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.MixedDoubles)]
 		public void CannotCreateDoublesEntryToSinglesEvent(EventType eventType)
 		{
-			var eventId = new EventId();
 			var player = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
 
-			Action act = () => EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
+			Action act = () => EventEntry.CreateSinglesEventEntry(eventType, player);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -84,10 +80,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.WomensSingles, Gender.Male)]
 		public void IfGenderDoesNotMatchSinglesEventThenExceptionIsThrown(EventType eventType, Gender gender)
 		{
-			var eventId = new EventId();
 			var player = Player.Register(new PlayerId(), "Steve Server", 20, 100, gender);
 
-			Action act = () => EventEntry.CreateSinglesEventEntry(eventId, eventType, player);
+			Action act = () => EventEntry.CreateSinglesEventEntry(eventType, player);
 
 			act.Should()
 				.Throw<Exception>()
@@ -101,11 +96,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void IfGenderDoesNotMatchDoubleEventThenExceptionIsThrown(EventType eventType,
 			Gender genderOne, Gender genderTwo)
 		{
-			var eventId = new EventId();
 			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, genderOne);
 			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, genderTwo);
 
-			Action act = () => EventEntry.CreateDoublesEventEntry(eventId, eventType, playerOne, playerTwo);
+			Action act = () => EventEntry.CreateDoublesEventEntry(eventType, playerOne, playerTwo);
 
 			act.Should()
 				.Throw<Exception>()

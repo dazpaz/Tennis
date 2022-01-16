@@ -1,9 +1,11 @@
-﻿using DomainDesign.Common;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TournamentManagement.Domain.Common;
+using TournamentManagement.Domain.PlayerAggregate;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
@@ -53,11 +55,45 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			IsCompleted = true;
 		}
 
-		public void AddEventEntry(EventEntry entry)
+		public EventEntryId Enter(Player playerOne, Player playerTwo = null)
 		{
-			GuardAgainstEntryNotMatchingTheEvent(entry);
-			// Guard Against same player entring the event more than once - right thing to do here?
+			EventEntry entry;
+
+			if (SinglesEvent)
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+
+				//ToDo: Move to a Guard
+				var existingPlayersIds = _entries.Select(e => e.PlayerOne.Id);
+				if (existingPlayersIds.Any(p => p == playerOne.Id))
+				{
+					throw new Exception($"Player {playerOne.Name} has already entered this event");
+				}
+
+				entry = EventEntry.CreateSinglesEventEntry(EventType, playerOne);
+			}
+			else
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+				Guard.Against.Null(playerTwo, nameof(playerTwo));
+
+				//ToDo: Move to a Guard
+				var existingPlayersIds = _entries.Select(e => e.PlayerOne.Id)
+					.Union(_entries.Select(e => e.PlayerTwo.Id));
+				if (existingPlayersIds.Any(p => p == playerOne.Id))
+				{
+					throw new Exception($"Player {playerOne.Name} has already entered this event");
+				}
+				if (existingPlayersIds.Any(p => p == playerTwo.Id))
+				{
+					throw new Exception($"Player {playerTwo.Name} has already entered this event");
+				}
+
+				entry = EventEntry.CreateDoublesEventEntry(EventType, playerOne, playerTwo);
+			}
+			
 			_entries.Add(entry);
+			return entry.Id;
 		}
 
 		public void RemoveEntry(EventEntryId entryId)
@@ -84,14 +120,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			if (IsCompleted)
 			{
 				throw new Exception("Cannot update the details of an event that is completed");
-			}
-		}
-
-		private void GuardAgainstEntryNotMatchingTheEvent(EventEntry entry)
-		{
-			if (entry.EventType != EventType || entry.EventId != Id)
-			{
-				throw new Exception("Cannot add Entry to this Event as details do not match");
 			}
 		}
 	}

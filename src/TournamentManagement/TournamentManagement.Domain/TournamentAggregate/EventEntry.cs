@@ -1,7 +1,6 @@
 ﻿using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TournamentManagement.Common;
 using TournamentManagement.Domain.PlayerAggregate;
@@ -10,12 +9,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class EventEntry : Entity<EventEntryId>
 	{
-		public EventId EventId { get; private set; }
 		public EventType EventType { get; private set; }
-		public IReadOnlyCollection<Player> Players { get; private set; }
+		public Player PlayerOne { get; private set; }
+		public Player PlayerTwo { get; private set; }
 		public ushort Rank { get; private set; }
-
-		private readonly IList<Player> _players;
 
 		protected EventEntry()
 		{
@@ -23,41 +20,39 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		private EventEntry(EventEntryId id) : base(id)
 		{
-			_players = new List<Player>();
-			Players = new ReadOnlyCollection<Player>(_players);
 		}
 
-		public static EventEntry CreateSinglesEventEntry(EventId eventId, EventType eventType,
-			Player player)
+		public static EventEntry CreateSinglesEventEntry(EventType eventType, Player player)
 		{
 			GuardAgainstDoublesEvent(eventType);
 			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { player });
 
-			var entry = CreateEntry(eventId, eventType);
-			entry._players.Add(player);
-			entry.Rank = player.SinglesRank;
+			var entry = new EventEntry(new EventEntryId())
+			{
+				PlayerOne = player,
+				EventType = eventType,
+				Rank = player.SinglesRank
+			};
+			
 			return entry;
 		}
 
-		public static EventEntry CreateDoublesEventEntry(EventId eventId, EventType eventType,
+		public static EventEntry CreateDoublesEventEntry(EventType eventType,
 			Player playerOne, Player playerTwo)
 		{
 			GuardAgainstSinglesEvent(eventType);
 			GuardAgainstWrongGenderForEventType(eventType, new List<Player> { playerOne, playerTwo });
 
-			var entry = CreateEntry(eventId, eventType);
-			entry._players.Add(playerOne);
-			entry._players.Add(playerTwo);
-			entry.Rank = entry._players.Min(p => p.DoublesRank);
-			return entry;
-		}
+			var rank = playerOne.DoublesRank < playerTwo.DoublesRank
+				? playerOne.DoublesRank
+				: playerTwo.DoublesRank;
 
-		private static EventEntry CreateEntry(EventId eventId, EventType eventType)
-		{
 			var entry = new EventEntry(new EventEntryId())
 			{
-				EventId = new EventId(eventId.Id),
+				PlayerOne = playerOne,
+				PlayerTwo = playerTwo,
 				EventType = eventType,
+				Rank = rank
 			};
 
 			return entry;

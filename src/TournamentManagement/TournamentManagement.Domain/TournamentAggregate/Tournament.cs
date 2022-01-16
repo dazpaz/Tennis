@@ -3,6 +3,7 @@ using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 
 namespace TournamentManagement.Domain.TournamentAggregate
@@ -110,6 +111,16 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			// Raise event to get notifications out to players telling them they can enter
 
 			TransitionToState(TournamentState.AcceptingEntries);
+		}
+
+		public void EnterEvent(EventType eventType, Player playerOne, Player playerTwo)
+		{
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(EnterEvent));
+
+			var tennisEvent = _events.Find(e => e.EventType == eventType);
+			Guard.Against.Null(tennisEvent, nameof(eventType), $"Tournament does not have and event of type {eventType}");
+
+			tennisEvent.Enter(playerOne, playerTwo);
 		}
 
 		public void CloseEntries()
