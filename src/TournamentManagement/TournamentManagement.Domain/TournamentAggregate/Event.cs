@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using DomainDesign.Common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TournamentManagement.Domain.Common;
