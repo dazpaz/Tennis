@@ -39,12 +39,16 @@ namespace Ardalis.GuardClauses
 			}
 		}
 
-		public static void MissingEventType(this IGuardClause guardClause, IEnumerable<Event> events, EventType eventType)
+		public static Event MissingEventType(this IGuardClause guardClause, IEnumerable<Event> events, EventType eventType)
 		{
-			if (!events.Any(e => e.EventType == eventType))
+			var tennisEvent = events.FirstOrDefault(e => e.EventType == eventType);
+
+			if (tennisEvent == null)
 			{
 				throw new Exception($"Tournament does not have an event of type {eventType}");
 			}
+
+			return tennisEvent;
 		}
 	}
 }

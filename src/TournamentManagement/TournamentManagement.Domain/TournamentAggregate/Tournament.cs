@@ -35,6 +35,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			DateTime startDate, DateTime endDate, Venue venue)
 		{
 			Guard.Against.NullOrWhiteSpace(title, nameof(title));
+			Guard.Against.Null(venue, nameof(venue));
 
 			var tournament = new Tournament(new TournamentId())
 			{
@@ -48,14 +49,17 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return tournament;
 		}
 
-		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate, DateTime endDate)
+		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate,
+			DateTime endDate, Venue venue)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(UpdateDetails));
 			Guard.Against.NullOrWhiteSpace(title, nameof(title));
+			Guard.Against.Null(venue, nameof(venue));
 
 			Title = title;
 			Level = level;
 			Dates = new TournamentDates(startDate, endDate);
+			Venue = venue;
 		}
 
 		public void AddEvent(Event tennisEvent)
@@ -69,9 +73,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public void RemoveEvent(EventType eventType)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(RemoveEvent));
-			Guard.Against.MissingEventType(_events, eventType);
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			var tennisEvent = _events.First(e => e.EventType == eventType);
 			_events.Remove(tennisEvent);
 		}
 
@@ -113,14 +116,12 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			TransitionToState(TournamentState.AcceptingEntries);
 		}
 
-		public void EnterEvent(EventType eventType, Player playerOne, Player playerTwo)
+		public void EnterEvent(EventType eventType, Player playerOne, Player playerTwo = null)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(EnterEvent));
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			var tennisEvent = _events.Find(e => e.EventType == eventType);
-			Guard.Against.Null(tennisEvent, nameof(eventType), $"Tournament does not have and event of type {eventType}");
-
-			tennisEvent.Enter(playerOne, playerTwo);
+			tennisEvent.EnterEvent(playerOne, playerTwo);
 		}
 
 		public void CloseEntries()
@@ -136,7 +137,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.EntriesClosed, State, nameof(DrawTheEvents));
 
-			// Raise event to perform the draw for each event 
+			// Raise event to perform the draw for each event
 
 			TransitionToState(TournamentState.DrawComplete);
 		}
@@ -155,7 +156,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			Guard.Against.TournamentActionInWrongState(TournamentState.InProgress, State, nameof(EventCompleted));
 			Guard.Against.MissingEventType(_events, eventType);
 
-			_events.First(e => e.EventType == eventType).MarkEventCompleted();
+			_events.First(e => e.EventType == eventType).CompleteEvent();
 
 			if (_events.All(e => e.IsCompleted))
 			{

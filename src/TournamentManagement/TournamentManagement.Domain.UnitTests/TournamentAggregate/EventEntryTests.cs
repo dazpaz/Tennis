@@ -15,7 +15,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CanUseFactoryMethodToCreateEntryToSinglesEvent(EventType eventType, Gender gender)
 		{
 			var playerId = new PlayerId();
-			var player = Player.Register(playerId, "Steve Server", 20, 100, gender);
+			var player = Player.Register(playerId, "Fast Server", 20, 100, gender);
 
 			var entry = EventEntry.CreateSinglesEventEntry(eventType, player);
 
@@ -48,7 +48,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Theory]
 		[InlineData(EventType.MensSingles)]
 		[InlineData(EventType.WomensSingles)]
-		public void CannotCreateSinglesEntryForADoublesEventType(EventType eventType)
+		public void CannotCreateDoublesEntryFoASinglesEvent(EventType eventType)
 		{
 			var playerOne = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Gary Groundstroke", 30, 50, Gender.Male);
@@ -64,7 +64,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.MensDoubles)]
 		[InlineData(EventType.WomensDoubles)]
 		[InlineData(EventType.MixedDoubles)]
-		public void CannotCreateDoublesEntryToSinglesEvent(EventType eventType)
+		public void CannotCreateSinglesEntryForADoublesEventType(EventType eventType)
 		{
 			var player = Player.Register(new PlayerId(), "Steve Server", 20, 100, Gender.Male);
 
