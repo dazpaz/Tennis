@@ -1,7 +1,9 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.Common;
+using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
@@ -22,7 +24,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 1));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 14));
-			tournament.Venue.Name.Should().Be("Roland Garros");
+			tournament.Venue.Name.Should().Be("All England Lawn Tennis Club");
 		}
 
 		[Theory]
@@ -43,18 +45,61 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
+		public void CannotCreateTournamentWithNullVenue()
+		{
+			Action act = () => Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
+				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'venue')");
+		}
+
+		[Fact]
 		public void CanUpdateTournamentDetails()
 		{
 			var tournament = CreateTestTournament();
 
+			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
 			tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
 
 			tournament.Title.Should().Be("New Wimbledon");
 			tournament.Level.Should().Be(TournamentLevel.Masters500);
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 4));
 			tournament.EndDate.Should().Be(new DateTime(2019, 7, 17));
+			tournament.Venue.Name.Should().Be(venue.Name);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("     ")]
+		[InlineData("")]
+		public void CannotUpdateTournamentToHaveEmptyTitle(string title)
+		{
+			var tournament = CreateTestTournament();
+			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
+
+			Action act = () => tournament.UpdateDetails(title, TournamentLevel.Masters500,
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
+
+			act.Should()
+				.Throw<ArgumentException>()
+				.WithMessage(title == null
+					? "Value cannot be null. (Parameter 'title')"
+					: "Required input title was empty. (Parameter 'title')");
+		}
+
+		[Fact]
+		public void CannotUpdateTournamentDetailsToHaveNoVenue()
+		{
+			var tournament = CreateTestTournament();
+
+			Action act = () => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'venue')");
 		}
 
 		[Fact]
@@ -111,7 +156,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CannotRemoveAnEventTypeFromATournamentIfItDoesNotExist()
+		public void CannotRemoveAnEventFromATournamentIfTheEventDoesNotExist()
 		{
 			var tournament = CreateTestTournament();
 			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
@@ -126,7 +171,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CanClearTheEventsForTheTournament()
+		public void CanClearAllEventsForTheTournament()
 		{
 			var tournament = CreateTestTournament();
 
@@ -153,8 +198,6 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 				CreateTestEvent(EventType.WomensDoubles),
 				CreateTestEvent(EventType.MixedDoubles)
 			};
-
-			
 
 			tournament.SetEvents(events);
 
@@ -211,9 +254,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotUpdateTournamentDetailsIfItIsNotInBeingDefinedState()
 		{
 			var tournament = CreateTestTournamentAndOpenForEntries();
+			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
 
 			void act() => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
 		}
@@ -282,6 +326,57 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
+		public void CannotEnterAnEventIfTournamentIsNotInAcceptingEntriesState()
+		{
+			var tournament = CreateTestTournament();
+			var player = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
+
+			void act() => tournament.EnterEvent(EventType.MensSingles, player);
+
+			VerifyExceptionThrownWhenNotInCorrectState(act, "EnterEvent", tournament.State);
+		}
+
+		[Fact]
+		public void CannotEnterAnEventIfTheTournamentDoesNotHaveThatTypeOfEvent()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var player = Player.Register(new PlayerId(), "Paula Player", 10, 200, Gender.Female);
+
+			Action act = () => tournament.EnterEvent(EventType.WomensSingles, player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Tournament does not have an event of type WomensSingles");
+		}
+
+		[Fact]
+		public void CanEnterAnSinglesEventWithOnePlayer()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var player = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
+
+			tournament.EnterEvent(EventType.MensSingles, player);
+
+			tournament.Events[0].Entries[0].PlayerOne.Name.Should().Be("Peter Player");
+			tournament.Events[0].Entries[0].PlayerTwo.Should().BeNull();
+		}
+
+		[Fact]
+		public void CanEnterAnDoublesEventWithTwoPlayers()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
+			tournament.AddEvent(Event.Create(EventType.MensDoubles, 64, 16, MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
+			tournament.OpenForEntries();
+			var playerOne = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Steve Serve", 15, 100, Gender.Male);
+
+			tournament.EnterEvent(EventType.MensDoubles, playerOne, playerTwo);
+
+			tournament.Events[1].Entries[0].PlayerOne.Name.Should().Be("Peter Player");
+			tournament.Events[1].Entries[0].PlayerTwo.Name.Should().Be("Steve Serve");
+		}
+
+		[Fact]
 		public void CannotCloseEntriesIfTournamentIsNotInAcceptingEntriesState()
 		{
 			var tournament = CreateTestTournament();
@@ -323,7 +418,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		private static Tournament CreateTestTournament()
 		{
-			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
+			var venue = Venue.Create(new VenueId(), "All England Lawn Tennis Club", Surface.Clay);
 
 			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
 				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), venue);

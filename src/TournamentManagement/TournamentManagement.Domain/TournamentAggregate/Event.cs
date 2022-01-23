@@ -1,9 +1,10 @@
-﻿using DomainDesign.Common;
-using System;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TournamentManagement.Domain.Common;
+using TournamentManagement.Domain.PlayerAggregate;
+using TournamentManagement.Domain.TournamentAggregate.Guards;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
@@ -15,9 +16,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		public EventSize EventSize { get; private set; }
 		public bool IsCompleted { get; private set; }
 
-		public virtual ReadOnlyCollection<EventEntry> Entries { get; private set; }
-
-		private readonly IList<EventEntry> _entries;
+		private readonly List<EventEntry> _entries = new();
+		public virtual IReadOnlyList<EventEntry> Entries => _entries.ToList();
 
 		protected Event()
 		{
@@ -25,8 +25,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		private Event(EventId id) : base(id)
 		{
-			_entries = new List<EventEntry>();
-			Entries = new ReadOnlyCollection<EventEntry>(_entries);
 		}
 
 		public static Event Create(EventType eventType, int entrantsLimit,
@@ -44,31 +42,58 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void UpdateDetails(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
-			GuardAgainstUpdatingCompletedEvent();
+			Guard.Against.UpdatingCompletedEvent(IsCompleted);
 			SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 		}
 
-		public void MarkEventCompleted()
+		public void CompleteEvent()
 		{
 			IsCompleted = true;
 		}
 
-		public void AddEventEntry(EventEntry entry)
+		public void EnterEvent(Player playerOne, Player playerTwo = null)
 		{
-			GuardAgainstEntryNotMatchingTheEvent(entry);
-			// Guard Against same player entring the event more than once - right thing to do here?
+			EventEntry entry;
+
+			if (SinglesEvent)
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+				Guard.Against.PlayerAlreadyEnteredInSingleEvent(_entries, playerOne);
+
+				entry = EventEntry.CreateSinglesEventEntry(EventType, playerOne);
+			}
+			else
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+				Guard.Against.Null(playerTwo, nameof(playerTwo));
+				Guard.Against.PlayersAlreadyEnteredInDoublesEvent(_entries, playerOne, playerTwo);
+
+				entry = EventEntry.CreateDoublesEventEntry(EventType, playerOne, playerTwo);
+			}
+			
 			_entries.Add(entry);
 		}
 
-		public void RemoveEntry(EventEntryId entryId)
+		public void WithdrawFromEvent(Player playerOne, Player playerTwo = null)
 		{
-			var entry = _entries.FirstOrDefault(e => e.Id == entryId);
-			if (entry != null) _entries.Remove(entry);
-		}
+			
+			if (SinglesEvent)
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+				var entry = _entries.Find(e => e.PlayerOne == playerOne);
+				Guard.Against.Null(entry, nameof(playerOne), "Player was not entered into the event");
 
-		public void ClearEntries()
-		{
-			_entries.Clear();
+				_entries.Remove(entry);
+			}
+			else
+			{
+				Guard.Against.Null(playerOne, nameof(playerOne));
+				Guard.Against.Null(playerTwo, nameof(playerTwo));
+				var entry = _entries.Find(e => e.PlayerOne == playerOne && e.PlayerTwo == playerTwo);
+				Guard.Against.Null(entry, nameof(playerOne), "Players were not entered into the event");
+
+				_entries.Remove(entry);
+			}
 		}
 
 		private void SetAttributeDetails(EventType eventType, int entrantsLimit,
@@ -77,22 +102,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			EventType = eventType;
 			MatchFormat = matchFormat;
 			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
-		}
-
-		private void GuardAgainstUpdatingCompletedEvent()
-		{
-			if (IsCompleted)
-			{
-				throw new Exception("Cannot update the details of an event that is completed");
-			}
-		}
-
-		private void GuardAgainstEntryNotMatchingTheEvent(EventEntry entry)
-		{
-			if (entry.EventType != EventType || entry.EventId != Id)
-			{
-				throw new Exception("Cannot add Entry to this Event as details do not match");
-			}
 		}
 	}
 }

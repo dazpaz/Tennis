@@ -118,9 +118,6 @@ namespace TournamentManagement.Data
 				.HasConversion(p => p.Id, p => new EventEntryId(p));
 			builder.Property(p => p.EventType);
 			builder.Property(p => p.Rank);
-			builder.Property(p => p.EventId)
-				.HasConversion(p => p.Id, p => new EventId(p));
-			builder.Ignore(p => p.Players);
 		}
 	}
 

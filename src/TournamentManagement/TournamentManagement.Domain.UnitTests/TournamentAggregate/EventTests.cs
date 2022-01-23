@@ -63,7 +63,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			tennisEvent.IsCompleted.Should().BeFalse();
 
-			tennisEvent.MarkEventCompleted();
+			tennisEvent.CompleteEvent();
 
 			tennisEvent.IsCompleted.Should().BeTrue();
 		}
@@ -73,7 +73,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			tennisEvent.MarkEventCompleted();
+			tennisEvent.CompleteEvent();
 
 			Action act = () => tennisEvent.UpdateDetails(EventType.WomensSingles, 64, 16,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
@@ -84,85 +84,151 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CanAddEntriesToAnEvent()
+		public void PlayerCanEnterASinglesEvent()
 		{
 			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
-			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
 
-			tennisEvent.AddEventEntry(entry);
+			tennisEvent.EnterEvent(player);
 
 			tennisEvent.Entries.Count.Should().Be(1);
-			tennisEvent.Entries[0].Id.Should().Be(entry.Id);
+			tennisEvent.Entries[0].PlayerOne.Should().Be(player);
+			tennisEvent.Entries[0].PlayerTwo.Should().BeNull();
 		}
 
 		[Fact]
-		public void CanRemoveAnEnryFromAnEvent()
+		public void PairOfPlayersCanEnterADoublesEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
 
-			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
-			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
-			tennisEvent.AddEventEntry(entry);
-			player = Player.Register(new PlayerId(), "Dave", 101, 52, Gender.Male);
-			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
-			tennisEvent.AddEventEntry(entry);
-			tennisEvent.Entries.Count.Should().Be(2);
-
-			tennisEvent.RemoveEntry(entry.Id);
+			tennisEvent.EnterEvent(playerOne, playerTwo);
 
 			tennisEvent.Entries.Count.Should().Be(1);
+			tennisEvent.Entries[0].PlayerOne.Should().Be(playerOne);
+			tennisEvent.Entries[0].PlayerTwo.Should().Be(playerTwo);
 		}
 
 		[Fact]
-		public void CanClearAllEntriesFromAnEvent()
+		public void CannotEnterSinglesEventIfPlayerIsNull()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			Action act = () => tennisEvent.EnterEvent(null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
+		}
+
+		[Fact]
+		public void CannotEnterDoublesEventIfEitherPlayerIsNull()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+
+			Action act = () => tennisEvent.EnterEvent(null, player);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
+
+			act = () => tennisEvent.EnterEvent(player, null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerTwo')");
+		}
+
+		[Fact]
+		public void CannotEnterSinglesEventIfPlayerIsAlreadyEnteredInTheEvent()
 		{
 			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
-			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
-			tennisEvent.AddEventEntry(entry);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(player);
+
+			tennisEvent.Entries.Count.Should().Be(3);
+
+			Action act = () => tennisEvent.EnterEvent(player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Player Steve has already entered this event");
+		}
+
+		[Fact]
+		public void CannotEnterDoublesEventIfPlayerOneIsAlreadyEnteredInTheEvent()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male), player);
+
+			tennisEvent.Entries.Count.Should().Be(3);
+
+			Action act = () => tennisEvent.EnterEvent(player,
+				Player.Register(new PlayerId(), "Chris", 100, 50, Gender.Male));
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Player Steve has already entered this event");
+		}
+
+		[Fact]
+		public void CannotEnterDoublesEventIfPlayerTwoIsAlreadyEnteredInTheEvent()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
+
+			tennisEvent.EnterEvent(player, Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male));
+
+			tennisEvent.Entries.Count.Should().Be(3);
+
+			Action act = () => tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Chris", 100, 50, Gender.Male),
+				player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Player Steve has already entered this event");
+		}
+
+		[Fact]
+		public void CanRemoveAnEntryFromAnEvent()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+
+			tennisEvent.EnterEvent(player);
 			player = Player.Register(new PlayerId(), "Dave", 101, 52, Gender.Male);
-			entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, tennisEvent.EventType, player);
-			tennisEvent.AddEventEntry(entry);
+			tennisEvent.EnterEvent(player);
 			tennisEvent.Entries.Count.Should().Be(2);
 
-			tennisEvent.ClearEntries();
+			//tennisEvent.RemoveEntry(entryId);
 
-			tennisEvent.Entries.Count.Should().Be(0);
-		}
-
-		[Fact]
-		public void CannotAddAnEntryToEventIfEventTypeDoesNotMatch()
-		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			var player = Player.Register(new PlayerId(), "Venus", 100, 50, Gender.Female);
-			var entry = EventEntry.CreateSinglesEventEntry(tennisEvent.Id, EventType.WomensSingles, player);
-
-			Action act = () => tennisEvent.AddEventEntry(entry);
-
-			act.Should()
-				.Throw<Exception>()
-				.WithMessage("Cannot add Entry to this Event as details do not match");
-		}
-
-		[Fact]
-		public void CannotAddAnEntryToEventIfEventIdDoesNotMatch()
-		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
-				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
-			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
-			var entry = EventEntry.CreateSinglesEventEntry(new EventId(), EventType.MensSingles, player);
-
-			Action act = () => tennisEvent.AddEventEntry(entry);
-
-			act.Should()
-				.Throw<Exception>()
-				.WithMessage("Cannot add Entry to this Event as details do not match");
+			tennisEvent.Entries.Count.Should().Be(1);
 		}
 	}
 }
