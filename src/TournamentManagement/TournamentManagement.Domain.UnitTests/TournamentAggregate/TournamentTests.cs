@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TournamentManagement.Common;
 using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
@@ -367,6 +368,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
 			tournament.AddEvent(Event.Create(EventType.MensDoubles, 64, 16, MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
 			tournament.OpenForEntries();
+
 			var playerOne = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Steve Serve", 15, 100, Gender.Male);
 
@@ -374,6 +376,71 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			tournament.Events[1].Entries[0].PlayerOne.Name.Should().Be("Peter Player");
 			tournament.Events[1].Entries[0].PlayerTwo.Name.Should().Be("Steve Serve");
+		}
+
+		[Fact]
+		public void PlayerCanWithdrawFromSinglesEvent()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var playerOne = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Steve Serve", 15, 100, Gender.Male);
+
+			tournament.EnterEvent(EventType.MensSingles, playerOne);
+			tournament.EnterEvent(EventType.MensSingles, playerTwo);
+
+			tournament.WithdrawFromEvent(EventType.MensSingles, playerTwo);
+
+			tournament.Events[0].Entries.Count.Should().Be(1);
+			tournament.Events[0].Entries.Any(e => e.PlayerOne.Id == playerTwo.Id).Should().BeFalse();
+			tournament.Events[0].Entries.Any(e => e.PlayerOne.Id == playerOne.Id).Should().BeTrue();
+		}
+
+		[Fact]
+		public void PairOfPlayersCanWithdrawFromDoublesEvent()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(Event.Create(EventType.MensDoubles, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak));
+			tournament.OpenForEntries();
+			var playerOne = Player.Register(new PlayerId(), "Peter Player", 10, 200, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Steve Serve", 15, 100, Gender.Male);
+
+			tournament.EnterEvent(EventType.MensDoubles,
+				Player.Register(new PlayerId(), "John", 10, 200, Gender.Male),
+				Player.Register(new PlayerId(), "John", 11, 201, Gender.Male));
+
+			tournament.EnterEvent(EventType.MensDoubles, playerOne, playerTwo);
+
+			tournament.WithdrawFromEvent(EventType.MensDoubles, playerOne, playerTwo);
+
+			tournament.Events[0].Entries.Count.Should().Be(1);
+			tournament.Events[0].Entries
+				.Any(e => e.PlayerOne.Id == playerOne.Id && e.PlayerTwo.Id == playerTwo.Id)
+				.Should().BeFalse();
+		}
+
+		[Fact]
+		public void CannotWithdrawPlayersIfTournamentIsNotInOpenForEntriesState()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			var player = Player.Register(new PlayerId(), "Steve Serve", 1, 1, Gender.Male);
+
+			Action act = () => tournament.WithdrawFromEvent(EventType.MensSingles, player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Action WithdrawFromEvent not allowed for a tournament in the state BeingDefined");
+		}
+
+		[Fact]
+		public void CannotWithdrawFromAnEventIfTheTournamentDoeNotHaveAnEventOfThatType()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+			var player = Player.Register(new PlayerId(), "Steve Serve", 1, 1, Gender.Male);
+
+			Action act = () => tournament.WithdrawFromEvent(EventType.WomensSingles, player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Tournament does not have an event of type WomensSingles");
 		}
 
 		[Fact]

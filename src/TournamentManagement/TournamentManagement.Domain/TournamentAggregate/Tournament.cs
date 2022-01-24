@@ -124,6 +124,14 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			tennisEvent.EnterEvent(playerOne, playerTwo);
 		}
 
+		public void WithdrawFromEvent(EventType eventType, Player playerOne, Player playerTwo = null)
+		{
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(WithdrawFromEvent));
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
+
+			tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
+		}
+
 		public void CloseEntries()
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(CloseEntries));
