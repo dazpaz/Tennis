@@ -9,8 +9,8 @@ namespace TournamentManagement.Domain.TournamentAggregate
 	public class EventEntry : Entity<EventEntryId>
 	{
 		public EventType EventType { get; private set; }
-		public Player PlayerOne { get; private set; }
-		public Player PlayerTwo { get; private set; }
+		public virtual Player PlayerOne { get; private set; }
+		public virtual Player PlayerTwo { get; private set; }
 		public ushort Rank { get; private set; }
 
 		protected EventEntry()

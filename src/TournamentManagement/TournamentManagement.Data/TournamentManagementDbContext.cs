@@ -73,13 +73,13 @@ namespace TournamentManagement.Data
 			builder.Property(p => p.Level);
 			builder.OwnsOne(p => p.Dates, p =>
 			{
-				p.Property(pp => pp.StartDate).HasColumnName("StartDate");
-				p.Property(pp => pp.EndDate).HasColumnName("EndDate");
-			});
+				p.Property(pp => pp.StartDate).IsRequired().HasColumnName("StartDate");
+				p.Property(pp => pp.EndDate).IsRequired().HasColumnName("EndDate");
+			}).Navigation(p => p.Dates).IsRequired();
 
-			builder.HasOne(p => p.Venue).WithMany();
+			builder.HasOne(p => p.Venue).WithMany().IsRequired();
 
-			builder.HasMany(b => b.Events).WithOne()
+			builder.HasMany(b => b.Events).WithOne().IsRequired()
 				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
@@ -97,15 +97,18 @@ namespace TournamentManagement.Data
 
 			builder.OwnsOne(p => p.EventSize, p =>
 			{
-				p.Property(pp => pp.EntrantsLimit).HasColumnName("EntrantsLimit");
-				p.Property(pp => pp.NumberOfSeeds).HasColumnName("NumberOfSeeds");
-			});
+				p.Property(pp => pp.EntrantsLimit).IsRequired().HasColumnName("EntrantsLimit");
+				p.Property(pp => pp.NumberOfSeeds).IsRequired().HasColumnName("NumberOfSeeds");
+			}).Navigation(p => p.EventSize).IsRequired();
 
 			builder.OwnsOne(p => p.MatchFormat, p =>
 			{
-				p.Property(pp => pp.NumberOfSets).HasColumnName("NumberOfSets");
-				p.Property(pp => pp.FinalSetType).HasColumnName("FinalSetType");
-			});
+				p.Property(pp => pp.NumberOfSets).IsRequired().HasColumnName("NumberOfSets");
+				p.Property(pp => pp.FinalSetType).IsRequired().HasColumnName("FinalSetType");
+			}).Navigation(p => p.MatchFormat).IsRequired();
+
+			builder.HasMany(b => b.Entries).WithOne().IsRequired()
+				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
 
@@ -118,6 +121,9 @@ namespace TournamentManagement.Data
 				.HasConversion(p => p.Id, p => new EventEntryId(p));
 			builder.Property(p => p.EventType);
 			builder.Property(p => p.Rank);
+
+			builder.HasOne(p => p.PlayerOne).WithMany().IsRequired();
+			builder.HasOne(p => p.PlayerTwo).WithMany();
 		}
 	}
 
@@ -148,7 +154,7 @@ namespace TournamentManagement.Data
 				.HasMaxLength(50)
 				.IsRequired();
 			builder.Property(p => p.Surface);
-			builder.HasMany(b => b.Courts).WithOne()
+			builder.HasMany(b => b.Courts).WithOne().IsRequired()
 				.Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 		}
 	}
