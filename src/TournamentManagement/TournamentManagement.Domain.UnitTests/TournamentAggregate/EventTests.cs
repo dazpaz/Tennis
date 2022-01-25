@@ -214,21 +214,115 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CanRemoveAnEntryFromAnEvent()
+		public void PlayerCanWithdrawFromSinglesEvent()
 		{
 			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
 			tennisEvent.EnterEvent(player);
-			player = Player.Register(new PlayerId(), "Dave", 101, 52, Gender.Male);
-			tennisEvent.EnterEvent(player);
+
+			tennisEvent.Entries.Count.Should().Be(3);
+
+			tennisEvent.WithdrawFromEvent(player);
+
+			tennisEvent.Entries.Count.Should().Be(2);
+		}
+
+		[Fact]
+		public void PairOfPlayersCanWithdrawFromDoublesEvent()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(playerOne, playerTwo);
+
 			tennisEvent.Entries.Count.Should().Be(2);
 
-			//tennisEvent.RemoveEntry(entryId);
+			tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
 
 			tennisEvent.Entries.Count.Should().Be(1);
+		}
+
+		[Fact]
+		public void CannotWithdrawFromSinglesEventIfPlayerIsNotSpecified()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			Action act = () => tennisEvent.WithdrawFromEvent(null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
+		}
+
+		[Fact]
+		public void CannotWithdrawFromDoublesEventIfPlayerOneIsNotSpecified()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			Action act = () => tennisEvent.WithdrawFromEvent(null, null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
+		}
+
+		[Fact]
+		public void CannotWithdrawFromDoublesEventIfPlayerTwoIsNotSpecified()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var playerOne = Player.Register(new PlayerId(), "John", 2, 4, Gender.Male);
+
+			Action act = () => tennisEvent.WithdrawFromEvent(playerOne, null);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'playerTwo')");
+		}
+
+		[Fact]
+		public void CannotWithdrawFromSinglesEventIfPlayerWasNotEntered()
+		{
+			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+
+			Action act = () => tennisEvent.WithdrawFromEvent(player);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Player was not entered into the event");
+		}
+
+		[Fact]
+		public void CannotWithdrawFromDoublesEventIfPlayersWereNotEntered()
+		{
+			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+
+			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
+			var playerTwo = Player.Register(new PlayerId(), "Boris", 10, 55, Gender.Male);
+
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(playerOne, Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
+			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male), playerTwo);
+
+			Action act = () => tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Players were not entered into the event");
 		}
 	}
 }

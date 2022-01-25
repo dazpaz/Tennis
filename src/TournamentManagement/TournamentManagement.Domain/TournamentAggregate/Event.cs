@@ -76,12 +76,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 
 		public void WithdrawFromEvent(Player playerOne, Player playerTwo = null)
 		{
-			
 			if (SinglesEvent)
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
-				var entry = _entries.Find(e => e.PlayerOne == playerOne);
-				Guard.Against.Null(entry, nameof(playerOne), "Player was not entered into the event");
+				var entry = Guard.Against.PlayerNotEnteredInSingleEvent(_entries, playerOne);
 
 				_entries.Remove(entry);
 			}
@@ -89,8 +87,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
 				Guard.Against.Null(playerTwo, nameof(playerTwo));
-				var entry = _entries.Find(e => e.PlayerOne == playerOne && e.PlayerTwo == playerTwo);
-				Guard.Against.Null(entry, nameof(playerOne), "Players were not entered into the event");
+				var entry = Guard.Against.PlayersNotEnteredInDoublesEvent(_entries, playerOne, playerTwo);
 
 				_entries.Remove(entry);
 			}

@@ -41,5 +41,27 @@ namespace TournamentManagement.Domain.TournamentAggregate.Guards
 				throw new Exception($"Player {playerTwo.Name} has already entered this event");
 			}
 		}
+
+		public static EventEntry PlayerNotEnteredInSingleEvent(this IGuardClause guardClause,
+			List<EventEntry> entries, Player playerOne)
+		{
+			var entry = entries.Find(e => e.PlayerOne == playerOne);
+			if (entry == null)
+			{
+				throw new Exception("Player was not entered into the event");
+			}
+			return entry;
+		}
+
+		public static EventEntry PlayersNotEnteredInDoublesEvent(this IGuardClause guardClause,
+			List<EventEntry> entries, Player playerOne, Player playerTwo)
+		{
+			var entry = entries.Find(e => e.PlayerOne == playerOne && e.PlayerTwo == playerTwo);
+			if (entry == null)
+			{
+				throw new Exception("Players were not entered into the event");
+			}
+			return entry;
+		}
 	}
 }
