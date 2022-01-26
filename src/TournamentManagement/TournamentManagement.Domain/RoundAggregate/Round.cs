@@ -8,7 +8,7 @@ namespace TournamentManagement.Domain.RoundAggregate
 	{
 		private static readonly int[] AllowedCompetitorCount = { 128, 64, 32, 16, 8, 4 ,2 };
 
-		public TournamentId TournamentId { get; private set; }
+		public Tournament Tournament { get; private set; }
 		public EventType EventType { get; private set; }
 		public int RoundNumber { get; private set; }
 		public string Title { get; private set; }
@@ -18,15 +18,16 @@ namespace TournamentManagement.Domain.RoundAggregate
 		{
 		}
 		
-		public static Round Create(TournamentId tournamentId, EventType eventType,
+		public static Round Create(Tournament tournament, EventType eventType,
 			int roundNumber, int competitorCount)
 		{
+			Guard.Against.Null(tournament, nameof(tournament));
 			Guard.Against.IntegerOutOfRange(roundNumber, 1, 7, nameof(roundNumber));
 			Guard.Against.ValueNotInSetOfAllowedValues(competitorCount, AllowedCompetitorCount, nameof(competitorCount));
 
 			var round = new Round(new RoundId())
 			{
-				TournamentId = tournamentId,
+				Tournament = tournament,
 				EventType = eventType,
 				RoundNumber = roundNumber,
 				Title = GetRoundTitle(competitorCount),
