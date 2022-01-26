@@ -1,50 +1,42 @@
-﻿using DomainDesign.Common;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Ardalis.GuardClauses;
+using DomainDesign.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.CompetitorAggregate
 {
 	public class Competitor : Entity<CompetitorId>, IAggregateRoot
 	{
-		public EventEntryId EventEntryId { get; private set; }
-		public TournamentId TournamentId { get; private set; }
+		public Tournament Tournament { get; private set; }
 		public EventType EventType { get; private set; }
 		public Seeding Seeding { get; private set; }
-		public ReadOnlyCollection<string> PlayerNames { get; private set; }
+		public string PlayerOneName { get; private set; }
+		public string PlayerTwoName { get; private set; }
 
-		private IList<string> _playersNames { get; set; }
-
-		private Competitor(CompetitorId id, ICollection<string> playersNames) : base(id)
+		private Competitor(CompetitorId id) : base(id)
 		{
-			_playersNames = new List<string>(playersNames);
-			PlayerNames = new ReadOnlyCollection<string>(_playersNames);
 		}
 
-		public static Competitor Create(TournamentId tournamentId, EventType eventType,
-			EventEntryId eventEntryId, Seeding seeding, ICollection<string> playersNames)
+		public static Competitor Create(Tournament tournament, EventType eventType,
+			Seeding seeding, string playerOneName, string playerTwoName = null)
 		{
-			GuardAgainstWrongNumberOfPlayers(eventType, playersNames.Count);
-
-			var competitor = new Competitor(new CompetitorId(), playersNames)
+			Guard.Against.Null(tournament, nameof(tournament));
+			Guard.Against.Null(seeding, nameof(seeding));
+			Guard.Against.NullOrWhiteSpace(playerOneName, nameof(playerOneName));
+			if (!Event.IsSinglesEvent(eventType))
 			{
-				TournamentId = tournamentId,
+				Guard.Against.NullOrWhiteSpace(playerTwoName, nameof(playerTwoName));
+			}
+
+			var competitor = new Competitor(new CompetitorId())
+			{
+				Tournament = tournament,
 				EventType = eventType,
-				EventEntryId = eventEntryId,
 				Seeding = seeding,
+				PlayerOneName = playerOneName,
+				PlayerTwoName = playerTwoName
 			};
 
 			return competitor;
-		}
-
-		private static void GuardAgainstWrongNumberOfPlayers(EventType eventType, int playerCount)
-		{
-			var expectedPlayerCount = Event.IsSinglesEvent(eventType) ? 1 : 2;
-			if (playerCount != expectedPlayerCount)
-			{
-				throw new Exception($"Competitor for {eventType} event must have {expectedPlayerCount} players");
-			}
 		}
 	}
 }
