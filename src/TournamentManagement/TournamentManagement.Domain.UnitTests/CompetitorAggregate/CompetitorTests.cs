@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using TournamentManagement.Domain.CompetitorAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests.CompetitorAggregate
@@ -12,63 +13,92 @@ namespace TournamentManagement.Domain.UnitTests.CompetitorAggregate
 		[Fact]
 		public void CanUseFactoryMethodToCreateCompetitorForASinglesEventAndItIsCreatedCorrectly()
 		{
-			var tournamentId = new TournamentId();
-			var eventEntryId = new EventEntryId();
+			var tournament = CreateTestTournament();
 			var seeding = new Seeding(1);
-			var competitor = Competitor.Create(tournamentId, EventType.MensSingles, eventEntryId,
-				seeding, new List<string>() { "Steve Serve" });
+			var competitor = Competitor.Create(tournament, EventType.MensSingles, seeding, "Steve Serve");
 
 			competitor.Id.Id.Should().NotBe(Guid.Empty);
-			competitor.TournamentId.Should().Be(tournamentId);
+			competitor.Tournament.Should().Be(tournament);
 			competitor.EventType.Should().Be(EventType.MensSingles);
-			competitor.EventEntryId.Should().Be(eventEntryId);
 			competitor.Seeding.Should().Be(seeding);
-			competitor.PlayerNames.Count.Should().Be(1);
-			competitor.PlayerNames[0].Should().Be("Steve Serve");
+			competitor.PlayerOneName.Should().Be("Steve Serve");
+			competitor.PlayerTwoName.Should().BeNull();
 		}
 
 		[Fact]
 		public void CanUseFactoryMethodToCreateCompetitorForADoublesEventAndItIsCreatedCorrectly()
 		{
-			var tournamentId = new TournamentId();
-			var eventEntryId = new EventEntryId();
+			var tournament = CreateTestTournament();
 			var seeding = new Seeding(1);
-			var competitor = Competitor.Create(tournamentId, EventType.MensDoubles, eventEntryId,
-				seeding, new List<string>() { "Steve Serve", "Vernon Volley" });
+			var competitor = Competitor.Create(tournament, EventType.MensDoubles,
+				seeding, "Steve Serve", "Vernon Volley");
 
 			competitor.Id.Id.Should().NotBe(Guid.Empty);
-			competitor.TournamentId.Should().Be(tournamentId);
+			competitor.Tournament.Should().Be(tournament);
 			competitor.EventType.Should().Be(EventType.MensDoubles);
-			competitor.EventEntryId.Should().Be(eventEntryId);
 			competitor.Seeding.Should().Be(seeding);
-			competitor.PlayerNames.Count.Should().Be(2);
-			competitor.PlayerNames[0].Should().Be("Steve Serve");
-			competitor.PlayerNames[1].Should().Be("Vernon Volley");
+			competitor.PlayerOneName.Should().Be("Steve Serve");
+			competitor.PlayerTwoName.Should().Be("Vernon Volley");
+		}
+
+		[Fact]
+		public void CannotCreateCompetitorWithANullTournament()
+		{
+			Action act = () => Competitor.Create(null, EventType.MensSingles, null, "Steve Serve");
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'tournament')");
+		}
+
+		[Fact]
+		public void CannotCreateCompetitorWithANullSeeding()
+		{
+			var tournament = CreateTestTournament();
+			Action act = () => Competitor.Create(tournament, EventType.MensSingles, null, "Steve Serve");
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'seeding')");
 		}
 
 		[Theory]
-		[InlineData(EventType.MensSingles, 2)]
-		[InlineData(EventType.WomensSingles, 2)]
-		[InlineData(EventType.MensDoubles, 1)]
-		[InlineData(EventType.WomensDoubles, 1)]
-		[InlineData(EventType.MixedDoubles, 1)]
-		public void CannotCreateCompetitorWithWrongNumberOfPlayers(EventType eventType, int numberOfPlayers)
+		[InlineData(null)]
+		[InlineData("     ")]
+		[InlineData("")]
+		public void CannotCreateACompetitorWithEmptyPlayerOneName(string name)
 		{
-			var tournamentId = new TournamentId();
-			var eventEntryId = new EventEntryId();
-			var expectedPlayerCount = numberOfPlayers == 2 ? 1 : 2;
-			var playersNames = new List<string>();
-			for (int i = 0; i < numberOfPlayers; i++)
-			{
-				playersNames.Add("Player");
-			}
+			var tournament = CreateTestTournament();
+			var seeding = new Seeding(1);
 
-			Action act = () => Competitor.Create(tournamentId, eventType, eventEntryId, new Seeding(1),
-				playersNames);
+			Action act = () => Competitor.Create(tournament, EventType.MensSingles, seeding, name);
 
-			act.Should()
-				.Throw<Exception>()
-				.WithMessage($"Competitor for {eventType} event must have {expectedPlayerCount} players");
+			act.Should().Throw<ArgumentException>()
+				.WithMessage(name == null
+				? "Value cannot be null. (Parameter 'playerOneName')"
+				: "Required input playerOneName was empty. (Parameter 'playerOneName')");
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("     ")]
+		[InlineData("")]
+		public void CannotCreateACompetitorWithEmptyPlayerTwoNameForDoublesEvent(string name)
+		{
+			var tournament = CreateTestTournament();
+			var seeding = new Seeding(1);
+
+			Action act = () => Competitor.Create(tournament, EventType.MensDoubles, seeding, "Steve Serve", name);
+
+			act.Should().Throw<ArgumentException>()
+				.WithMessage(name == null
+				? "Value cannot be null. (Parameter 'playerTwoName')"
+				: "Required input playerTwoName was empty. (Parameter 'playerTwoName')");
+		}
+
+		private static Tournament CreateTestTournament()
+		{
+			var venue = Venue.Create(new VenueId(), "AETLA", Surface.Grass);
+			return Tournament.Create("Wimbledon", TournamentLevel.Masters500,
+				DateTime.Today, DateTime.Today, venue);
 		}
 	}
 }

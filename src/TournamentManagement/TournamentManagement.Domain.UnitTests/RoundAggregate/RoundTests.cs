@@ -2,6 +2,7 @@
 using System;
 using TournamentManagement.Domain.RoundAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
 
 namespace TournamentManagement.Domain.UnitTests.RoundAggregate
@@ -11,16 +12,25 @@ namespace TournamentManagement.Domain.UnitTests.RoundAggregate
 		[Fact]
 		public void CanUseFactoryMethodToCreateRoundAndItIsCreatedCorrectly()
 		{
-			var tournamentId = new TournamentId();
+			var tournament = CreateTestTournament();
 
-			var round = Round.Create(tournamentId, EventType.MensSingles, 1, 128);
+			var round = Round.Create(tournament, EventType.MensSingles, 1, 128);
 
 			round.Id.Id.Should().NotBe(Guid.Empty);
-			round.TournamentId.Should().Be(tournamentId);
+			round.Tournament.Should().Be(tournament);
 			round.EventType.Should().Be(EventType.MensSingles);
 			round.RoundNumber.Should().Be(1);
 			round.CompetitorCount.Should().Be(128);
 			round.Title.Should().Be("Round of 128");
+		}
+
+		[Fact]
+		public void CannotCreateARoundWithNullTournament()
+		{
+			Action act = () => Round.Create(null, EventType.MensSingles, 1, 128);
+
+			act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Value cannot be null. (Parameter 'tournament')");
 		}
 
 		[Theory]
@@ -28,7 +38,7 @@ namespace TournamentManagement.Domain.UnitTests.RoundAggregate
 		[InlineData(8)]
 		public void CannotCreateRoundWithRoundNumberOutOfRange(int roundNumber)
 		{
-			Action act = () => Round.Create(new TournamentId(), EventType.MensSingles, roundNumber, 128);
+			Action act = () => Round.Create(CreateTestTournament(), EventType.MensSingles, roundNumber, 128);
 
 			act.Should()
 				.Throw<ArgumentOutOfRangeException>()
@@ -42,7 +52,7 @@ namespace TournamentManagement.Domain.UnitTests.RoundAggregate
 		[InlineData(100)]
 		public void CannotCreateRoundWithInvalidNumberOfCompetitors(int competitorCount)
 		{
-			Action act = () => Round.Create(new TournamentId(), EventType.MensSingles, 1, competitorCount);
+			Action act = () => Round.Create(CreateTestTournament(), EventType.MensSingles, 1, competitorCount);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -59,9 +69,16 @@ namespace TournamentManagement.Domain.UnitTests.RoundAggregate
 		[InlineData(2, "Final")]
 		public void TitleOfTheRoundIsCalculatedFromTheNumberOfCompetitors(int competitorCount, string expectedTitle)
 		{
-			var round = Round.Create(new TournamentId(), EventType.MensSingles, 1, competitorCount);
+			var round = Round.Create(CreateTestTournament(), EventType.MensSingles, 1, competitorCount);
 
 			round.Title.Should().Be(expectedTitle);
+		}
+
+		private static Tournament CreateTestTournament()
+		{
+			var venue = Venue.Create(new VenueId(), "AETLA", Surface.Grass);
+			return Tournament.Create("Wimbledon", TournamentLevel.Masters500,
+				DateTime.Today, DateTime.Today, venue);
 		}
 	}
 }
