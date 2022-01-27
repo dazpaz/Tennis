@@ -50,16 +50,6 @@ namespace TournamentManagement.Domain.UnitTests.CompetitorAggregate
 				.WithMessage("Value cannot be null. (Parameter 'tournament')");
 		}
 
-		[Fact]
-		public void CannotCreateCompetitorWithANullSeeding()
-		{
-			var tournament = CreateTestTournament();
-			Action act = () => Competitor.Create(tournament, EventType.MensSingles, null, "Steve Serve");
-
-			act.Should().Throw<ArgumentNullException>()
-				.WithMessage("Value cannot be null. (Parameter 'seeding')");
-		}
-
 		[Theory]
 		[InlineData(null)]
 		[InlineData("     ")]
