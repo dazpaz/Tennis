@@ -8,11 +8,15 @@ namespace TournamentManagement.Domain.RoundAggregate
 	{
 		private static readonly int[] AllowedCompetitorCount = { 128, 64, 32, 16, 8, 4 ,2 };
 
-		public Tournament Tournament { get; private set; }
+		public virtual Tournament Tournament { get; private set; }
 		public EventType EventType { get; private set; }
 		public int RoundNumber { get; private set; }
 		public string Title { get; private set; }
 		public int CompetitorCount { get; private set; }
+
+		protected Round()
+		{
+		}
 
 		private Round(RoundId id) : base(id)
 		{

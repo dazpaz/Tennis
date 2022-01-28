@@ -7,7 +7,9 @@ using TournamentManagement.Common;
 using TournamentManagement.Data;
 using TournamentManagement.Domain;
 using TournamentManagement.Domain.Common;
+using TournamentManagement.Domain.CompetitorAggregate;
 using TournamentManagement.Domain.PlayerAggregate;
+using TournamentManagement.Domain.RoundAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 
@@ -33,6 +35,13 @@ namespace TournamentManagement.Console
 			ReadTournament(connectionString, useConsoleLogger, tournamentGuid);
 			ReadTournamentAndEvents(connectionString, useConsoleLogger, tournamentGuid);
 			ReadTournamentAndVenue(connectionString, useConsoleLogger, tournamentGuid);
+			ReadEntries(connectionString, useConsoleLogger, tournamentGuid);
+
+			var competitorGuid = CreateCompetitor(connectionString, useConsoleLogger, tournamentGuid);
+			ReadCompetitor(connectionString, useConsoleLogger, competitorGuid);
+
+			Guid roundGuid = CreateRound(connectionString, useConsoleLogger, tournamentGuid);
+			ReadRound(connectionString, useConsoleLogger, roundGuid);
 		}
 
 		private static void EnsureDatabaseIsCreated(string connectionString, bool useConsoleLogger)
@@ -112,6 +121,11 @@ namespace TournamentManagement.Console
 			tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32, new MatchFormat(5, SetType.TieBreakAtTwelveAll)));
 			tournament.AddEvent(Event.Create(EventType.WomensSingles, 128, 32, new MatchFormat(3, SetType.TieBreakAtTwelveAll)));
 
+			tournament.OpenForEntries();
+
+			var player = Player.Register(new PlayerId(), "Edward Entered", 12, 123, Gender.Male);
+			tournament.EnterEvent(EventType.MensSingles, player);
+
 			context.Tournaments.Add(tournament);
 			context.SaveChanges();
 
@@ -138,6 +152,55 @@ namespace TournamentManagement.Console
 			var tournament = context.Tournaments
 				.Include(t => t.Venue)
 				.First(t => t.Id == new TournamentId(tournamentGuid));
+		}
+
+		private static void ReadEntries(string connectionString, bool useConsoleLogger, Guid tournamentGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var tournament = context.Tournaments.Find(new TournamentId(tournamentGuid));
+
+			var tennisEvent = tournament.Events.FirstOrDefault(e => e.EventType == EventType.MensSingles);
+			var name = tennisEvent.Entries[0].PlayerOne.Name;
+		}
+
+		private static Guid CreateCompetitor(string connectionString, bool useConsoleLogger, Guid tournamentGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var tournament = context.Tournaments.Find(new TournamentId(tournamentGuid));
+			var tennisEvent = tournament.Events.FirstOrDefault(e => e.EventType == EventType.MensSingles);
+			var player = tennisEvent.Entries[0].PlayerOne;
+			var competitor = Competitor.Create(tournament, EventType.MensSingles, new Seeding(1), player.Name);
+
+			context.Competitors.Add(competitor);
+			context.SaveChanges();
+
+			return competitor.Id.Id;
+		}
+
+		private static void ReadCompetitor(string connectionString, bool useConsoleLogger, Guid competitorGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var competitor = context.Competitors.Find(new CompetitorId(competitorGuid));
+		}
+
+		private static Guid CreateRound(string connectionString, bool useConsoleLogger, Guid tournamentGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var tournament = context.Tournaments.Find(new TournamentId(tournamentGuid));
+
+			var round = Round.Create(tournament, EventType.MensSingles, 1, 32);
+
+			context.Rounds.Add(round);
+			context.SaveChanges();
+
+			return round.Id.Id;
+		}
+
+		private static void ReadRound(string connectionString, bool useConsoleLogger, Guid roundGuid)
+		{
+			using var context = new TournamentManagementDbContext(connectionString, useConsoleLogger);
+			var round = context.Rounds.Find(new RoundId(roundGuid));
+			var title = round.Tournament.Title;
 		}
 
 		private static string GetConnectionString()

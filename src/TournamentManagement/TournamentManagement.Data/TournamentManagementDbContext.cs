@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
+using TournamentManagement.Domain.CompetitorAggregate;
 using TournamentManagement.Domain.PlayerAggregate;
+using TournamentManagement.Domain.RoundAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 using EventId = TournamentManagement.Domain.TournamentAggregate.EventId;
@@ -16,6 +18,8 @@ namespace TournamentManagement.Data
 		public DbSet<Tournament> Tournaments { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventEntry> EventEntries { get; set; }
+		public DbSet<Competitor> Competitors { get; set; }
+		public DbSet<Round> Rounds { get; set; }
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Venue> Venues { get; set; }
 		public DbSet<Court> Courts { get; set; }
@@ -56,6 +60,8 @@ namespace TournamentManagement.Data
 			new PlayerEntityTypeConfiguration().Configure(modelBuilder.Entity<Player>());
 			new VenueEntityTypeConfiguration().Configure(modelBuilder.Entity<Venue>());
 			new CourtEntityTypeConfiguration().Configure(modelBuilder.Entity<Court>());
+			new CompetitorEntityTypeConfiguration().Configure(modelBuilder.Entity<Competitor>());
+			new RoundEntityTypeConfiguration().Configure(modelBuilder.Entity<Round>());
 		}
 	}
 
@@ -124,6 +130,40 @@ namespace TournamentManagement.Data
 
 			builder.HasOne(p => p.PlayerOne).WithMany().IsRequired();
 			builder.HasOne(p => p.PlayerTwo).WithMany();
+		}
+	}
+
+	public class CompetitorEntityTypeConfiguration : IEntityTypeConfiguration<Competitor>
+	{
+		public void Configure(EntityTypeBuilder<Competitor> builder)
+		{
+			builder.ToTable("Competitor").HasKey(k => k.Id);
+			builder.Property(p => p.Id)
+				.HasConversion(p => p.Id, p => new CompetitorId(p));
+			builder.Property(p => p.EventType);
+			builder.Property(p => p.Seeding)
+				.HasConversion(p => p.Seed, p => new Seeding(p));
+			builder.HasOne(p => p.Tournament).WithMany().IsRequired();
+			builder.Property(p => p.PlayerOneName)
+				.HasMaxLength(50)
+				.IsRequired();
+			builder.Property(p => p.PlayerTwoName)
+				.HasMaxLength(50);
+		}
+	}
+
+	public class RoundEntityTypeConfiguration : IEntityTypeConfiguration<Round>
+	{
+		public void Configure(EntityTypeBuilder<Round> builder)
+		{
+			builder.ToTable("Round").HasKey(k => k.Id);
+			builder.Property(p => p.Id)
+				.HasConversion(p => p.Id, p => new RoundId(p));
+			builder.HasOne(p => p.Tournament).WithMany().IsRequired();
+			builder.Property(p => p.EventType);
+			builder.Property(p => p.RoundNumber).IsRequired();
+			builder.Property(p => p.CompetitorCount).IsRequired();
+			builder.Ignore(p => p.Title);
 		}
 	}
 
