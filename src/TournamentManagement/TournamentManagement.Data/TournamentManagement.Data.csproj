@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Application\TournamentManagement.Application.csproj" />
     <ProjectReference Include="..\TournamentManagement.Domain\TournamentManagement.Domain.csproj" />
   </ItemGroup>
 
