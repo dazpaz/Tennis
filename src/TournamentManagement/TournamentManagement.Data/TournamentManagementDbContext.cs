@@ -15,13 +15,10 @@ namespace TournamentManagement.Data
 		private readonly bool _useConsoleLogger;
 
 		public DbSet<Tournament> Tournaments { get; set; }
-		public DbSet<Event> Events { get; set; }
-		public DbSet<EventEntry> EventEntries { get; set; }
 		public DbSet<Competitor> Competitors { get; set; }
 		public DbSet<Round> Rounds { get; set; }
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Venue> Venues { get; set; }
-		public DbSet<Court> Courts { get; set; }
 
 		public TournamentManagementDbContext(string connectionString, bool useConsoleLogger)
 		{
