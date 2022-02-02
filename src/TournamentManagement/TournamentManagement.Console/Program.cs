@@ -34,7 +34,8 @@ namespace TournamentManagement.Console
 
 			var venueId = CreateVenue();
 			TestDuplicateCourtNames(venueId);
-			AddAnExtraCourt(venueId);
+			var courtId = AddAnExtraCourt(venueId);
+			RemoveCourt(venueId, courtId);
 
 			var tournamentId = CreateTournament(venueId);
 			ReadTournament(tournamentId);
@@ -117,13 +118,26 @@ namespace TournamentManagement.Console
 			}
 		}
 
-		private static void AddAnExtraCourt(VenueId venueId)
+		private static CourtId AddAnExtraCourt(VenueId venueId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var repository = new VenueRepository(context);
 
 			var venue = repository.GetById(venueId);
-			venue.AddCourt(new CourtId(), "New Court", 100);
+			var courtId = new CourtId();
+			venue.AddCourt(courtId, "New Court", 100);
+			context.SaveChanges();
+
+			return courtId;
+		}
+
+		private static void RemoveCourt(VenueId venueId, CourtId courtId)
+		{
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new VenueRepository(context);
+
+			var venue = repository.GetById(venueId);
+			venue.RemoveCourt(courtId);
 			context.SaveChanges();
 		}
 
