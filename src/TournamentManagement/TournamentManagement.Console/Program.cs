@@ -79,16 +79,10 @@ namespace TournamentManagement.Console
 			var player = context.Players.Find(new PlayerId(playerGuid));
 		}
 
-		private static IVenueRepository GetVenueRepository()
-		{
-			var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new VenueRepository(context);
-			return repository;
-		}
-
 		private static VenueId CreateVenue()
 		{
-			using var repository = GetVenueRepository();
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new VenueRepository(context);
 
 			var venueId = new VenueId(Guid.NewGuid());
 			var wimbledon = Venue.Create(venueId, "Wimbledon", Surface.Grass);
@@ -100,21 +94,22 @@ namespace TournamentManagement.Console
 			repository.Add(wimbledon);
 			repository.Add(queens);
 
-			repository.SaveChanges();
+			context.SaveChanges();
 
 			return venueId;
 		}
 
 		private static void TestDuplicateCourtNames(VenueId venueId)
 		{
-			using var repository = GetVenueRepository();
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new VenueRepository(context);
 
 			var venue = repository.GetById(venueId);
 
 			try
 			{
 				venue.AddCourt(new CourtId(), "Centre Court", 14979);
-				repository.SaveChanges();
+				context.SaveChanges();
 			}
 			catch
 			{
@@ -124,11 +119,12 @@ namespace TournamentManagement.Console
 
 		private static void AddAnExtraCourt(VenueId venueId)
 		{
-			using var repository = GetVenueRepository();
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new VenueRepository(context);
 
 			var venue = repository.GetById(venueId);
 			venue.AddCourt(new CourtId(), "New Court", 100);
-			repository.SaveChanges();
+			context.SaveChanges();
 		}
 
 		private static TournamentId CreateTournament(VenueId venueId)
