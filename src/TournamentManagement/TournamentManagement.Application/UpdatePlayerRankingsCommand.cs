@@ -1,7 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using DomainDesign.Common;
 using System;
-using TournamentManagement.Domain.PlayerAggregate.Repository;
+using TournamentManagement.Application.Repository;
+using TournamentManagement.Domain.PlayerAggregate;
 
 namespace TournamentManagement.Application
 {
@@ -23,7 +24,7 @@ namespace TournamentManagement.Application
 
 		public Result Handle(UpdatePlayerRankingsCommand command)
 		{
-			var player = _playerRepository.GetById(command.Id);
+			var player = _playerRepository.GetById(new PlayerId(command.Id));
 			if (player == null) return Result.Failure("Player Not Found");
 
 			player.UpdateRankings(command.SinglesRank, command.DoublesRank);

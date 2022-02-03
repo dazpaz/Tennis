@@ -129,6 +129,31 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
+		public void CanGetAnEventFromTournamentByEventType()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+
+			var tennisEvent = tournament.GetEvent(EventType.WomensSingles);
+
+			tennisEvent.EventType.Should().Be(EventType.WomensSingles);
+		}
+
+		[Fact]
+		public void CannotGetAnEventFromTournamentIfEventDoesNotExist()
+		{
+			var tournament = CreateTestTournament();
+			tournament.AddEvent(CreateTestEvent(EventType.MensSingles));
+			tournament.AddEvent(CreateTestEvent(EventType.WomensSingles));
+
+			Action act = () => tournament.GetEvent(EventType.MixedDoubles);
+
+			act.Should().Throw<Exception>()
+				.WithMessage("Tournament does not have an event of type MixedDoubles");
+		}
+
+		[Fact]
 		public void CanRemoveAnEventFromATournament()
 		{
 			var tournament = CreateTestTournament();

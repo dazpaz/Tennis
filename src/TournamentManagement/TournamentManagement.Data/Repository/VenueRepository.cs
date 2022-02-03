@@ -26,15 +26,5 @@ namespace TournamentManagement.Data.Repository
 		{
 			_context.Venues.Add(venue);
 		}
-
-		public void SaveChanges()
-		{
-			_context.SaveChanges();
-		}
-
-		public void Dispose()
-		{
-			_context.Dispose();
-		}
 	}
 }

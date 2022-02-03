@@ -62,6 +62,12 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			Venue = venue;
 		}
 
+		public Event GetEvent(EventType eventType)
+		{
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
+			return tennisEvent;
+		}
+
 		public void AddEvent(Event tennisEvent)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));

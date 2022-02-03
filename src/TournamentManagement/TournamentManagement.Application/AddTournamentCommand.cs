@@ -1,8 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using DomainDesign.Common;
 using System;
+using TournamentManagement.Application.Repository;
 using TournamentManagement.Domain.TournamentAggregate;
-using TournamentManagement.Domain.TournamentAggregate.Repository;
 using TournamentManagement.Domain.VenueAggregate;
 
 namespace TournamentManagement.Application
