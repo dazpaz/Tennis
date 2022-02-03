@@ -215,12 +215,15 @@ namespace TournamentManagement.Console
 		private static CompetitorId CreateCompetitor(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var tournament = context.Tournaments.Find(tournamentId);
-			var tennisEvent = tournament.Events.FirstOrDefault(e => e.EventType == EventType.MensSingles);
+			var tournamentRepo = new TournamentRepository(context);
+			var competitorRepo = new CompetitorRepository(context);
+
+			var tournament = tournamentRepo.GetById(tournamentId);
+			var tennisEvent = tournament.GetEvent(EventType.MensSingles);
 			var player = tennisEvent.Entries[0].PlayerOne;
 			var competitor = Competitor.Create(tournament, EventType.MensSingles, new Seeding(1), player.Name);
 
-			context.Competitors.Add(competitor);
+			competitorRepo.Add(competitor);
 			context.SaveChanges();
 
 			return competitor.Id;
@@ -229,7 +232,9 @@ namespace TournamentManagement.Console
 		private static void ReadCompetitor(CompetitorId competitorId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var competitor = context.Competitors.Find(competitorId);
+			var competitorRepo = new CompetitorRepository(context);
+
+			var competitor = competitorRepo.GetById(competitorId);
 		}
 
 		private static RoundId CreateRound(TournamentId tournamentId)
