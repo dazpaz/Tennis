@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Linq;
-using TournamentManagement.Application.Repository;
 using TournamentManagement.Common;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
@@ -30,7 +29,7 @@ namespace TournamentManagement.Console
 			EnsureDatabaseIsCreated();
 
 			var playerGuid = CreatePlayers();
-			ReadPlayer(playerGuid);
+			ReadAndUpdatePlayer(playerGuid);
 
 			var venueId = CreateVenue();
 			TestDuplicateCourtNames(venueId);
@@ -62,22 +61,26 @@ namespace TournamentManagement.Console
 			var steveGuid = Guid.NewGuid();
 
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new PlayerRepository(context);
 
 			var player1 = Player.Register(new PlayerId(steveGuid), "Steve Serve", 32, 123, Gender.Male);
 			var player2 = Player.Register(new PlayerId(dorisGuid), "Doris Dropshot", 4, 56, Gender.Female);
 
-			context.Players.Add(player1);
-			context.Players.Add(player2);
+			repository.Add(player1);
+			repository.Add(player2);
 
 			context.SaveChanges();
 
 			return dorisGuid;
 		}
 
-		private static void ReadPlayer(Guid playerGuid)
+		private static void ReadAndUpdatePlayer(Guid playerGuid)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var player = context.Players.Find(new PlayerId(playerGuid));
+			var repository = new PlayerRepository(context);
+			var player = repository.GetById(new PlayerId(playerGuid));
+			player.UpdateRankings(45, 67);
+			context.SaveChanges();
 		}
 
 		private static VenueId CreateVenue()
