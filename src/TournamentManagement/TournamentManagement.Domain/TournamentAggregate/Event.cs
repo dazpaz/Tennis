@@ -58,7 +58,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			if (SinglesEvent)
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
-				Guard.Against.PlayerAlreadyEnteredInSingleEvent(_entries, playerOne);
+				Guard.Against.PlayerAlreadyEnteredInSingleEvent(Entries, playerOne);
 
 				entry = EventEntry.CreateSinglesEventEntry(EventType, playerOne);
 			}
@@ -66,7 +66,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
 				Guard.Against.Null(playerTwo, nameof(playerTwo));
-				Guard.Against.PlayersAlreadyEnteredInDoublesEvent(_entries, playerOne, playerTwo);
+				Guard.Against.PlayersAlreadyEnteredInDoublesEvent(Entries, playerOne, playerTwo);
 
 				entry = EventEntry.CreateDoublesEventEntry(EventType, playerOne, playerTwo);
 			}
@@ -79,7 +79,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			if (SinglesEvent)
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
-				var entry = Guard.Against.PlayerNotEnteredInSingleEvent(_entries, playerOne);
+				var entry = Guard.Against.PlayerNotEnteredInSingleEvent(Entries, playerOne);
 
 				_entries.Remove(entry);
 			}
@@ -87,7 +87,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			{
 				Guard.Against.Null(playerOne, nameof(playerOne));
 				Guard.Against.Null(playerTwo, nameof(playerTwo));
-				var entry = Guard.Against.PlayersNotEnteredInDoublesEvent(_entries, playerOne, playerTwo);
+				var entry = Guard.Against.PlayersNotEnteredInDoublesEvent(Entries, playerOne, playerTwo);
 
 				_entries.Remove(entry);
 			}

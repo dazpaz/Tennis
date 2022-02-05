@@ -17,7 +17,7 @@ namespace TournamentManagement.Domain.TournamentAggregate.Guards
 		}
 
 		public static void PlayerAlreadyEnteredInSingleEvent(this IGuardClause guardClause,
-			List<EventEntry> entries, Player player)
+			IEnumerable<EventEntry> entries, Player player)
 		{
 			var existingPlayerIds = entries.Select(e => e.PlayerOne.Id);
 			if (existingPlayerIds.Any(p => p == player.Id))
@@ -27,7 +27,7 @@ namespace TournamentManagement.Domain.TournamentAggregate.Guards
 		}
 
 		public static void PlayersAlreadyEnteredInDoublesEvent(this IGuardClause guardClause,
-			List<EventEntry> entries, Player playerOne, Player playerTwo)
+			IEnumerable<EventEntry> entries, Player playerOne, Player playerTwo)
 		{
 			var existingPlayerIds = entries.Select(e => e.PlayerOne.Id)
 				.Union(entries.Select(e => e.PlayerTwo.Id));
@@ -43,9 +43,9 @@ namespace TournamentManagement.Domain.TournamentAggregate.Guards
 		}
 
 		public static EventEntry PlayerNotEnteredInSingleEvent(this IGuardClause guardClause,
-			List<EventEntry> entries, Player playerOne)
+			IEnumerable<EventEntry> entries, Player playerOne)
 		{
-			var entry = entries.Find(e => e.PlayerOne == playerOne);
+			var entry = entries.FirstOrDefault(e => e.PlayerOne == playerOne);
 			if (entry == null)
 			{
 				throw new Exception("Player was not entered into the event");
@@ -54,9 +54,9 @@ namespace TournamentManagement.Domain.TournamentAggregate.Guards
 		}
 
 		public static EventEntry PlayersNotEnteredInDoublesEvent(this IGuardClause guardClause,
-			List<EventEntry> entries, Player playerOne, Player playerTwo)
+			IEnumerable<EventEntry> entries, Player playerOne, Player playerTwo)
 		{
-			var entry = entries.Find(e => e.PlayerOne == playerOne && e.PlayerTwo == playerTwo);
+			var entry = entries.FirstOrDefault(e => e.PlayerOne == playerOne && e.PlayerTwo == playerTwo);
 			if (entry == null)
 			{
 				throw new Exception("Players were not entered into the event");
