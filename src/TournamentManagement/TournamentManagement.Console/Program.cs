@@ -258,7 +258,8 @@ namespace TournamentManagement.Console
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var roundRepo = new RoundRepository(context);
 			var round = roundRepo.GetById(roundId);
-			var title = round.Tournament.Title;
+			var tournamentTitle = round.Tournament.Title;
+			var roundTitle = round.Title;
 		}
 
 		private static string GetConnectionString()
