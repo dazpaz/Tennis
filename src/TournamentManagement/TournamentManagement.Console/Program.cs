@@ -36,8 +36,10 @@ namespace TournamentManagement.Console
 			var courtId = AddAnExtraCourt(venueId);
 			RemoveCourt(venueId, courtId);
 
-			var tournamentId = CreateTournament(venueId);
+			var playerId = new PlayerId();
+			var tournamentId = CreateTournament(venueId, playerId);
 			TestDuplicateEventTypes(tournamentId);
+			TestAddingPlayersUsesLazyLoading(tournamentId, playerId);
 			ReadTournamentAndCloseEntries(tournamentId);
 			ReadEntries(tournamentId);
 
@@ -144,7 +146,7 @@ namespace TournamentManagement.Console
 			context.SaveChanges();
 		}
 
-		private static TournamentId CreateTournament(VenueId venueId)
+		private static TournamentId CreateTournament(VenueId venueId, PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var tournamentRepo = new TournamentRepository(context);
@@ -162,7 +164,7 @@ namespace TournamentManagement.Console
 
 			tournament.OpenForEntries();
 
-			var player = Player.Register(new PlayerId(), "Edward Entered", 12, 123, Gender.Male);
+			var player = Player.Register(playerId, "Edward Entered", 12, 123, Gender.Male);
 			tournament.EnterEvent(EventType.MensSingles, player);
 
 			tournamentRepo.Add(tournament);
@@ -183,6 +185,23 @@ namespace TournamentManagement.Console
 				tournament.AddEvent(Event.Create(EventType.MensSingles, 128, 32,
 					new MatchFormat(5, SetType.TieBreakAtTwelveAll)));
 				context.SaveChanges();
+			}
+			catch
+			{
+				// Do nothing - just proving a point
+			}
+		}
+
+		private static void TestAddingPlayersUsesLazyLoading(TournamentId tournamentId, PlayerId playerId)
+		{
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var repository = new TournamentRepository(context);
+
+			var tournament = repository.GetById(tournamentId);
+
+			try
+			{
+				tournament.EnterEvent(EventType.MensSingles, Player.Register(playerId, "Someone Else", 1, 1, Gender.Male));
 			}
 			catch
 			{
@@ -258,7 +277,8 @@ namespace TournamentManagement.Console
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var roundRepo = new RoundRepository(context);
 			var round = roundRepo.GetById(roundId);
-			var title = round.Tournament.Title;
+			var tournamentTitle = round.Tournament.Title;
+			var roundTitle = round.Title;
 		}
 
 		private static string GetConnectionString()

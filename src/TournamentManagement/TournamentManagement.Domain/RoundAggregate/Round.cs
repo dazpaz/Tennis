@@ -11,8 +11,8 @@ namespace TournamentManagement.Domain.RoundAggregate
 		public virtual Tournament Tournament { get; private set; }
 		public EventType EventType { get; private set; }
 		public int RoundNumber { get; private set; }
-		public string Title { get; private set; }
 		public int CompetitorCount { get; private set; }
+		public string Title => GetRoundTitle();
 
 		protected Round()
 		{
@@ -34,19 +34,18 @@ namespace TournamentManagement.Domain.RoundAggregate
 				Tournament = tournament,
 				EventType = eventType,
 				RoundNumber = roundNumber,
-				Title = GetRoundTitle(competitorCount),
 				CompetitorCount = competitorCount
 			};
 
 			return round;
 		}
 
-		private static string GetRoundTitle(int playerCount)
+		private string GetRoundTitle()
 		{
-			if (playerCount == 2) return "Final";
-			if (playerCount == 4) return "Semi-Final";
-			if (playerCount == 8) return "Quarter-Final";
-			return $"Round of {playerCount}";
+			if (CompetitorCount == 2) return "Final";
+			if (CompetitorCount == 4) return "Semi-Final";
+			if (CompetitorCount == 8) return "Quarter-Final";
+			return $"Round of {CompetitorCount}";
 		}
 	}
 }
