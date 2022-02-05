@@ -229,10 +229,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			tournament.StartTournament();
 			tournament.State.Should().Be(TournamentState.InProgress);
 
-			tournament.EventCompleted(EventType.MensSingles);
+			tournament.CompleteEvent(EventType.MensSingles);
 			tournament.State.Should().Be(TournamentState.InProgress);
 
-			tournament.EventCompleted(EventType.WomensSingles);
+			tournament.CompleteEvent(EventType.WomensSingles);
 			tournament.State.Should().Be(TournamentState.Complete);
 		}
 
@@ -452,7 +452,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournament();
 
-			void act() => tournament.EventCompleted(EventType.MensSingles);
+			void act() => tournament.CompleteEvent(EventType.MensSingles);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", tournament.State);
 		}

@@ -46,7 +46,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			SetAttributeDetails(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 		}
 
-		public void CompleteEvent()
+		internal void CompleteEvent()
 		{
 			IsCompleted = true;
 		}
