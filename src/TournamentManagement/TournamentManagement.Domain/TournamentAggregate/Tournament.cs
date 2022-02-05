@@ -104,7 +104,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			_events.Clear();
 		}
 
-
 		public void OpenForEntries()
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(OpenForEntries));
@@ -158,12 +157,12 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			TransitionToState(TournamentState.InProgress);
 		}
 
-		public void EventCompleted(EventType eventType)
+		public void CompleteEvent(EventType eventType)
 		{
-			Guard.Against.TournamentActionInWrongState(TournamentState.InProgress, State, nameof(EventCompleted));
-			Guard.Against.MissingEventType(_events, eventType);
+			Guard.Against.TournamentActionInWrongState(TournamentState.InProgress, State, nameof(CompleteEvent));
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			_events.First(e => e.EventType == eventType).CompleteEvent();
+			tennisEvent.CompleteEvent();
 
 			if (_events.All(e => e.IsCompleted))
 			{
