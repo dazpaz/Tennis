@@ -27,7 +27,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 		}
 
-		public static Event Create(EventType eventType, int entrantsLimit,
+		internal static Event Create(EventType eventType, int entrantsLimit,
 			int numberOfSeeds, MatchFormat matchFormat)
 		{
 			var tennisEvent = new Event(new EventId());
@@ -51,7 +51,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			IsCompleted = true;
 		}
 
-		public void EnterEvent(Player playerOne, Player playerTwo = null)
+		internal void EnterEvent(Player playerOne, Player playerTwo = null)
 		{
 			EventEntry entry;
 
@@ -74,7 +74,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			_entries.Add(entry);
 		}
 
-		public void WithdrawFromEvent(Player playerOne, Player playerTwo = null)
+		internal void WithdrawFromEvent(Player playerOne, Player playerTwo = null)
 		{
 			if (SinglesEvent)
 			{

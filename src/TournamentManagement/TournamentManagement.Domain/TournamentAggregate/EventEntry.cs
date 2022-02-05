@@ -21,7 +21,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 		}
 
-		public static EventEntry CreateSinglesEventEntry(EventType eventType, Player player)
+		internal static EventEntry CreateSinglesEventEntry(EventType eventType, Player player)
 		{
 			Guard.Against.NotASinglesEventType(eventType);
 			Guard.Against.WrongGenderForEventType(eventType, new List<Player> { player });
@@ -36,7 +36,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return entry;
 		}
 
-		public static EventEntry CreateDoublesEventEntry(EventType eventType,
+		internal static EventEntry CreateDoublesEventEntry(EventType eventType,
 			Player playerOne, Player playerTwo)
 		{
 			Guard.Against.NotADoublesEventType(eventType);

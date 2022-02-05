@@ -1,8 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using DomainDesign.Common;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("TournamentManagement.Domain.UnitTests")]
 
 namespace TournamentManagement.Domain.VenueAggregate
 {

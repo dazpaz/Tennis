@@ -3,8 +3,12 @@ using DomainDesign.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.VenueAggregate;
+
+[assembly: InternalsVisibleTo("TournamentManagement.Domain.UnitTests")]
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
@@ -68,10 +72,19 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return tennisEvent;
 		}
 
-		public void AddEvent(Event tennisEvent)
+		public void AddEvent(EventType eventType, int entrantsLimit, int numberOfSeeds,
+			int numberOfSets, SetType finalSetType)
+		{
+			var matchFormat = new MatchFormat(numberOfSets, finalSetType);
+			AddEvent(eventType, entrantsLimit, numberOfSeeds, matchFormat);
+		}
+
+		public void AddEvent(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));
-			Guard.Against.DuplicateEventType(_events, tennisEvent.EventType); 
+			Guard.Against.DuplicateEventType(_events, eventType);
+
+			var tennisEvent = Event.Create(eventType, entrantsLimit, numberOfSeeds, matchFormat);
 
 			_events.Add(tennisEvent);
 		}
@@ -91,26 +104,6 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			_events.Clear();
 		}
 
-		public void SetEvents(IEnumerable<Event> events)
-		{
-			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(SetEvents));
-
-			_events.Clear();
-
-			try
-			{
-				foreach (var tennisEvent in events)
-				{
-					Guard.Against.DuplicateEventType(_events, tennisEvent.EventType);
-					_events.Add(tennisEvent);
-				}
-			}
-			catch (Exception)
-			{
-				_events.Clear();
-				throw;
-			}
-		}
 
 		public void OpenForEntries()
 		{
