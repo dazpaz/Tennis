@@ -454,7 +454,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			void act() => tournament.CompleteEvent(EventType.MensSingles);
 
-			VerifyExceptionThrownWhenNotInCorrectState(act, "EventCompleted", tournament.State);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "CompleteEvent", tournament.State);
 		}
 
 		private static Tournament CreateTestTournament()
