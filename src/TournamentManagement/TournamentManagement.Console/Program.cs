@@ -28,8 +28,8 @@ namespace TournamentManagement.Console
 
 			EnsureDatabaseIsCreated();
 
-			var playerGuid = CreatePlayers();
-			ReadAndUpdatePlayer(playerGuid);
+			var dorisId = CreatePlayers();
+			ReadAndUpdatePlayer(dorisId);
 
 			var venueId = CreateVenue();
 			TestDuplicateCourtNames(venueId);
@@ -40,6 +40,7 @@ namespace TournamentManagement.Console
 			var tournamentId = CreateTournament(venueId, playerId);
 			TestDuplicateEventTypes(tournamentId);
 			TestAddingPlayersUsesLazyLoading(tournamentId, playerId);
+			AddTwoMorePlayersToEvents(tournamentId, dorisId);
 			ReadTournamentAndCloseEntries(tournamentId);
 			ReadEntries(tournamentId);
 
@@ -56,31 +57,31 @@ namespace TournamentManagement.Console
 			context.Database.EnsureCreated();
 		}
 
-		private static Guid CreatePlayers()
+		private static PlayerId CreatePlayers()
 		{
-			var dorisGuid = Guid.NewGuid();
-			var steveGuid = Guid.NewGuid();
+			var steveId = new PlayerId();
+			var dorisId = new PlayerId();
 
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var repository = new PlayerRepository(context);
 
-			var player1 = Player.Register(new PlayerId(steveGuid), "Steve Serve", 32, 123, Gender.Male);
-			var player2 = Player.Register(new PlayerId(dorisGuid), "Doris Dropshot", 4, 56, Gender.Female);
+			var player1 = Player.Register(steveId, "Steve Serve", 32, 123, Gender.Male);
+			var player2 = Player.Register(dorisId, "Doris Dropshot", 4, 56, Gender.Female);
 
 			repository.Add(player1);
 			repository.Add(player2);
 
 			context.SaveChanges();
 
-			return dorisGuid;
+			return dorisId;
 		}
 
-		private static void ReadAndUpdatePlayer(Guid playerGuid)
+		private static void ReadAndUpdatePlayer(PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			var repository = new PlayerRepository(context);
 
-			var player = repository.GetById(new PlayerId(playerGuid));
+			var player = repository.GetById(playerId);
 			player.UpdateRankings(45, 67);
 			context.SaveChanges();
 		}
@@ -166,6 +167,7 @@ namespace TournamentManagement.Console
 			tournament.EnterEvent(EventType.MensSingles, player);
 
 			tournamentRepo.Add(tournament);
+
 			context.SaveChanges();
 
 			return tournament.Id;
@@ -187,6 +189,24 @@ namespace TournamentManagement.Console
 			{
 				// Do nothing - just proving a point
 			}
+		}
+
+		private static void AddTwoMorePlayersToEvents(TournamentId tournamentId, PlayerId playerId)
+		{
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var tournamentRepo = new TournamentRepository(context);
+			var playerRepo = new PlayerRepository(context);
+
+			var player = playerRepo.GetById(playerId);
+
+			var tournament = tournamentRepo.GetById(tournamentId);
+
+			var otherPlayer = Player.Register(new PlayerId(), "Brad New", 123, 121, Gender.Male);
+			tournament.EnterEvent(EventType.WomensSingles, player);
+			playerRepo.Add(otherPlayer);
+			tournament.EnterEvent(EventType.MensSingles, otherPlayer);
+
+			context.SaveChanges();
 		}
 
 		private static void TestAddingPlayersUsesLazyLoading(TournamentId tournamentId, PlayerId playerId)
