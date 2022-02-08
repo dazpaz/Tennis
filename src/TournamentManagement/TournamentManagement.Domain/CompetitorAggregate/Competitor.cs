@@ -4,7 +4,7 @@ using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.CompetitorAggregate
 {
-	public class Competitor : Entity<CompetitorId>, IAggregateRoot
+	public class Competitor : AggregateRoot<CompetitorId>
 	{
 		public virtual Tournament Tournament { get; private set; }
 		public EventType EventType { get; private set; }

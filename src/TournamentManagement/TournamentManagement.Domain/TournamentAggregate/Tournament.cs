@@ -6,13 +6,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
+using TournamentManagement.Domain.TournamentAggregate.Events;
 using TournamentManagement.Domain.VenueAggregate;
 
 [assembly: InternalsVisibleTo("TournamentManagement.Domain.UnitTests")]
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {
-	public class Tournament : Entity<TournamentId>, IAggregateRoot
+	public class Tournament : AggregateRoot<TournamentId>
 	{
 		public string Title { get; private set; }
 		public TournamentDates Dates { get; private set; }
@@ -108,10 +109,9 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(OpenForEntries));
 			Guard.Against.NoEvents(_events);
-			
-			// Raise event to get notifications out to players telling them they can enter
 
 			TransitionToState(TournamentState.AcceptingEntries);
+			RaiseDomainEvent(new TournamentEntryOpened(Id, _events.Select(e => e.EventType)));
 		}
 
 		public void EnterEvent(EventType eventType, Player playerOne, Player playerTwo = null)
@@ -134,16 +134,15 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(CloseEntries));
 
-			// Raise event to get notification out to players saying if they are in or not
-
 			TransitionToState(TournamentState.EntriesClosed);
+			RaiseDomainEvent(new TournamentEntryClosed(Id));
 		}
 
 		public void DrawTheEvents()
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.EntriesClosed, State, nameof(DrawTheEvents));
 
-			// Raise event to perform the draw for each event
+			// Raise event to perform the draw for each event - or do it ourselves in here
 
 			TransitionToState(TournamentState.DrawComplete);
 		}

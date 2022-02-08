@@ -1,6 +1,6 @@
 ﻿namespace DomainDesign.Common
 {
-	public interface IAggregateRoot
+	public interface IDomainEvent
 	{
 	}
 }
