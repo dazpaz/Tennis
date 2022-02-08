@@ -6,6 +6,7 @@ using TournamentManagement.Common;
 using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.TournamentAggregate.Events;
 using TournamentManagement.Domain.VenueAggregate;
 using Xunit;
 
@@ -46,7 +47,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CannotCreateTournamentWithNullVenue()
+		public void CannotCreateTournamentWithNoVenue()
 		{
 			Action act = () => Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
 				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), null);
@@ -169,7 +170,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
-		public void CannnotAddASecondEventOfTheSameTypeToATournament()
+		public void CannnotAddASecondEventOfTheSameEventTypeToATournament()
 		{
 			var tournament = CreateTestTournament();
 			AddEventToTournament(tournament, EventType.MensSingles);
@@ -455,6 +456,39 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			void act() => tournament.CompleteEvent(EventType.MensSingles);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "CompleteEvent", tournament.State);
+		}
+
+		[Fact]
+		public void TournamentEntryOpenedEventRaisedWhenTournamentIsOpenedForEntries()
+		{
+			var tournament = CreateTestTournament();
+			AddEventToTournament(tournament, EventType.MensSingles);
+			AddEventToTournament(tournament, EventType.WomensSingles);
+
+			tournament.DomainEvents.Count.Should().Be(0);
+
+			tournament.OpenForEntries();
+
+			tournament.DomainEvents.Count.Should().Be(1);
+			var openedEvent = tournament.DomainEvents[0] as TournamentEntryOpened;
+			openedEvent.TournamentId.Should().Be(tournament.Id);
+			openedEvent.EventTypes.Count().Should().Be(2);
+		}
+
+		[Fact]
+		public void TournamentEntryClosedEventRaisedWhenTournamentIsClosedForEntries()
+		{
+			var tournament = CreateTestTournament();
+			AddEventToTournament(tournament, EventType.MensSingles);
+			AddEventToTournament(tournament, EventType.WomensSingles);
+			tournament.OpenForEntries();
+			tournament.ClearDomainEvents();
+
+			tournament.CloseEntries();
+
+			tournament.DomainEvents.Count.Should().Be(1);
+			var closedEvent = tournament.DomainEvents[0] as TournamentEntryClosed;
+			closedEvent.TournamentId.Should().Be(tournament.Id);
 		}
 
 		private static Tournament CreateTestTournament()

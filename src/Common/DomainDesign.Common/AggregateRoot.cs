@@ -2,7 +2,13 @@
 
 namespace DomainDesign.Common
 {
-	public abstract class AggregateRoot<T> : Entity<T>
+	public interface IAggregateRoot
+	{
+		IReadOnlyList<IDomainEvent> DomainEvents { get; }
+		void ClearDomainEvents();
+	}
+
+	public abstract class AggregateRoot<T> : Entity<T>, IAggregateRoot
 	{
 		private readonly List<IDomainEvent> _domainEvents = new();
 		public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
@@ -12,7 +18,7 @@ namespace DomainDesign.Common
 			_domainEvents.Add(domainEvent);
 		}
 
-		protected void ClearDomainEvents()
+		public void ClearDomainEvents()
 		{
 			_domainEvents.Clear();
 		}
