@@ -63,15 +63,15 @@ namespace TournamentManagement.Console
 			var dorisId = new PlayerId();
 
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new PlayerRepository(context);
+			var uow = new UnitOfWork(context);
 
 			var player1 = Player.Register(steveId, "Steve Serve", 32, 123, Gender.Male);
 			var player2 = Player.Register(dorisId, "Doris Dropshot", 4, 56, Gender.Female);
 
-			repository.Add(player1);
-			repository.Add(player2);
+			uow.PlayerRepository.Add(player1);
+			uow.PlayerRepository.Add(player2);
 
-			context.SaveChanges();
+			uow.SaveChanges();
 
 			return dorisId;
 		}
@@ -79,17 +79,18 @@ namespace TournamentManagement.Console
 		private static void ReadAndUpdatePlayer(PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new PlayerRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var player = repository.GetById(playerId);
+			var player = uow.PlayerRepository.GetById(playerId);
 			player.UpdateRankings(45, 67);
-			context.SaveChanges();
+
+			uow.SaveChanges();
 		}
 
 		private static VenueId CreateVenue()
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new VenueRepository(context);
+			var uow = new UnitOfWork(context);
 
 			var venueId = new VenueId(Guid.NewGuid());
 			var wimbledon = Venue.Create(venueId, "Wimbledon", Surface.Grass);
@@ -98,10 +99,10 @@ namespace TournamentManagement.Console
 
 			var queens = Venue.Create(new VenueId(), "Queens Club", Surface.Grass);
 
-			repository.Add(wimbledon);
-			repository.Add(queens);
+			uow.VenueRepository.Add(wimbledon);
+			uow.VenueRepository.Add(queens);
 
-			context.SaveChanges();
+			uow.SaveChanges();
 
 			return venueId;
 		}
@@ -109,14 +110,14 @@ namespace TournamentManagement.Console
 		private static void TestDuplicateCourtNames(VenueId venueId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new VenueRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var venue = repository.GetById(venueId);
+			var venue = uow.VenueRepository.GetById(venueId);
 
 			try
 			{
 				venue.AddCourt(new CourtId(), "Centre Court", 14979);
-				context.SaveChanges();
+				uow.SaveChanges();
 			}
 			catch
 			{
@@ -127,12 +128,12 @@ namespace TournamentManagement.Console
 		private static CourtId AddAnExtraCourt(VenueId venueId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new VenueRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var venue = repository.GetById(venueId);
+			var venue = uow.VenueRepository.GetById(venueId);
 			var courtId = new CourtId();
 			venue.AddCourt(courtId, "New Court", 100);
-			context.SaveChanges();
+			uow.SaveChanges();
 
 			return courtId;
 		}
@@ -140,20 +141,19 @@ namespace TournamentManagement.Console
 		private static void RemoveCourt(VenueId venueId, CourtId courtId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new VenueRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var venue = repository.GetById(venueId);
+			var venue = uow.VenueRepository.GetById(venueId);
 			venue.RemoveCourt(courtId);
-			context.SaveChanges();
+			uow.SaveChanges();
 		}
 
 		private static TournamentId CreateTournament(VenueId venueId, PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var tournamentRepo = new TournamentRepository(context);
-			var venueRepo = new VenueRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var venue = venueRepo.GetById(venueId);
+			var venue = uow.VenueRepository.GetById(venueId);
 
 			var tournament = Tournament.Create("Wimbledon 2022", TournamentLevel.GrandSlam,
 				new DateTime(2022, 07, 22), new DateTime(2022, 07, 29), venue);
@@ -166,9 +166,9 @@ namespace TournamentManagement.Console
 			var player = Player.Register(playerId, "Edward Entered", 12, 123, Gender.Male);
 			tournament.EnterEvent(EventType.MensSingles, player);
 
-			tournamentRepo.Add(tournament);
+			uow.TournamentRepository.Add(tournament);
 
-			context.SaveChanges();
+			uow.SaveChanges();
 
 			return tournament.Id;
 		}
@@ -176,14 +176,14 @@ namespace TournamentManagement.Console
 		private static void TestDuplicateEventTypes(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new TournamentRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var tournament = repository.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			try
 			{
 				tournament.AddEvent(EventType.MensSingles, 128, 32, 5, SetType.TieBreakAtTwelveAll);
-				context.SaveChanges();
+				uow.SaveChanges();
 			}
 			catch
 			{
@@ -194,27 +194,26 @@ namespace TournamentManagement.Console
 		private static void AddTwoMorePlayersToEvents(TournamentId tournamentId, PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var tournamentRepo = new TournamentRepository(context);
-			var playerRepo = new PlayerRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var player = playerRepo.GetById(playerId);
+			var player = uow.PlayerRepository.GetById(playerId);
 
-			var tournament = tournamentRepo.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			var otherPlayer = Player.Register(new PlayerId(), "Brad New", 123, 121, Gender.Male);
 			tournament.EnterEvent(EventType.WomensSingles, player);
-			playerRepo.Add(otherPlayer);
+			uow.PlayerRepository.Add(otherPlayer);
 			tournament.EnterEvent(EventType.MensSingles, otherPlayer);
 
-			context.SaveChanges();
+			uow.SaveChanges();
 		}
 
 		private static void TestAddingPlayersUsesLazyLoading(TournamentId tournamentId, PlayerId playerId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new TournamentRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var tournament = repository.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			try
 			{
@@ -229,20 +228,20 @@ namespace TournamentManagement.Console
 		private static void ReadTournamentAndCloseEntries(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new TournamentRepository(context); 
-			
-			var tournament = repository.GetById(tournamentId);
+			var uow = new UnitOfWork(context);
+
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 			tournament.CloseEntries();
 
-			context.SaveChanges();
+			uow.SaveChanges();
 		}
 
 		private static void ReadEntries(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var repository = new TournamentRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var tournament = repository.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			var tennisEvent = tournament.GetEvent(EventType.MensSingles);
 			var name = tennisEvent.Entries[0].PlayerOne.Name;
@@ -251,16 +250,15 @@ namespace TournamentManagement.Console
 		private static CompetitorId CreateCompetitor(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var tournamentRepo = new TournamentRepository(context);
-			var competitorRepo = new CompetitorRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var tournament = tournamentRepo.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 			var tennisEvent = tournament.GetEvent(EventType.MensSingles);
 			var player = tennisEvent.Entries[0].PlayerOne;
 			var competitor = Competitor.Create(tournament, EventType.MensSingles, new Seeding(1), player.Name);
 
-			competitorRepo.Add(competitor);
-			context.SaveChanges();
+			uow.CompetitorRepository.Add(competitor);
+			uow.SaveChanges();
 
 			return competitor.Id;
 		}
@@ -268,23 +266,22 @@ namespace TournamentManagement.Console
 		private static void ReadCompetitor(CompetitorId competitorId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var competitorRepo = new CompetitorRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var competitor = competitorRepo.GetById(competitorId);
+			var competitor = uow.CompetitorRepository.GetById(competitorId);
 		}
 
 		private static RoundId CreateRound(TournamentId tournamentId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var tournamentRepo = new TournamentRepository(context);
-			var roundRepo = new RoundRepository(context);
+			var uow = new UnitOfWork(context);
 
-			var tournament = tournamentRepo.GetById(tournamentId);
+			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			var round = Round.Create(tournament, EventType.MensSingles, 1, 32);
 
-			roundRepo.Add(round);
-			context.SaveChanges();
+			uow.RoundRepository.Add(round);
+			uow.SaveChanges();
 
 			return round.Id;
 		}
@@ -292,8 +289,9 @@ namespace TournamentManagement.Console
 		private static void ReadRound(RoundId roundId)
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
-			var roundRepo = new RoundRepository(context);
-			var round = roundRepo.GetById(roundId);
+			var uow = new UnitOfWork(context);
+
+			var round = uow.RoundRepository.GetById(roundId);
 			var tournamentTitle = round.Tournament.Title;
 			var roundTitle = round.Title;
 		}

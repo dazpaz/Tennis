@@ -2,7 +2,7 @@
 
 namespace TournamentManagement.Data.Repository
 {
-	class UnitOfWork : IUnitOfWork
+	public class UnitOfWork : IUnitOfWork
 	{
 		private readonly TournamentManagementDbContext _context;
 
