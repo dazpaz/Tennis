@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using TournamentManagement.Application;
+using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.VenueAggregate;
 using TournamentManagement.WebApi.Dto;
 
 namespace TournamentManagement.WebApi.Controllers
@@ -10,16 +12,22 @@ namespace TournamentManagement.WebApi.Controllers
 	[ApiController]
 	public class TournamentController : ControllerBase
 	{
+		private readonly AddTournamentCommandHandler _addTournamentCommandHandler;
+
+		public TournamentController(AddTournamentCommandHandler addTournamentCommandHandler)
+		{
+			_addTournamentCommandHandler = addTournamentCommandHandler;
+		}
+
 		[HttpPost]
 		public IActionResult AddTournament([FromBody] AddTournamentDto tournament)
 		{
 			var command = MapDtoToAddTournamentCommand(tournament);
 
-			var handler = new AddTournamentCommandHandler(null);
-			Result<Guid> result = handler.Handle(command);
+			Result<TournamentId> result = _addTournamentCommandHandler.Handle(command);
 
 			return result.IsSuccess
-				? CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null)
+				? CreatedAtAction(nameof(GetTournament), new { id = result.Value.Id }, null)
 				: BadRequest(result.Error);
 		}
 
@@ -37,7 +45,7 @@ namespace TournamentManagement.WebApi.Controllers
 				TournamentLevel = tournament.TournamentLevel,
 				StartDate = tournament.StartDate,
 				EndDate = tournament.EndDate,
-				VenueId = tournament.VenueId
+				VenueId = new VenueId(tournament.VenueId)
 			};
 		}
 	}

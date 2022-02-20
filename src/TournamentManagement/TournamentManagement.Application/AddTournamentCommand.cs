@@ -10,33 +10,43 @@ namespace TournamentManagement.Application
 	public sealed class AddTournamentCommand : ICommand
 	{
 		public string Title { get; set; }
-		public int TournamentLevel { get; set; }
+		public TournamentLevel TournamentLevel { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
-		public Guid VenueId { get; set; }
+		public VenueId VenueId { get; set; }
 	}
 
-	public sealed class AddTournamentCommandHandler : ICommandHandler<AddTournamentCommand, Guid>
+	public sealed class AddTournamentCommandHandler : ICommandHandler<AddTournamentCommand, TournamentId>
 	{
-		private ITournamentRepository _tournamentRepository;
+		private readonly IUnitOfWork _uow;
 
-		public AddTournamentCommandHandler(ITournamentRepository tournamentRepository)
+		public AddTournamentCommandHandler(IUnitOfWork uow)
 		{
-			_tournamentRepository = tournamentRepository;
+			_uow = uow;
 		}
 
-		public Result<Guid> Handle(AddTournamentCommand command)
+		public Result<TournamentId> Handle(AddTournamentCommand command)
 		{
-			// retrieve the Venue based on its ID
-			var venue = Venue.Create(new VenueId(command.VenueId), "Roland Garros", Domain.Surface.Clay);
+			var venue = _uow.VenueRepository.GetById(command.VenueId);
+			if (venue == null)
+			{
+				return Result.Failure<TournamentId>("Venue does not exist");
+			}
 
-			var tournament = Tournament.Create(command.Title, TournamentLevel.GrandSlam,
+			try
+			{
+				var tournament = Tournament.Create(command.Title, command.TournamentLevel,
 					command.StartDate, command.EndDate, venue);
 
-			// add tournament to the repository
-			// save the repository
+				_uow.TournamentRepository.Add(tournament);
+				_uow.SaveChanges();
 
-			return Result.Success(tournament.Id.Id);
+				return Result.Success(tournament.Id);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<TournamentId>(ex.Message);
+			}
 		}
 	}
 }

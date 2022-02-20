@@ -1,3 +1,4 @@
+using DomainDesign.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TournamentManagement.Application;
+using TournamentManagement.Application.Repository;
+using TournamentManagement.Data;
+using TournamentManagement.Data.Repository;
+using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.WebApi
 {
@@ -26,12 +32,19 @@ namespace TournamentManagement.WebApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var connectionString = Configuration["ConnectionString"];
+
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped(s => new AddTournamentCommandHandler(s.GetRequiredService<IUnitOfWork>()));
+			services.AddScoped(s => new TournamentManagementDbContext(connectionString, true));
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "TournamentManagement.WebApi", Version = "v1" });
 			});
+
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
