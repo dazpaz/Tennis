@@ -18,7 +18,7 @@ namespace TournamentManagement.Application
 
 	public sealed class AddTournamentCommandHandler : ICommandHandler<AddTournamentCommand, TournamentId>
 	{
-		private IUnitOfWork _uow;
+		private readonly IUnitOfWork _uow;
 
 		public AddTournamentCommandHandler(IUnitOfWork uow)
 		{
