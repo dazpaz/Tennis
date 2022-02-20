@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
-using System.Linq;
 using TournamentManagement.Common;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
@@ -27,34 +25,82 @@ namespace TournamentManagement.Console
 			_useConsoleLogger = true;  // IHostingEnvironment.IsDevelopment();
 
 			EnsureDatabaseIsCreated();
+			CreateTestPlayers();
+			CreateTestVenues();
 
-			var dorisId = CreatePlayers();
-			ReadAndUpdatePlayer(dorisId);
+			//var dorisId = CreatePlayers();
+			//ReadAndUpdatePlayer(dorisId);
 
-			var venueId = CreateVenue();
-			TestDuplicateCourtNames(venueId);
-			var courtId = AddAnExtraCourt(venueId);
-			RemoveCourt(venueId, courtId);
+			//var venueId = CreateVenue();
+			//TestDuplicateCourtNames(venueId);
+			//var courtId = AddAnExtraCourt(venueId);
+			//RemoveCourt(venueId, courtId);
 
-			var playerId = new PlayerId();
-			var tournamentId = CreateTournament(venueId, playerId);
-			TestDuplicateEventTypes(tournamentId);
-			TestAddingPlayersUsesLazyLoading(tournamentId, playerId);
-			AddTwoMorePlayersToEvents(tournamentId, dorisId);
-			ReadTournamentAndCloseEntries(tournamentId);
-			ReadEntries(tournamentId);
+			//var playerId = new PlayerId();
+			//var tournamentId = CreateTournament(venueId, playerId);
+			//TestDuplicateEventTypes(tournamentId);
+			//TestAddingPlayersUsesLazyLoading(tournamentId, playerId);
+			//AddTwoMorePlayersToEvents(tournamentId, dorisId);
+			//ReadTournamentAndCloseEntries(tournamentId);
+			//ReadEntries(tournamentId);
 
-			var competitorId = CreateCompetitor(tournamentId);
-			ReadCompetitor(competitorId);
+			//var competitorId = CreateCompetitor(tournamentId);
+			//ReadCompetitor(competitorId);
 
-			var roundId = CreateRound(tournamentId);
-			ReadRound(roundId);
+			//var roundId = CreateRound(tournamentId);
+			//ReadRound(roundId);
 		}
 
 		private static void EnsureDatabaseIsCreated()
 		{
 			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
 			context.Database.EnsureCreated();
+		}
+
+		private static void CreateTestVenues()
+		{
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var uow = new UnitOfWork(context);
+
+			var wimbledon = Venue.Create(new VenueId(), "Wimbledon", Surface.Grass);
+			wimbledon.AddCourt(new CourtId(), "Center Court", 14979);
+			wimbledon.AddCourt(new CourtId(), "No. 1 Court", 12345);
+
+			uow.VenueRepository.Add(wimbledon);
+
+			uow.VenueRepository.Add(Venue.Create(new VenueId(), "Roland Garros", Surface.Clay));
+			uow.VenueRepository.Add(Venue.Create(new VenueId(), "Flushing Meadows", Surface.Hard));
+			uow.VenueRepository.Add(Venue.Create(new VenueId(), "Melbourne Park", Surface.Hard));
+
+			uow.SaveChanges();
+		}
+
+		private static void CreateTestPlayers()
+		{
+			using var context = new TournamentManagementDbContext(_connectionString, _useConsoleLogger);
+			var uow = new UnitOfWork(context);
+
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Novak Djokovic", 1, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Daniil Medvedev", 2, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Alexander Zverev", 3, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Stefanos Tsitsipas", 4, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Rafael Nadal", 5, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Matteo Berrettini", 6, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Andrey Rublev", 7, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Casper Ruud", 8, 101, Gender.Male));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Felix Auger-Aliassime", 9, 101, Gender.Male));
+
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Ashleigh Barty", 1, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Aryna Sabalenka", 2, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Barbora Krejcikova", 3, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Karolina Pliskova", 4, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Paula Badosa", 5, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Anett Kontaveit", 6, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Garbiñe Muguruza", 7, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Maria Sakkari", 8, 101, Gender.Female));
+			uow.PlayerRepository.Add(Player.Register(new PlayerId(), "Iga Swiatek", 9, 101, Gender.Female));
+
+			uow.SaveChanges();
 		}
 
 		private static PlayerId CreatePlayers()
