@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using TournamentManagement.Common;
+using TournamentManagement.Contract;
 using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate;

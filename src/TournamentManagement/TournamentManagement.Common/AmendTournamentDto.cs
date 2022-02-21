@@ -1,7 +1,6 @@
 ﻿using System;
-using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.WebApi.Dto
+namespace TournamentManagement.Contract
 {
 	public class AmendTournamentDto
 	{

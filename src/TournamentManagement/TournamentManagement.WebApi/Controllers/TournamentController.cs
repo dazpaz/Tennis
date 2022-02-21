@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using TournamentManagement.Application;
+using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
-using TournamentManagement.WebApi.Dto;
 
 namespace TournamentManagement.WebApi.Controllers
 {

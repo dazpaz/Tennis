@@ -2,6 +2,7 @@
 using DomainDesign.Common;
 using System;
 using TournamentManagement.Application.Repository;
+using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 
