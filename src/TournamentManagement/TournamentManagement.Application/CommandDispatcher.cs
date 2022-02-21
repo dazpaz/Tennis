@@ -1,0 +1,39 @@
+﻿using CSharpFunctionalExtensions;
+using DomainDesign.Common;
+using System;
+
+namespace TournamentManagement.Application
+{
+	public sealed class CommandDispatcher
+	{
+		private readonly IServiceProvider _provider;
+
+		public CommandDispatcher(IServiceProvider provider)
+		{
+			_provider = provider;
+		}
+		public Result Dispatch(ICommand command)
+		{
+			Type type = typeof(ICommandHandler<>);
+			Type[] typeArgs = { command.GetType() };
+			Type handlerType = type.MakeGenericType(typeArgs);
+
+			dynamic handler = _provider.GetService(handlerType);
+			Result result = handler.Handle((dynamic)command);
+
+			return result;
+		}
+
+		public Result<TResult> Dispatch<TResult>(ICommand command)
+		{
+			Type type = typeof(ICommandHandler<,>);
+			Type[] typeArgs = { command.GetType(), typeof(TResult) };
+			Type handlerType = type.MakeGenericType(typeArgs);
+
+			dynamic handler = _provider.GetService(handlerType);
+			Result<TResult> result = handler.Handle((dynamic)command);
+
+			return result;
+		}
+	}
+}
