@@ -34,9 +34,11 @@ namespace TournamentManagement.WebApi
 		{
 			var connectionString = Configuration["ConnectionString"];
 
-			services.AddScoped<IUnitOfWork, UnitOfWork>();
-			services.AddScoped(s => new AddTournamentCommandHandler(s.GetRequiredService<IUnitOfWork>()));
-			services.AddScoped(s => new TournamentManagementDbContext(connectionString, true));
+			services.AddTransient<IUnitOfWork, UnitOfWork>();
+			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
+			services.AddTransient<ICommandHandler<AddTournamentCommand, TournamentId>, AddTournamentCommandHandler>();
+			services.AddTransient<ICommandHandler<AmendTournamentCommand>, AmendTournamentCommandHandler>();
+			services.AddSingleton<CommandDispatcher>();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
