@@ -37,8 +37,7 @@ namespace TournamentManagement.WebApi
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
-			services.AddTransient<ICommandHandler<AddTournamentCommand, TournamentId>,
-				AddTournamentCommandHandler>();
+			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>, AddTournamentCommandHandler>();
 			services.AddTransient<ICommandHandler<AmendTournamentCommand>, AmendTournamentCommandHandler>();
 			services.AddTransient<IQueryHandler<GetTournamentSummaryQuery, List<TournamentSummaryDto>>,
 				GetTournamentSummaryQueryHandler>();

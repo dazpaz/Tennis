@@ -10,12 +10,23 @@ namespace TournamentManagement.Application
 {
 	public class AmendTournamentCommand : ICommand
 	{
-		public TournamentId Id { get; set; }
-		public string Title { get; set; }
-		public TournamentLevel TournamentLevel { get; set; }
-		public DateTime StartDate { get; set; }
-		public DateTime EndDate { get; set; }
-		public VenueId VenueId { get; set; }
+		public TournamentId Id { get; }
+		public string Title { get; }
+		public TournamentLevel TournamentLevel { get; }
+		public DateTime StartDate { get; }
+		public DateTime EndDate { get; }
+		public VenueId VenueId { get; }
+
+		public AmendTournamentCommand(Guid tournamentGuid, string title, TournamentLevel level, DateTime startDate,
+			DateTime endDate, Guid venueGuid)
+		{
+			Id = new TournamentId(tournamentGuid);
+			Title = title;
+			TournamentLevel = level;
+			StartDate = startDate;
+			EndDate = endDate;
+			VenueId = new VenueId(venueGuid);
+		}
 	}
 
 	public sealed class AmendTournamentCommandHandler : ICommandHandler<AmendTournamentCommand>
