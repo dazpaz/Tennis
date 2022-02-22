@@ -1,4 +1,5 @@
-﻿using TournamentManagement.Domain.TournamentAggregate;
+﻿using System.Collections.Generic;
+using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Application.Repository
 {
@@ -6,5 +7,6 @@ namespace TournamentManagement.Application.Repository
 	{
 		Tournament GetById(TournamentId id);
 		void Add(Tournament tournament);
+		IReadOnlyList<Tournament> GetList();
 	}
 }

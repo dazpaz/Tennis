@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using TournamentManagement.Application;
 using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
@@ -62,6 +63,18 @@ namespace TournamentManagement.WebApi.Controllers
 		public IActionResult GetTournament(Guid id)
 		{
 			return Ok($"Tournament {id} to ho here");
+		}
+
+
+		[HttpGet]
+		public IActionResult GetTournaments()
+		{
+			var query = new GetTournamentSummaryQuery();
+			Result<List<TournamentSummaryDto>> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess 
+				? Ok(result.Value) 
+				: BadRequest(result.Error);
 		}
 	}
 }

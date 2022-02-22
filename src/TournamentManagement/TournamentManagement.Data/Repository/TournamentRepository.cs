@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using TournamentManagement.Application.Repository;
 using TournamentManagement.Domain.TournamentAggregate;
 
@@ -26,6 +28,11 @@ namespace TournamentManagement.Data.Repository
 		public void Add(Tournament tournament)
 		{
 			_context.Tournaments.Add(tournament);
+		}
+
+		public IReadOnlyList<Tournament> GetList()
+		{
+			return _context.Tournaments.Include(t => t.Venue).ToList();
 		}
 	}
 }

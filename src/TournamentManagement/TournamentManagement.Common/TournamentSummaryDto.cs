@@ -9,7 +9,6 @@ namespace TournamentManagement.Contract
 		public TournamentLevel TournamentLevel { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
-		public Guid VenueId { get; set; }
-		public string VenueTitle { get; set; }
+		public string VenueName { get; set; }
 	}
 }
