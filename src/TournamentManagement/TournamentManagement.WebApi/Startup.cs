@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Repository;
+using TournamentManagement.Contract;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
 using TournamentManagement.Domain.TournamentAggregate;
@@ -36,9 +37,11 @@ namespace TournamentManagement.WebApi
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
-			services.AddTransient<ICommandHandler<AddTournamentCommand, TournamentId>, AddTournamentCommandHandler>();
+			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>, AddTournamentCommandHandler>();
 			services.AddTransient<ICommandHandler<AmendTournamentCommand>, AmendTournamentCommandHandler>();
-			services.AddSingleton<CommandDispatcher>();
+			services.AddTransient<IQueryHandler<GetTournamentSummaryQuery, List<TournamentSummaryDto>>,
+				GetTournamentSummaryQueryHandler>();
+			services.AddSingleton<MessageDispatcher>();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>

@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Common
+﻿namespace TournamentManagement.Contract
 {
 	public enum Gender
 	{

@@ -1,9 +1,8 @@
 ﻿using System;
-using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.WebApi.Dto
+namespace TournamentManagement.Contract
 {
-	public class AddTournamentDto
+	public class AmendTournamentDto
 	{
 		public string Title { get; set; }
 		public TournamentLevel TournamentLevel { get; set; }

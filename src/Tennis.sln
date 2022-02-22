@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.WebApi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Application", "TournamentManagement\TournamentManagement.Application\TournamentManagement.Application.csproj", "{3761695D-06BD-4A09-A9C9-3FD5A420FBBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Common", "TournamentManagement\TournamentManagement.Common\TournamentManagement.Common.csproj", "{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Contract", "TournamentManagement\TournamentManagement.Common\TournamentManagement.Contract.csproj", "{4F1387AE-DDCB-431F-A8FC-C7B4766C6B77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManagement.Data", "TournamentManagement\TournamentManagement.Data\TournamentManagement.Data.csproj", "{982D6DF5-1950-4340-8E9F-0AB4851694E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Data", "TournamentManagement\TournamentManagement.Data\TournamentManagement.Data.csproj", "{982D6DF5-1950-4340-8E9F-0AB4851694E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManagement.Console", "TournamentManagement\TournamentManagement.Console\TournamentManagement.Console.csproj", "{433B56E0-BB90-48DA-B2B4-F2EC377CD1FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Console", "TournamentManagement\TournamentManagement.Console\TournamentManagement.Console.csproj", "{433B56E0-BB90-48DA-B2B4-F2EC377CD1FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
