@@ -35,5 +35,17 @@ namespace TournamentManagement.Application
 
 			return result;
 		}
+
+		public Result<TResult> Dispatch<TResult>(IQuery<TResult> query)
+		{
+			Type type = typeof(IQueryHandler<,>);
+			Type[] typeArgs = { query.GetType(), typeof(TResult) };
+			Type handlerType = type.MakeGenericType(typeArgs);
+
+			dynamic handler = _provider.GetService(handlerType);
+			Result<TResult> result = handler.Handle((dynamic)query);
+
+			return result;
+		}
 	}
 }
