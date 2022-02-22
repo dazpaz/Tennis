@@ -4,11 +4,11 @@ using System;
 
 namespace TournamentManagement.Application
 {
-	public sealed class CommandDispatcher
+	public sealed class MessageDispatcher
 	{
 		private readonly IServiceProvider _provider;
 
-		public CommandDispatcher(IServiceProvider provider)
+		public MessageDispatcher(IServiceProvider provider)
 		{
 			_provider = provider;
 		}

@@ -41,7 +41,7 @@ namespace TournamentManagement.WebApi
 			services.AddTransient<ICommandHandler<AmendTournamentCommand>, AmendTournamentCommandHandler>();
 			services.AddTransient<IQueryHandler<GetTournamentSummaryQuery, List<TournamentSummaryDto>>,
 				GetTournamentSummaryQueryHandler>();
-			services.AddSingleton<CommandDispatcher>();
+			services.AddSingleton<MessageDispatcher>();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>

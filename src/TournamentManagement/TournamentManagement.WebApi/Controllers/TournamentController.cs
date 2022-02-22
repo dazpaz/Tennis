@@ -11,9 +11,9 @@ namespace TournamentManagement.WebApi.Controllers
 	[ApiController]
 	public class TournamentController : ControllerBase
 	{
-		private readonly CommandDispatcher _dispatcher;
+		private readonly MessageDispatcher _dispatcher;
 
-		public TournamentController(CommandDispatcher dispatcher)
+		public TournamentController(MessageDispatcher dispatcher)
 		{
 			_dispatcher = dispatcher;
 		}
