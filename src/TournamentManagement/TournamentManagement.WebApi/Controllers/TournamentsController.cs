@@ -11,11 +11,11 @@ namespace TournamentManagement.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class TournamentController : ControllerBase
+	public class TournamentsController : ControllerBase
 	{
 		private readonly MessageDispatcher _dispatcher;
 
-		public TournamentController(MessageDispatcher dispatcher)
+		public TournamentsController(MessageDispatcher dispatcher)
 		{
 			_dispatcher = dispatcher;
 		}

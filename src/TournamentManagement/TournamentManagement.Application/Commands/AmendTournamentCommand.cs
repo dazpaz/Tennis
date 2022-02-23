@@ -54,7 +54,7 @@ namespace TournamentManagement.Application.Commands
 
 			try
 			{
-				tournament.UpdateDetails(command.Title, command.TournamentLevel, 
+				tournament.AmendDetails(command.Title, command.TournamentLevel, 
 					command.StartDate, command.EndDate, venue);
 
 				_uow.SaveChanges();
