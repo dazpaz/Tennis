@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TournamentManagement.Application;
+using TournamentManagement.Application.Commands;
+using TournamentManagement.Application.Queries;
 using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Data;

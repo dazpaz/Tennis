@@ -5,7 +5,7 @@ using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
 
-namespace TournamentManagement.Application
+namespace TournamentManagement.Application.Queries
 {
 	public sealed class GetTournamentSummaryQuery : IQuery<List<TournamentSummaryDto>>
 	{

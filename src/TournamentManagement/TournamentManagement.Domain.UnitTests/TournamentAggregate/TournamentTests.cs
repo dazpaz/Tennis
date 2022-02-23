@@ -61,7 +61,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournament();
 
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
-			tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+			tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
 
 			tournament.Title.Should().Be("New Wimbledon");
@@ -81,7 +81,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournament();
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
 
-			Action act = () => tournament.UpdateDetails(title, TournamentLevel.Masters500,
+			Action act = () => tournament.AmendDetails(title, TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
 
 			act.Should()
@@ -96,7 +96,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournament();
 
-			Action act = () => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+			Action act = () => tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), null);
 
 			act.Should().Throw<ArgumentNullException>()
@@ -242,10 +242,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournamentAndOpenForEntries();
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
 
-			void act() => tournament.UpdateDetails("New Wimbledon", TournamentLevel.Masters500,
+			void act() => tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
 				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
 
-			VerifyExceptionThrownWhenNotInCorrectState(act, "UpdateDetails", TournamentState.AcceptingEntries);
+			VerifyExceptionThrownWhenNotInCorrectState(act, "AmendDetails", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]

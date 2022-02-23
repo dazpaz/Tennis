@@ -3,17 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using TournamentManagement.Application;
+using TournamentManagement.Application.Commands;
+using TournamentManagement.Application.Queries;
 using TournamentManagement.Contract;
 
 namespace TournamentManagement.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class TournamentController : ControllerBase
+	public class TournamentsController : ControllerBase
 	{
 		private readonly MessageDispatcher _dispatcher;
 
-		public TournamentController(MessageDispatcher dispatcher)
+		public TournamentsController(MessageDispatcher dispatcher)
 		{
 			_dispatcher = dispatcher;
 		}

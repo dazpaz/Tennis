@@ -55,10 +55,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return tournament;
 		}
 
-		public void UpdateDetails(string title, TournamentLevel level, DateTime startDate,
+		public void AmendDetails(string title, TournamentLevel level, DateTime startDate,
 			DateTime endDate, Venue venue)
 		{
-			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(UpdateDetails));
+			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AmendDetails));
 			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 			Guard.Against.Null(venue, nameof(venue));
 
