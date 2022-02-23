@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Domain.Common
+﻿namespace TournamentManagement.Contract
 {
 	public enum SetType
 	{

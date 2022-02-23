@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using DomainDesign.Common;
 using System.Collections.Generic;
+using TournamentManagement.Contract;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate.Guards;
 

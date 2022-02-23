@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Domain.TournamentAggregate
+﻿namespace TournamentManagement.Contract
 {
 	public enum EventType
 	{
