@@ -6,19 +6,21 @@ using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
 using TournamentManagement.Domain.VenueAggregate;
 
-namespace TournamentManagement.Application
+namespace TournamentManagement.Application.Commands
 {
-	public sealed class AddTournamentCommand : ICommand
+	public class AmendTournamentCommand : ICommand
 	{
+		public TournamentId Id { get; }
 		public string Title { get; }
 		public TournamentLevel TournamentLevel { get; }
 		public DateTime StartDate { get; }
 		public DateTime EndDate { get; }
 		public VenueId VenueId { get; }
 
-		public AddTournamentCommand(string title, TournamentLevel level, DateTime startDate,
+		public AmendTournamentCommand(Guid tournamentGuid, string title, TournamentLevel level, DateTime startDate,
 			DateTime endDate, Guid venueGuid)
 		{
+			Id = new TournamentId(tournamentGuid);
 			Title = title;
 			TournamentLevel = level;
 			StartDate = startDate;
@@ -27,36 +29,41 @@ namespace TournamentManagement.Application
 		}
 	}
 
-	public sealed class AddTournamentCommandHandler : ICommandHandler<AddTournamentCommand, Guid>
+	public sealed class AmendTournamentCommandHandler : ICommandHandler<AmendTournamentCommand>
 	{
 		private readonly IUnitOfWork _uow;
 
-		public AddTournamentCommandHandler(IUnitOfWork uow)
+		public AmendTournamentCommandHandler(IUnitOfWork uow)
 		{
 			_uow = uow;
 		}
 
-		public Result<Guid> Handle(AddTournamentCommand command)
+		public Result Handle(AmendTournamentCommand command)
 		{
+			var tournament = _uow.TournamentRepository.GetById(command.Id);
+			if (tournament == null)
+			{
+				return Result.Failure("Tournament does not exist");
+			}
+
 			var venue = _uow.VenueRepository.GetById(command.VenueId);
 			if (venue == null)
 			{
-				return Result.Failure<Guid>("Venue does not exist");
+				return Result.Failure<TournamentId>("Venue does not exist");
 			}
 
 			try
 			{
-				var tournament = Tournament.Create(command.Title, command.TournamentLevel,
+				tournament.UpdateDetails(command.Title, command.TournamentLevel, 
 					command.StartDate, command.EndDate, venue);
 
-				_uow.TournamentRepository.Add(tournament);
 				_uow.SaveChanges();
 
-				return Result.Success(tournament.Id.Id);
+				return Result.Success(tournament.Id);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<Guid>(ex.Message);
+				return Result.Failure<TournamentId>(ex.Message);
 			}
 		}
 	}
