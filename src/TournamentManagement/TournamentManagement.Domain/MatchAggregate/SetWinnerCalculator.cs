@@ -1,4 +1,4 @@
-﻿using TournamentManagement.Domain.Common;
+﻿using TournamentManagement.Contract;
 
 namespace TournamentManagement.Domain.MatchAggregate
 {

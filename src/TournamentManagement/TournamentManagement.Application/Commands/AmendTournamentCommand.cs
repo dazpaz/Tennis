@@ -17,10 +17,10 @@ namespace TournamentManagement.Application.Commands
 		public DateTime EndDate { get; }
 		public VenueId VenueId { get; }
 
-		public AmendTournamentCommand(Guid tournamentGuid, string title, TournamentLevel level, DateTime startDate,
+		public AmendTournamentCommand(Guid tournamentId, string title, TournamentLevel level, DateTime startDate,
 			DateTime endDate, Guid venueGuid)
 		{
-			Id = new TournamentId(tournamentGuid);
+			Id = new TournamentId(tournamentId);
 			Title = title;
 			TournamentLevel = level;
 			StartDate = startDate;

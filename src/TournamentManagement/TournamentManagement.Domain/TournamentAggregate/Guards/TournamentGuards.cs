@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace Ardalis.GuardClauses

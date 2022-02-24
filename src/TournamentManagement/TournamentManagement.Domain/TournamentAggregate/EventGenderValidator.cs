@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TournamentManagement.Contract;
 
 namespace TournamentManagement.Domain.TournamentAggregate
 {

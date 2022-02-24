@@ -48,12 +48,24 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		[HttpPost("{id}/Events")]
+		public IActionResult AddEvent(Guid id, [FromBody] AddEventDto eventDetails)
+		{
+			var command = new AddEventCommand(id, eventDetails.EventType, eventDetails.EntrantsLimit,
+				eventDetails.NumberOfSeeds, eventDetails.NumberOfSets, eventDetails.FinalSetType);
+
+			Result result = _dispatcher.Dispatch(command);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
 			return Ok($"Tournament {id} to go here");
 		}
-
 
 		[HttpGet]
 		public IActionResult GetTournaments()
