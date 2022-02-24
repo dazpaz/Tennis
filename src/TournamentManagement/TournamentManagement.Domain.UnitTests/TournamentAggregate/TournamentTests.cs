@@ -154,6 +154,38 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		}
 
 		[Fact]
+		public void CanAmendAnEventInTheTournament()
+		{
+			var tournament = CreateTestTournament();
+			AddEventToTournament(tournament, EventType.MensSingles);
+			AddEventToTournament(tournament, EventType.WomensSingles);
+
+			tournament.AmendEvent(EventType.MensSingles, 16, 4, 1, SetType.TieBreakAtTwelveAll);
+
+			tournament.Events[0].EventType.Should().Be(EventType.MensSingles);
+			tournament.Events[0].EventSize.EntrantsLimit.Should().Be(16);
+			tournament.Events[0].EventSize.NumberOfSeeds.Should().Be(4);
+			tournament.Events[0].MatchFormat.NumberOfSets.Should().Be(1);
+			tournament.Events[0].MatchFormat.FinalSetType.Should().Be(SetType.TieBreakAtTwelveAll);
+		}
+
+		[Fact]
+		public void CannotAmendAnEventFromATournamentIfTheEventDoesNotExist()
+		{
+			var tournament = CreateTestTournament();
+			AddEventToTournament(tournament, EventType.MensSingles);
+
+			tournament.Events.Count.Should().Be(1);
+
+			Action act = () => tournament.AmendEvent(EventType.WomensSingles, 128, 32, MatchFormat.OneSetMatchWithTwoGamesClear);
+
+			act.Should()
+				.Throw<Exception>()
+				.WithMessage("Tournament does not have an event of type WomensSingles");
+		}
+
+
+		[Fact]
 		public void CanRemoveAnEventFromATournament()
 		{
 			var tournament = CreateTestTournament();
@@ -256,6 +288,16 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			void act() => AddEventToTournament(tournament);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "AddEvent", TournamentState.AcceptingEntries);
+		}
+
+		[Fact]
+		public void CannotAmendEventIfTournamentIsNotInBeingDefinedState()
+		{
+			var tournament = CreateTestTournamentAndOpenForEntries();
+
+			void act() => tournament.AmendEvent(EventType.MensSingles, 128, 32, MatchFormat.FiveSetMatchWithTwoGamesClear);
+
+			VerifyExceptionThrownWhenNotInCorrectState(act, "AmendEvent", TournamentState.AcceptingEntries);
 		}
 
 		[Fact]
