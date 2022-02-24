@@ -10,7 +10,7 @@ namespace TournamentManagement.Application.Commands
 {
 	public class AmendTournamentCommand : ICommand
 	{
-		public TournamentId Id { get; }
+		public TournamentId TournamentId { get; }
 		public string Title { get; }
 		public TournamentLevel TournamentLevel { get; }
 		public DateTime StartDate { get; }
@@ -20,7 +20,7 @@ namespace TournamentManagement.Application.Commands
 		public AmendTournamentCommand(Guid tournamentId, string title, TournamentLevel level, DateTime startDate,
 			DateTime endDate, Guid venueGuid)
 		{
-			Id = new TournamentId(tournamentId);
+			TournamentId = new TournamentId(tournamentId);
 			Title = title;
 			TournamentLevel = level;
 			StartDate = startDate;
@@ -40,7 +40,7 @@ namespace TournamentManagement.Application.Commands
 
 		public Result Handle(AmendTournamentCommand command)
 		{
-			var tournament = _uow.TournamentRepository.GetById(command.Id);
+			var tournament = _uow.TournamentRepository.GetById(command.TournamentId);
 			if (tournament == null)
 			{
 				return Result.Failure("Tournament does not exist");

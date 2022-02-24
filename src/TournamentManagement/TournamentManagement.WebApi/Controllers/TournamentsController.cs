@@ -61,6 +61,53 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		[HttpPut("{id}/Events/{eventType}")]
+		public IActionResult AmendEvent(Guid id, string eventType, [FromBody] AmendEventDto eventDetails)
+		{
+			if (!Enum.TryParse(eventType, out EventType type))
+			{
+				return BadRequest("Invalid Event Type");
+			}
+
+			var command = new AmendEventCommand(id, type, eventDetails.EntrantsLimit,
+				eventDetails.NumberOfSeeds, eventDetails.NumberOfSets, eventDetails.FinalSetType);
+
+			Result result = _dispatcher.Dispatch(command);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
+		[HttpDelete("{id}/Events/{eventType}")]
+		public IActionResult RemoveEvent(Guid id, string eventType)
+		{
+			if (!Enum.TryParse(eventType, out EventType type))
+			{
+				return BadRequest("Invalid Event Type");
+			}
+
+			var command = new RemoveEventCommand(id, type);
+
+			Result result = _dispatcher.Dispatch(command);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
+		[HttpPost("{id}/OpenForEntries")]
+		public IActionResult OpenForEntries(Guid id)
+		{
+			var command = new OpenForEntriesCommand(id);
+
+			Result result = _dispatcher.Dispatch(command);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
