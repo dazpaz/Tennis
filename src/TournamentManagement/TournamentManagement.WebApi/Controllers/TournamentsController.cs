@@ -57,7 +57,7 @@ namespace TournamentManagement.WebApi.Controllers
 			Result result = _dispatcher.Dispatch(command);
 
 			return result.IsSuccess
-				? Ok()
+				? CreatedAtAction(nameof(GetEvent), new { id, eventType = eventDetails.EventType.ToString() }, null)
 				: BadRequest(result.Error);
 		}
 
@@ -65,6 +65,12 @@ namespace TournamentManagement.WebApi.Controllers
 		public IActionResult GetTournament(Guid id)
 		{
 			return Ok($"Tournament {id} to go here");
+		}
+
+		[HttpGet("{id}/Events/{eventType}")]
+		public IActionResult GetEvent(Guid id, string eventType)
+		{
+			return Ok($"Event {id} of type {eventType} to go here");
 		}
 
 		[HttpGet]
