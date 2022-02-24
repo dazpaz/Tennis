@@ -42,7 +42,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return eventType == EventType.MensSingles || eventType == EventType.WomensSingles;
 		}
 
-		public void UpdateDetails(int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		public void AmendDetails(int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
 		{
 			Guard.Against.UpdatingCompletedEvent(IsCompleted);
 			SetAttributeDetails(entrantsLimit, numberOfSeeds, matchFormat);

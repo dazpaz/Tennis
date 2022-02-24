@@ -45,7 +45,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var id = tennisEvent.Id;
 
-			tennisEvent.UpdateDetails(64, 16, MatchFormat.OneSetMatchWithFinalSetTieBreak);
+			tennisEvent.AmendDetails(64, 16, MatchFormat.OneSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.Id.Should().Be(id);
 			tennisEvent.EventType.Should().Be(EventType.MensSingles);
@@ -74,7 +74,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			tennisEvent.CompleteEvent();
 
-			Action act = () => tennisEvent.UpdateDetails(64, 16,
+			Action act = () => tennisEvent.AmendDetails(64, 16,
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			act.Should()
