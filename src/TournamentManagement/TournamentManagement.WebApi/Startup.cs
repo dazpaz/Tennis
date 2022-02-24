@@ -44,6 +44,7 @@ namespace TournamentManagement.WebApi
 			services.AddTransient<ICommandHandler<AddEventCommand>, AddEventCommandHandler>();
 			services.AddTransient<ICommandHandler<AmendEventCommand>, AmendEventCommandHandler>();
 			services.AddTransient<ICommandHandler<RemoveEventCommand>, RemoveEventCommandHandler>();
+			services.AddTransient<ICommandHandler<OpenForEntriesCommand>, OpenForEntriesCommandHandler>();
 			services.AddTransient<IQueryHandler<GetTournamentSummaryQuery, List<TournamentSummaryDto>>,
 				GetTournamentSummaryQueryHandler>();
 			services.AddSingleton<MessageDispatcher>();

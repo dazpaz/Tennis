@@ -96,6 +96,18 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		[HttpPost("{id}/OpenForEntries")]
+		public IActionResult OpenForEntries(Guid id)
+		{
+			var command = new OpenForEntriesCommand(id);
+
+			Result result = _dispatcher.Dispatch(command);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
