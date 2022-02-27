@@ -32,7 +32,7 @@ namespace TournamentManagement.Data.Repository
 
 		public IReadOnlyList<Tournament> GetList()
 		{
-			return _context.Tournaments.Include(t => t.Venue).ToList();
+			return _context.Tournaments.ToList();
 		}
 	}
 }

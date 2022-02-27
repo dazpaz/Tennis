@@ -111,23 +111,50 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
-			return Ok($"Tournament {id} to go here");
+			var query = new GetTournamentDetails(id);
+
+			Result<TournamentDetailsDto> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
 		}
 
 		[HttpGet("{id}/Events/{eventType}")]
 		public IActionResult GetEvent(Guid id, string eventType)
 		{
-			return Ok($"Event {id} of type {eventType} to go here");
+			if (!Enum.TryParse(eventType, out EventType type))
+			{
+				return BadRequest("Invalid Event Type");
+			}
+
+			var query = new GetEvent(id, type);
+			Result<EventDto> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
 		}
 
 		[HttpGet]
 		public IActionResult GetTournaments()
 		{
-			var query = new GetTournamentSummaryQuery();
+			var query = new GetTournamentSummaryList();
 			Result<List<TournamentSummaryDto>> result = _dispatcher.Dispatch(query);
 
 			return result.IsSuccess 
 				? Ok(result.Value) 
+				: BadRequest(result.Error);
+		}
+
+		[HttpGet("Details")]
+		public IActionResult GetTournamentDetails()
+		{
+			var query = new GetTournamentDetailsList();
+			Result<List<TournamentDetailsDto>> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
 				: BadRequest(result.Error);
 		}
 	}
