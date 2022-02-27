@@ -23,7 +23,7 @@ namespace TournamentManagement.Application.Queries
 			};
 		}
 
-		private static EventDto ToEventDto(Event tennisEvent)
+		public static EventDto ToEventDto(Event tennisEvent)
 		{
 			return new EventDto
 			{

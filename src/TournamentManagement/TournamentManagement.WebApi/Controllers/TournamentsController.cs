@@ -123,7 +123,17 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpGet("{id}/Events/{eventType}")]
 		public IActionResult GetEvent(Guid id, string eventType)
 		{
-			return Ok($"Event {id} of type {eventType} to go here");
+			if (!Enum.TryParse(eventType, out EventType type))
+			{
+				return BadRequest("Invalid Event Type");
+			}
+
+			var query = new GetEvent(id, type);
+			Result<EventDto> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
 		}
 
 		[HttpGet]
