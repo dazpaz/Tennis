@@ -111,7 +111,13 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
-			return Ok($"Tournament {id} to go here");
+			var query = new GetTournamentDetails(id);
+
+			Result<TournamentDetailsDto> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
 		}
 
 		[HttpGet("{id}/Events/{eventType}")]
