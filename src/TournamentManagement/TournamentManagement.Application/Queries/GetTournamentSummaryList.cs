@@ -7,21 +7,21 @@ using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Application.Queries
 {
-	public sealed class GetTournamentSummaryQuery : IQuery<List<TournamentSummaryDto>>
+	public sealed class GetTournamentSummaryList : IQuery<List<TournamentSummaryDto>>
 	{
 	}
 
-	public sealed class GetTournamentSummaryQueryHandler
-		: IQueryHandler<GetTournamentSummaryQuery, List<TournamentSummaryDto>>
+	public sealed class GetTournamentSummaryListHandler
+		: IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>
 	{
 		private readonly IUnitOfWork _uow;
 
-		public GetTournamentSummaryQueryHandler(IUnitOfWork uow)
+		public GetTournamentSummaryListHandler(IUnitOfWork uow)
 		{
 			_uow = uow;
 		}
 
-		public List<TournamentSummaryDto> Handle(GetTournamentSummaryQuery query)
+		public List<TournamentSummaryDto> Handle(GetTournamentSummaryList query)
 		{
 			return _uow.TournamentRepository
 				.GetList()
@@ -35,10 +35,12 @@ namespace TournamentManagement.Application.Queries
 			{
 				Id = tournament.Id.Id,
 				Title = tournament.Title,
-				TournamentLevel = tournament.Level,
+				TournamentLevel = tournament.Level.ToString(),
+				State = tournament.State.ToString(),
 				StartDate = tournament.StartDate,
 				EndDate = tournament.EndDate,
-				VenueName = tournament.Venue.Name
+				VenueName = tournament.Venue.Name,
+				NumberOfEvents = tournament.Events.Count
 			};
 		}
 	}

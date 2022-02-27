@@ -123,11 +123,22 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpGet]
 		public IActionResult GetTournaments()
 		{
-			var query = new GetTournamentSummaryQuery();
+			var query = new GetTournamentSummaryList();
 			Result<List<TournamentSummaryDto>> result = _dispatcher.Dispatch(query);
 
 			return result.IsSuccess 
 				? Ok(result.Value) 
+				: BadRequest(result.Error);
+		}
+
+		[HttpGet("Details")]
+		public IActionResult GetTournamentDetails()
+		{
+			var query = new GetTournamentDetailsList();
+			Result<List<TournamentDetailsDto>> result = _dispatcher.Dispatch(query);
+
+			return result.IsSuccess
+				? Ok(result.Value)
 				: BadRequest(result.Error);
 		}
 	}
