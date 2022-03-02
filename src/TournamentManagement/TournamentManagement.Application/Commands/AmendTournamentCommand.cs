@@ -11,21 +11,35 @@ namespace TournamentManagement.Application.Commands
 	public class AmendTournamentCommand : ICommand
 	{
 		public TournamentId TournamentId { get; }
-		public string Title { get; }
-		public TournamentLevel TournamentLevel { get; }
-		public DateTime StartDate { get; }
-		public DateTime EndDate { get; }
+		public TournamentTitle Title { get; }
+		public TournamentLevel Level { get; }
+		public TournamentDates Dates { get; }
 		public VenueId VenueId { get; }
 
-		public AmendTournamentCommand(Guid tournamentId, string title, TournamentLevel level, DateTime startDate,
-			DateTime endDate, Guid venueGuid)
+		private AmendTournamentCommand(TournamentId tournamentId, TournamentTitle title, TournamentLevel level,
+			TournamentDates dates, VenueId venueId)
 		{
-			TournamentId = new TournamentId(tournamentId);
+			TournamentId = tournamentId;
 			Title = title;
-			TournamentLevel = level;
-			StartDate = startDate;
-			EndDate = endDate;
-			VenueId = new VenueId(venueGuid);
+			Level = level;
+			Dates = dates;
+			VenueId = venueId;
+		}
+
+		public static Result<AmendTournamentCommand> Create(Guid tournamentGuid, string title, TournamentLevel level,
+			DateTime startDate, DateTime endDate, Guid venueGuid)
+		{
+			try
+			{
+				var command = new AmendTournamentCommand(new TournamentId(tournamentGuid), new TournamentTitle(title),
+					level, new TournamentDates(startDate, endDate), new VenueId(venueGuid));
+
+				return Result.Success(command);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<AmendTournamentCommand>(ex.Message);
+			}
 		}
 	}
 
@@ -54,8 +68,8 @@ namespace TournamentManagement.Application.Commands
 
 			try
 			{
-				tournament.AmendDetails(command.Title, command.TournamentLevel, 
-					command.StartDate, command.EndDate, venue);
+				tournament.AmendDetails((TournamentTitle)command.Title, command.Level, 
+					command.Dates, venue);
 
 				_uow.SaveChanges();
 

@@ -10,20 +10,34 @@ namespace TournamentManagement.Application.Commands
 {
 	public sealed class AddTournamentCommand : ICommand
 	{
-		public string Title { get; }
-		public TournamentLevel TournamentLevel { get; }
-		public DateTime StartDate { get; }
-		public DateTime EndDate { get; }
+		public TournamentTitle Title { get; }
+		public TournamentLevel Level { get; }
+		public TournamentDates Dates { get; }
 		public VenueId VenueId { get; }
 
-		public AddTournamentCommand(string title, TournamentLevel level, DateTime startDate,
-			DateTime endDate, Guid venueGuid)
+		private AddTournamentCommand(TournamentTitle title, TournamentLevel level,
+			TournamentDates tournamentDates, VenueId venueId)
 		{
 			Title = title;
-			TournamentLevel = level;
-			StartDate = startDate;
-			EndDate = endDate;
-			VenueId = new VenueId(venueGuid);
+			Level = level;
+			Dates = tournamentDates;
+			VenueId = venueId;
+		}
+
+		public static Result<AddTournamentCommand> Create(string title, TournamentLevel level,
+			DateTime startDate, DateTime endDate, Guid venueGuid)
+		{
+			try
+			{
+				var command = new AddTournamentCommand(new TournamentTitle(title), level,
+					new TournamentDates(startDate, endDate), new VenueId(venueGuid));
+
+				return Result.Success(command);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<AddTournamentCommand>(ex.Message);
+			}
 		}
 	}
 
@@ -46,8 +60,8 @@ namespace TournamentManagement.Application.Commands
 
 			try
 			{
-				var tournament = Tournament.Create(command.Title, command.TournamentLevel,
-					command.StartDate, command.EndDate, venue);
+				var tournament = Tournament.Create(command.Title, command.Level,
+					command.Dates, venue);
 
 				_uow.TournamentRepository.Add(tournament);
 				_uow.SaveChanges();

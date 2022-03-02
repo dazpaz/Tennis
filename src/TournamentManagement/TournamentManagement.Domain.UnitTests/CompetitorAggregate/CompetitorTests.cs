@@ -87,8 +87,8 @@ namespace TournamentManagement.Domain.UnitTests.CompetitorAggregate
 		private static Tournament CreateTestTournament()
 		{
 			var venue = Venue.Create(new VenueId(), "AETLA", Surface.Grass);
-			return Tournament.Create("Wimbledon", TournamentLevel.Masters500,
-				DateTime.Today, DateTime.Today, venue);
+			var dates = new TournamentDates(DateTime.Today, DateTime.Today);
+			return Tournament.Create((TournamentTitle)"Wimbledon", TournamentLevel.Masters500, dates, venue);
 		}
 	}
 }
