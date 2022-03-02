@@ -2,10 +2,10 @@
 {
 	public enum TournamentLevel
 	{
-		Masters125 = 125,
-		Masters250 = 250,
-		Masters500 = 500,
-		Masters1000 = 1000,
-		GrandSlam = 2000
+		Challenger,
+		Masters250,
+		Masters500,
+		Masters1000,
+		GrandSlam
 	}
 }

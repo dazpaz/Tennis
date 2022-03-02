@@ -12,7 +12,8 @@ namespace TournamentManagement.Data.Configuration
 			builder.Property(p => p.Id)
 				.HasConversion(p => p.Id, p => new TournamentId(p));
 			builder.Property(p => p.Title)
-				.HasMaxLength(50)
+				.HasConversion(p => p.Title, p => new TournamentTitle(p))
+				.HasMaxLength(TournamentTitle.MaxLength)
 				.IsRequired();
 			builder.Property(p => p.State);
 			builder.Property(p => p.Level);

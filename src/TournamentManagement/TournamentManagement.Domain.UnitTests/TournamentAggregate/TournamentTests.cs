@@ -19,7 +19,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournament();
 
 			tournament.Id.Id.Should().NotBe(Guid.Empty);
-			tournament.Title.Should().Be("Wimbledon");
+			tournament.Title.Should().Be((TournamentTitle)"Wimbledon");
 			tournament.Year.Should().Be(2019);
 			tournament.Level.Should().Be(TournamentLevel.GrandSlam);
 			tournament.State.Should().Be(TournamentState.BeingDefined);
@@ -35,8 +35,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotCreateTournamentWithEmptyTitle(string title)
 		{
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
-			Action act = () => Tournament.Create(title, TournamentLevel.Masters125,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), venue);
+			var dates = new TournamentDates(new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+
+			Action act = () => Tournament.Create((TournamentTitle)title, TournamentLevel.Challenger,
+				dates, venue);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -48,8 +50,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotCreateTournamentWithNoVenue()
 		{
-			Action act = () => Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), null);
+			var dates = new TournamentDates(new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
+
+			Action act = () => Tournament.Create((TournamentTitle)"Wimbledon", TournamentLevel.GrandSlam,
+				dates , null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'venue')");
@@ -61,10 +65,11 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournament();
 
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
-			tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
+			var dates = new TournamentDates(new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+			tournament.AmendDetails((TournamentTitle)"New Wimbledon", TournamentLevel.Masters500,
+				dates , venue);
 
-			tournament.Title.Should().Be("New Wimbledon");
+			tournament.Title.Should().Be((TournamentTitle)"New Wimbledon");
 			tournament.Level.Should().Be(TournamentLevel.Masters500);
 			tournament.State.Should().Be(TournamentState.BeingDefined);
 			tournament.StartDate.Should().Be(new DateTime(2019, 7, 4));
@@ -80,9 +85,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournament();
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
-
-			Action act = () => tournament.AmendDetails(title, TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
+			var dates = new TournamentDates(new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
+			Action act = () => tournament.AmendDetails((TournamentTitle)title, TournamentLevel.Masters500,
+				dates, venue);
 
 			act.Should()
 				.Throw<ArgumentException>()
@@ -95,9 +100,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		public void CannotUpdateTournamentDetailsToHaveNoVenue()
 		{
 			var tournament = CreateTestTournament();
+			var dates = new TournamentDates(new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
 
-			Action act = () => tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), null);
+			Action act = () => tournament.AmendDetails((TournamentTitle)"New Wimbledon", TournamentLevel.Masters500,
+				dates, null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'venue')");
@@ -273,9 +279,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournamentAndOpenForEntries();
 			var venue = Venue.Create(new VenueId(), "Roland Garros", Surface.Clay);
+			var dates = new TournamentDates(new DateTime(2019, 7, 4), new DateTime(2019, 7, 17));
 
-			void act() => tournament.AmendDetails("New Wimbledon", TournamentLevel.Masters500,
-				new DateTime(2019, 7, 4), new DateTime(2019, 7, 17), venue);
+			void act() => tournament.AmendDetails((TournamentTitle)"New Wimbledon", TournamentLevel.Masters500,
+				dates, venue);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "AmendDetails", TournamentState.AcceptingEntries);
 		}
@@ -535,9 +542,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		private static Tournament CreateTestTournament()
 		{
 			var venue = Venue.Create(new VenueId(), "All England Lawn Tennis Club", Surface.Clay);
+			var dates = new TournamentDates(new DateTime(2019, 7, 1), new DateTime(2019, 7, 14));
 
-			return Tournament.Create("Wimbledon", TournamentLevel.GrandSlam,
-				new DateTime(2019, 7, 1), new DateTime(2019, 7, 14), venue);
+			return Tournament.Create((TournamentTitle)"Wimbledon", TournamentLevel.GrandSlam, dates, venue);
 		}
 
 		private static void AddEventToTournament(Tournament tournament, EventType eventType = EventType.MensSingles)

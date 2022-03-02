@@ -23,11 +23,13 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpPost]
 		public IActionResult AddTournament([FromBody] AddTournamentDto tournamentDetails)
 		{
-			var command = new AddTournamentCommand(tournamentDetails.Title,
+			var command = AddTournamentCommand.Create(tournamentDetails.Title,
 				tournamentDetails.TournamentLevel, tournamentDetails.StartDate,
 				tournamentDetails.EndDate, tournamentDetails.VenueId);
 
-			Result<Guid> result = _dispatcher.Dispatch<Guid>(command);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result<Guid> result = _dispatcher.Dispatch<Guid>(command.Value);
 
 			return result.IsSuccess
 				? CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null)
@@ -37,11 +39,13 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpPut("{id}")]
 		public IActionResult AmendTournament(Guid id, [FromBody] AmendTournamentDto tournamentDetails)
 		{
-			var command = new AmendTournamentCommand(id, tournamentDetails.Title,
+			var command = AmendTournamentCommand.Create(id, tournamentDetails.Title,
 				tournamentDetails.TournamentLevel, tournamentDetails.StartDate,
 				tournamentDetails.EndDate, tournamentDetails.VenueId);
 
-			Result result = _dispatcher.Dispatch(command);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
 
 			return result.IsSuccess
 				? Ok()

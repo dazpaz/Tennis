@@ -16,7 +16,7 @@ namespace TournamentManagement.Domain.TournamentAggregate
 {
 	public class Tournament : AggregateRoot<TournamentId>
 	{
-		public string Title { get; private set; }
+		public TournamentTitle Title { get; private set; }
 		public TournamentDates Dates { get; private set; }
 		public TournamentState State { get; private set; }
 		public TournamentLevel Level { get; private set; }
@@ -37,10 +37,11 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 		}
 
-		public static Tournament Create(string title, TournamentLevel level,
-			DateTime startDate, DateTime endDate, Venue venue)
+		public static Tournament Create(TournamentTitle title, TournamentLevel level,
+			TournamentDates dates, Venue venue)
 		{
-			Guard.Against.NullOrWhiteSpace(title, nameof(title));
+			Guard.Against.Null(title, nameof(title));
+			Guard.Against.Null(dates, nameof(dates));
 			Guard.Against.Null(venue, nameof(venue));
 
 			var tournament = new Tournament(new TournamentId())
@@ -48,23 +49,24 @@ namespace TournamentManagement.Domain.TournamentAggregate
 				Title = title,
 				Level = level,
 				State = TournamentState.BeingDefined,
-				Dates = new TournamentDates(startDate, endDate),
+				Dates = dates,
 				Venue = venue
 			};
 
 			return tournament;
 		}
 
-		public void AmendDetails(string title, TournamentLevel level, DateTime startDate,
-			DateTime endDate, Venue venue)
+		public void AmendDetails(TournamentTitle title, TournamentLevel level,
+			TournamentDates dates, Venue venue)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AmendDetails));
-			Guard.Against.NullOrWhiteSpace(title, nameof(title));
+			Guard.Against.Null(title, nameof(title));
+			Guard.Against.Null(dates, nameof(dates));
 			Guard.Against.Null(venue, nameof(venue));
 
 			Title = title;
 			Level = level;
-			Dates = new TournamentDates(startDate, endDate);
+			Dates = dates;
 			Venue = venue;
 		}
 
