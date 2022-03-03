@@ -103,9 +103,11 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpPost("{id}/OpenForEntries")]
 		public IActionResult OpenForEntries(Guid id)
 		{
-			var command = new OpenForEntriesCommand(id);
+			var command = OpenForEntriesCommand.Create(id);
 
-			Result result = _dispatcher.Dispatch(command);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
 
 			return result.IsSuccess
 				? Ok()
