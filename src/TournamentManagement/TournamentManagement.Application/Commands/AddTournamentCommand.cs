@@ -29,6 +29,11 @@ namespace TournamentManagement.Application.Commands
 		{
 			try
 			{
+				if (!Enum.IsDefined(typeof(TournamentLevel), level))
+				{
+					return Result.Failure<AddTournamentCommand>("Invalid tournament level");
+				}
+
 				var command = new AddTournamentCommand(new TournamentTitle(title), level,
 					new TournamentDates(startDate, endDate), new VenueId(venueGuid));
 
