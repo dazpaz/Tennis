@@ -85,14 +85,11 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpDelete("{id}/Events/{eventType}")]
 		public IActionResult RemoveEvent(Guid id, string eventType)
 		{
-			if (!Enum.TryParse(eventType, out EventType type))
-			{
-				return BadRequest("Invalid Event Type");
-			}
+			var command = RemoveEventCommand.Create(id, eventType);
 
-			var command = new RemoveEventCommand(id, type);
+			if (command.IsFailure) return BadRequest(command.Error);
 
-			Result result = _dispatcher.Dispatch(command);
+			Result result = _dispatcher.Dispatch(command.Value);
 
 			return result.IsSuccess
 				? Ok()

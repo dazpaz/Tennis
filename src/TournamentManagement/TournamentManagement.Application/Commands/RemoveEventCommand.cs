@@ -12,10 +12,28 @@ namespace TournamentManagement.Application.Commands
 		public TournamentId TournamentId { get; }
 		public EventType EventType { get; }
 
-		public RemoveEventCommand(Guid tournamentId, EventType eventType)
+		private RemoveEventCommand(TournamentId tournamentId, EventType eventType)
 		{
-			TournamentId = new TournamentId(tournamentId);
+			TournamentId = tournamentId;
 			EventType = eventType;
+		}
+
+		public static Result<RemoveEventCommand> Create(Guid tournamentGuid, string eventType)
+		{
+			if (!Enum.TryParse(eventType, out EventType type))
+			{
+				return Result.Failure<RemoveEventCommand>("Invalid event type");
+			}
+
+			try
+			{
+				var command = new RemoveEventCommand(new TournamentId(tournamentGuid), type);
+				return Result.Success(command);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<RemoveEventCommand>(ex.Message);
+			}
 		}
 	}
 
