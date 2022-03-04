@@ -204,8 +204,9 @@ namespace TournamentManagement.Console
 			var tournament = Tournament.Create((TournamentTitle)"Wimbledon 2022", TournamentLevel.GrandSlam,
 				dates, venue);
 
-			tournament.AddEvent(EventType.MensSingles, 128, 32, 5, SetType.TieBreakAtTwelveAll);
-			tournament.AddEvent(EventType.WomensSingles, 128, 32, 3, SetType.TieBreakAtTwelveAll);
+			var eventSize = new EventSize(128, 32);
+			tournament.AddEvent(EventType.MensSingles, eventSize, MatchFormat.FiveSetMatchWithFinalSetTieBreak);
+			tournament.AddEvent(EventType.WomensSingles, eventSize, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tournament.OpenForEntries();
 
@@ -228,7 +229,8 @@ namespace TournamentManagement.Console
 
 			try
 			{
-				tournament.AddEvent(EventType.MensSingles, 128, 32, 5, SetType.TieBreakAtTwelveAll);
+				var eventSize = new EventSize(128, 32);
+				tournament.AddEvent(EventType.MensSingles, eventSize, MatchFormat.FiveSetMatchWithTwoGamesClear);
 				uow.SaveChanges();
 			}
 			catch

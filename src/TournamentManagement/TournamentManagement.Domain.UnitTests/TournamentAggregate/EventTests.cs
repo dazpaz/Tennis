@@ -13,7 +13,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanCreateAnEventUsingTheFactory()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.Id.Id.Should().NotBe(Guid.Empty);
@@ -32,7 +32,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData(EventType.WomensSingles, true)]
 		public void TheIsSinglesEventPropertyIsSetCorrectlyBasedOnEventType(EventType eventType, bool isSingles)
 		{
-			var tennisEvent = Event.Create(eventType, 128, 32, new MatchFormat(1, SetType.TieBreak));
+			var tennisEvent = Event.Create(eventType, new EventSize(128, 32),
+				new MatchFormat(1, SetType.TieBreak));
 
 			tennisEvent.SinglesEvent.Should().Be(isSingles);
 		}
@@ -40,12 +41,12 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanUpdateAnEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var id = tennisEvent.Id;
 
-			tennisEvent.AmendDetails(64, 16, MatchFormat.OneSetMatchWithFinalSetTieBreak);
+			tennisEvent.AmendDetails(new EventSize(64, 16), MatchFormat.OneSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.Id.Should().Be(id);
 			tennisEvent.EventType.Should().Be(EventType.MensSingles);
@@ -57,7 +58,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CanMarkAnEventAsCompleted()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tennisEvent.IsCompleted.Should().BeFalse();
@@ -70,11 +71,12 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotUpdateAnEventThatIsCompleted()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles,
+				new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			tennisEvent.CompleteEvent();
 
-			Action act = () => tennisEvent.AmendDetails(64, 16,
+			Action act = () => tennisEvent.AmendDetails(new EventSize(64, 16),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			act.Should()
@@ -85,7 +87,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void PlayerCanEnterASinglesEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
@@ -99,7 +101,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void PairOfPlayersCanEnterADoublesEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
@@ -114,7 +116,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotEnterSinglesEventIfPlayerIsNull()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			Action act = () => tennisEvent.EnterEvent(null);
@@ -126,7 +128,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotEnterDoublesEventIfEitherPlayerIsNull()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -145,7 +147,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotEnterSinglesEventIfPlayerIsAlreadyEnteredInTheEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -165,7 +167,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotEnterDoublesEventIfPlayerOneIsAlreadyEnteredInTheEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -190,7 +192,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotEnterDoublesEventIfPlayerTwoIsAlreadyEnteredInTheEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -215,7 +217,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void PlayerCanWithdrawFromSinglesEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -234,7 +236,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void PairOfPlayersCanWithdrawFromDoublesEvent()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
@@ -253,7 +255,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotWithdrawFromSinglesEventIfPlayerIsNotSpecified()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			Action act = () => tennisEvent.WithdrawFromEvent(null);
@@ -265,7 +267,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotWithdrawFromDoublesEventIfPlayerOneIsNotSpecified()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			Action act = () => tennisEvent.WithdrawFromEvent(null, null);
@@ -277,7 +279,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotWithdrawFromDoublesEventIfPlayerTwoIsNotSpecified()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var playerOne = Player.Register(new PlayerId(), "John", 2, 4, Gender.Male);
 
@@ -290,7 +292,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotWithdrawFromSinglesEventIfPlayerWasNotEntered()
 		{
-			var tennisEvent = Event.Create(EventType.MensSingles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
@@ -307,7 +309,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void CannotWithdrawFromDoublesEventIfPlayersWereNotEntered()
 		{
-			var tennisEvent = Event.Create(EventType.MensDoubles, 128, 32,
+			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);

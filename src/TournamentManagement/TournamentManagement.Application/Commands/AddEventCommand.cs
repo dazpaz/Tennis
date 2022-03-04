@@ -12,20 +12,42 @@ namespace TournamentManagement.Application.Commands
 	{
 		public TournamentId TournamentId { get; }
 		public EventType EventType { get; }
-		public int EntrantsLimit { get; }
-		public int NumberOfSeeds { get; }
-		public int NumberOfSets { get; }
-		public SetType FinalSetType { get; }
+		public EventSize EventSize { get; }
+		public MatchFormat MatchFormat { get; }
 
-		public AddEventCommand(Guid tournamentId, EventType eventType, int entrantsLimit,
-			int numberOfSeeds, int numberOfSets, SetType finalSetType)
+		private AddEventCommand(TournamentId tournamentId, EventType eventType, EventSize eventSize, MatchFormat matchFormat)
 		{
-			TournamentId = new TournamentId(tournamentId);
+			TournamentId = tournamentId;
 			EventType = eventType;
-			EntrantsLimit = entrantsLimit;
-			NumberOfSeeds = numberOfSeeds;
-			NumberOfSets = numberOfSets;
-			FinalSetType = finalSetType;
+			EventSize = eventSize;
+			MatchFormat = matchFormat;
+		}
+
+
+		public static Result<AddEventCommand> Create(Guid tournamentGuid, EventType eventType, int entrantsLimit,
+				int numberOfSeeds, int numberOfSets, SetType finalSetType)
+		{
+			try
+			{
+				if (!Enum.IsDefined(typeof(EventType), eventType))
+				{
+					return Result.Failure<AddEventCommand>("Invalid event Type");
+				}
+
+				if (!Enum.IsDefined(typeof(SetType), finalSetType))
+				{
+					return Result.Failure<AddEventCommand>("Invalid set type");
+				}
+
+				var command = new AddEventCommand(new TournamentId(tournamentGuid), eventType,
+					new EventSize(entrantsLimit, numberOfSeeds), new MatchFormat(numberOfSets, finalSetType));
+
+				return Result.Success(command);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<AddEventCommand>(ex.Message);
+			}
 		}
 	}
 
@@ -48,8 +70,7 @@ namespace TournamentManagement.Application.Commands
 
 			try
 			{
-				var matchFormat = new MatchFormat(command.NumberOfSets, command.FinalSetType);
-				tournament.AddEvent(command.EventType, command.EntrantsLimit, command.NumberOfSeeds, matchFormat);
+				tournament.AddEvent(command.EventType, command.EventSize, command.MatchFormat);
 
 				_uow.SaveChanges();
 				return Result.Success();

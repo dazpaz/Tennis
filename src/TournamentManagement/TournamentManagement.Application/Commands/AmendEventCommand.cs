@@ -12,18 +12,41 @@ namespace TournamentManagement.Application.Commands
 	{
 		public TournamentId TournamentId { get; }
 		public EventType EventType { get; }
-		public int EntrantsLimit { get; }
-		public int NumberOfSeeds { get; }
+		public EventSize EventSize { get; }
 		public MatchFormat MatchFormat { get; }
 
-		public AmendEventCommand(Guid tournamentId, EventType eventType, int entrantsLimit,
-			int numberOfSeeds, int numberOfSets, SetType finalSetType)
+		private AmendEventCommand(TournamentId tournamentId, EventType eventType, EventSize eventSize, MatchFormat matchFormat)
 		{
-			TournamentId = new TournamentId(tournamentId);
+			TournamentId = tournamentId;
 			EventType = eventType;
-			EntrantsLimit = entrantsLimit;
-			NumberOfSeeds = numberOfSeeds;
-			MatchFormat = new MatchFormat(numberOfSets, finalSetType);
+			EventSize = eventSize;
+			MatchFormat = matchFormat;
+		}
+
+		public static Result<AmendEventCommand> Create(Guid tournamentGuid, string eventType, int entrantsLimit,
+				int numberOfSeeds, int numberOfSets, SetType finalSetType)
+		{
+			try
+			{
+				if (!Enum.TryParse(eventType, out EventType type))
+				{
+					return Result.Failure<AmendEventCommand>("Invalid event type");
+				}
+
+				if (!Enum.IsDefined(typeof(SetType), finalSetType))
+				{
+					return Result.Failure<AmendEventCommand>("Invalid set type");
+				}
+
+				var command = new AmendEventCommand(new TournamentId(tournamentGuid), type,
+					new EventSize(entrantsLimit, numberOfSeeds), new MatchFormat(numberOfSets, finalSetType));
+
+				return Result.Success(command);
+			}
+			catch (Exception ex)
+			{
+				return Result.Failure<AmendEventCommand>(ex.Message);
+			}
 		}
 	}
 
@@ -46,8 +69,7 @@ namespace TournamentManagement.Application.Commands
 
 			try 
 			{
-				tournament.AmendEvent(command.EventType, command.EntrantsLimit, command.NumberOfSeeds,
-					command.MatchFormat);
+				tournament.AmendEvent(command.EventType, command.EventSize, command.MatchFormat);
 
 				_uow.SaveChanges();
 
