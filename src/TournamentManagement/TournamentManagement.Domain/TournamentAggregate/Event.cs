@@ -28,12 +28,11 @@ namespace TournamentManagement.Domain.TournamentAggregate
 		{
 		}
 
-		internal static Event Create(EventType eventType, int entrantsLimit,
-			int numberOfSeeds, MatchFormat matchFormat)
+		internal static Event Create(EventType eventType, EventSize eventSize, MatchFormat matchFormat)
 		{
 			var tennisEvent = new Event(new EventId());
 			tennisEvent.EventType = eventType;
-			tennisEvent.SetAttributeDetails(entrantsLimit, numberOfSeeds, matchFormat);
+			tennisEvent.SetAttributeDetails(eventSize, matchFormat);
 			return tennisEvent;
 		}
 
@@ -42,10 +41,10 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return eventType == EventType.MensSingles || eventType == EventType.WomensSingles;
 		}
 
-		public void AmendDetails(int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		public void AmendDetails(EventSize eventSize, MatchFormat matchFormat)
 		{
 			Guard.Against.UpdatingCompletedEvent(IsCompleted);
-			SetAttributeDetails(entrantsLimit, numberOfSeeds, matchFormat);
+			SetAttributeDetails(eventSize, matchFormat);
 		}
 
 		internal void CompleteEvent()
@@ -95,10 +94,11 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			}
 		}
 
-		private void SetAttributeDetails(int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		private void SetAttributeDetails(EventSize eventSize, MatchFormat matchFormat)
 		{
+			EventSize = eventSize;
 			MatchFormat = matchFormat;
-			EventSize = new EventSize(entrantsLimit, numberOfSeeds);
+			
 		}
 	}
 }

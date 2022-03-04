@@ -55,10 +55,12 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpPost("{id}/Events")]
 		public IActionResult AddEvent(Guid id, [FromBody] AddEventDto eventDetails)
 		{
-			var command = new AddEventCommand(id, eventDetails.EventType, eventDetails.EntrantsLimit,
+			var command = AddEventCommand.Create(id, eventDetails.EventType, eventDetails.EntrantsLimit,
 				eventDetails.NumberOfSeeds, eventDetails.NumberOfSets, eventDetails.FinalSetType);
 
-			Result result = _dispatcher.Dispatch(command);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
 
 			return result.IsSuccess
 				? CreatedAtAction(nameof(GetEvent), new { id, eventType = eventDetails.EventType.ToString() }, null)
@@ -68,15 +70,12 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpPut("{id}/Events/{eventType}")]
 		public IActionResult AmendEvent(Guid id, string eventType, [FromBody] AmendEventDto eventDetails)
 		{
-			if (!Enum.TryParse(eventType, out EventType type))
-			{
-				return BadRequest("Invalid Event Type");
-			}
-
-			var command = new AmendEventCommand(id, type, eventDetails.EntrantsLimit,
+			var command = AmendEventCommand.Create(id, eventType , eventDetails.EntrantsLimit,
 				eventDetails.NumberOfSeeds, eventDetails.NumberOfSets, eventDetails.FinalSetType);
 
-			Result result = _dispatcher.Dispatch(command);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
 
 			return result.IsSuccess
 				? Ok()

@@ -114,8 +114,9 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournament();
 
-			tournament.AddEvent(EventType.MensSingles, 128, 32, 3, SetType.TieBreak);
-			tournament.AddEvent(EventType.WomensSingles, 128, 32, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			var eventSize = new EventSize(128, 32);
+			tournament.AddEvent(EventType.MensSingles, eventSize, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
+			tournament.AddEvent(EventType.WomensSingles, eventSize, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
 			tournament.Events.Count.Should().Be(2);
 			tournament.Events[0].EventSize.EntrantsLimit.Should().Be(128);
@@ -165,8 +166,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tournament = CreateTestTournament();
 			AddEventToTournament(tournament, EventType.MensSingles);
 			AddEventToTournament(tournament, EventType.WomensSingles);
+			var eventSize = new EventSize(16, 4);
+			var matchFormat = new MatchFormat(1, SetType.TieBreakAtTwelveAll);
 
-			tournament.AmendEvent(EventType.MensSingles, 16, 4, 1, SetType.TieBreakAtTwelveAll);
+			tournament.AmendEvent(EventType.MensSingles, eventSize, matchFormat);
 
 			tournament.Events[0].EventType.Should().Be(EventType.MensSingles);
 			tournament.Events[0].EventSize.EntrantsLimit.Should().Be(16);
@@ -183,7 +186,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			tournament.Events.Count.Should().Be(1);
 
-			Action act = () => tournament.AmendEvent(EventType.WomensSingles, 128, 32, MatchFormat.OneSetMatchWithTwoGamesClear);
+			Action act = () => tournament.AmendEvent(EventType.WomensSingles, new EventSize(128, 32),
+				MatchFormat.OneSetMatchWithTwoGamesClear);
 
 			act.Should()
 				.Throw<Exception>()
@@ -302,7 +306,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var tournament = CreateTestTournamentAndOpenForEntries();
 
-			void act() => tournament.AmendEvent(EventType.MensSingles, 128, 32, MatchFormat.FiveSetMatchWithTwoGamesClear);
+			void act() => tournament.AmendEvent(EventType.MensSingles, new EventSize(128, 32),
+				MatchFormat.FiveSetMatchWithTwoGamesClear);
 
 			VerifyExceptionThrownWhenNotInCorrectState(act, "AmendEvent", TournamentState.AcceptingEntries);
 		}
@@ -549,7 +554,8 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 		private static void AddEventToTournament(Tournament tournament, EventType eventType = EventType.MensSingles)
 		{
-			tournament.AddEvent(eventType, 128, 32, 3, SetType.TieBreak);
+			var eventSize = new EventSize(128, 32);
+			tournament.AddEvent(eventType, eventSize, MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 		}
 
 		private static Tournament CreateTestTournamentAndOpenForEntries()

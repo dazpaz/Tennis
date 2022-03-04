@@ -76,36 +76,22 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			return tennisEvent;
 		}
 
-		public void AddEvent(EventType eventType, int entrantsLimit, int numberOfSeeds,
-			int numberOfSets, SetType finalSetType)
-		{
-			var matchFormat = new MatchFormat(numberOfSets, finalSetType);
-			AddEvent(eventType, entrantsLimit, numberOfSeeds, matchFormat);
-		}
-
-		public void AddEvent(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		public void AddEvent(EventType eventType, EventSize eventSize, MatchFormat matchFormat)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AddEvent));
 			Guard.Against.DuplicateEventType(_events, eventType);
 
-			var tennisEvent = Event.Create(eventType, entrantsLimit, numberOfSeeds, matchFormat);
+			var tennisEvent = Event.Create(eventType, eventSize, matchFormat);
 
 			_events.Add(tennisEvent);
 		}
 
-		public void AmendEvent(EventType eventType, int entrantsLimit, int numberOfSeeds, int numberOfSets,
-			SetType finalSetType)
-		{
-			var matchFormat = new MatchFormat(numberOfSets, finalSetType);
-			AmendEvent(eventType, entrantsLimit, numberOfSeeds, matchFormat);
-		}
-
-		public void AmendEvent(EventType eventType, int entrantsLimit, int numberOfSeeds, MatchFormat matchFormat)
+		public void AmendEvent(EventType eventType, EventSize eventSize, MatchFormat matchFormat)
 		{
 			Guard.Against.TournamentActionInWrongState(TournamentState.BeingDefined, State, nameof(AmendEvent));
 			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			tennisEvent.AmendDetails(entrantsLimit, numberOfSeeds, matchFormat);
+			tennisEvent.AmendDetails(eventSize, matchFormat);
 		}
 
 		public void RemoveEvent(EventType eventType)
