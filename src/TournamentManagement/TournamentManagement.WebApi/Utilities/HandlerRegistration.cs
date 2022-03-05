@@ -28,13 +28,15 @@ namespace TournamentManagement.WebApi.Utilities
 		{
 			object[] attributes = type.GetCustomAttributes(false);
 
+			Type interfaceType = type.GetInterfaces().Single(y => IsHandlerInterface(y));
+			var count = interfaceType.GenericTypeArguments.Length;
+
 			List<Type> pipeline = attributes
-				.Select(x => ToDecorator(x))
+				.Select(x => ToDecorator(x, count))
 				.Concat(new[] { type })
 				.Reverse()
 				.ToList();
 
-			Type interfaceType = type.GetInterfaces().Single(y => IsHandlerInterface(y));
 			Func<IServiceProvider, object> factory = BuildPipeline(pipeline, interfaceType);
 
 			services.AddTransient(interfaceType, factory);
@@ -95,15 +97,23 @@ namespace TournamentManagement.WebApi.Utilities
 			throw new ArgumentException($"Type {parameterType} not found");
 		}
 
-		private static Type ToDecorator(object attribute)
+		private static Type ToDecorator(object attribute, int count)
 		{
 			Type type = attribute.GetType();
 
 			if (type == typeof(AuditCommandAttribute))
-				return typeof(AuditCommandDecorator<>);
+			{
+				return count == 1
+					? typeof(AuditCommandDecorator<>)
+					: typeof(AuditCommandDecorator<,>);
+			}
 
 			if (type == typeof(PassthroughAttribute))
-				return typeof(PassthroughDecorator<>);
+			{
+				return count == 1
+					? typeof(PassthroughDecorator<>)
+					: typeof(PassthroughDecorator<,>);
+			}
 
 			// other attributes go here
 
