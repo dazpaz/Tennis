@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DomainDesign.Common;
 using System;
+using TournamentManagement.Application.Decorators;
 using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Domain.TournamentAggregate;
@@ -48,6 +49,8 @@ namespace TournamentManagement.Application.Commands
 		}
 	}
 
+	[Passthrough]
+	[AuditCommand]
 	public sealed class AmendTournamentCommandHandler : ICommandHandler<AmendTournamentCommand>
 	{
 		private readonly IUnitOfWork _uow;
