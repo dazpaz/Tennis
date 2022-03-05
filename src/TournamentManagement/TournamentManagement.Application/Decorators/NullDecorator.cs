@@ -15,7 +15,6 @@ namespace TournamentManagement.Application.Decorators
 
 		public Result Handle(TCommand command)
 		{
-			// Null operation for now - just checking the decorator is being used
 			var result = _handler.Handle(command);
 			return result;
 		}
@@ -33,7 +32,6 @@ namespace TournamentManagement.Application.Decorators
 
 		public Result<TResult> Handle(TCommand command)
 		{
-			// Null operation for now - just checking the decorator is being used
 			var result = _handler.Handle(command);
 			return result;
 		}

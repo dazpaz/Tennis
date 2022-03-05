@@ -20,7 +20,6 @@ using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
-using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.WebApi
 {
@@ -41,14 +40,17 @@ namespace TournamentManagement.WebApi
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
 			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>>(provider =>
-				new NullDecorator<AddTournamentCommand, Guid>(
-					new AddTournamentCommandHandler(provider.GetService<IUnitOfWork>())));
+				new AuditDecorator<AddTournamentCommand, Guid>(
+					new NullDecorator<AddTournamentCommand, Guid>(
+						new AddTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AmendTournamentCommand>>(provider =>
-				new NullDecorator<AmendTournamentCommand>(
-					new AmendTournamentCommandHandler(provider.GetService<IUnitOfWork>())));
+				new AuditDecorator<AmendTournamentCommand> (
+					new NullDecorator<AmendTournamentCommand>(
+						new AmendTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AddEventCommand>>(provider =>
-				new NullDecorator<AddEventCommand>(
-					new AddEventCommandHandler(provider.GetService<IUnitOfWork>())));
+				new AuditDecorator<AddEventCommand>(
+					new NullDecorator<AddEventCommand>(
+						new AddEventCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AmendEventCommand>, AmendEventCommandHandler>();
 			services.AddTransient<ICommandHandler<RemoveEventCommand>, RemoveEventCommandHandler>();
 			services.AddTransient<ICommandHandler<OpenForEntriesCommand>, OpenForEntriesCommandHandler>();
