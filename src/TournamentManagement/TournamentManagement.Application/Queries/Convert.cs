@@ -6,6 +6,21 @@ namespace TournamentManagement.Application.Queries
 {
 	public static class Convert
 	{
+		public static TournamentSummaryDto ToTournamentSummaryDto(Tournament tournament)
+		{
+			return new TournamentSummaryDto
+			{
+				Id = tournament.Id.Id,
+				Title = tournament.Title,
+				TournamentLevel = tournament.Level.ToString(),
+				State = tournament.State.ToString(),
+				StartDate = tournament.StartDate,
+				EndDate = tournament.EndDate,
+				VenueName = tournament.Venue.Name,
+				NumberOfEvents = tournament.Events.Count
+			};
+		}
+
 		public static TournamentDetailsDto ToTournamentDetailsDto(Tournament tournament)
 		{
 			return new TournamentDetailsDto

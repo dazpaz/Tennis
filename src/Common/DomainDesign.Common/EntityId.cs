@@ -47,5 +47,10 @@ namespace DomainDesign.Common
 		{
 			return !(a == b);
 		}
+
+		public override string ToString()
+		{
+			return Id.ToString();
+		}
 	}
 }

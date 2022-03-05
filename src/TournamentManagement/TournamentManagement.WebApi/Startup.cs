@@ -14,12 +14,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Commands;
+using TournamentManagement.Application.Decorators;
 using TournamentManagement.Application.Queries;
 using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
-using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.WebApi.Utilities;
 
 namespace TournamentManagement.WebApi
 {
@@ -39,20 +40,8 @@ namespace TournamentManagement.WebApi
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
-			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>, AddTournamentCommandHandler>();
-			services.AddTransient<ICommandHandler<AmendTournamentCommand>, AmendTournamentCommandHandler>();
-			services.AddTransient<ICommandHandler<AddEventCommand>, AddEventCommandHandler>();
-			services.AddTransient<ICommandHandler<AmendEventCommand>, AmendEventCommandHandler>();
-			services.AddTransient<ICommandHandler<RemoveEventCommand>, RemoveEventCommandHandler>();
-			services.AddTransient<ICommandHandler<OpenForEntriesCommand>, OpenForEntriesCommandHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>,
-				GetTournamentSummaryListHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>,
-				GetTournamentDetailsListHandler>();
-			services.AddTransient<IQueryHandler<GetEvent, EventDto>, GetEventHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentDetails, TournamentDetailsDto>,
-				GetTournamentDetailsHandler>();
 			services.AddSingleton<MessageDispatcher>();
+			services.AddHandlers();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
