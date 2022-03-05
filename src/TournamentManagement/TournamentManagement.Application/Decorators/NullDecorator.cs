@@ -20,4 +20,22 @@ namespace TournamentManagement.Application.Decorators
 			return result;
 		}
 	}
+
+	public sealed class NullDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+		where TCommand : ICommand
+	{
+		private readonly ICommandHandler<TCommand, TResult> _handler;
+
+		public NullDecorator(ICommandHandler<TCommand, TResult> handler)
+		{
+			_handler = handler;
+		}
+
+		public Result<TResult> Handle(TCommand command)
+		{
+			// Null operation for now - just checking the decorator is being used
+			var result = _handler.Handle(command);
+			return result;
+		}
+	}
 }
