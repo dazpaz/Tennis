@@ -20,6 +20,7 @@ using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
+using TournamentManagement.WebApi.Utilities;
 
 namespace TournamentManagement.WebApi
 {
@@ -39,29 +40,8 @@ namespace TournamentManagement.WebApi
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
-			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>>(provider =>
-				new AuditCommandDecorator<AddTournamentCommand, Guid>(
-					new PassthroughDecorator<AddTournamentCommand, Guid>(
-						new AddTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
-			services.AddTransient<ICommandHandler<AmendTournamentCommand>>(provider =>
-				new AuditCommandDecorator<AmendTournamentCommand> (
-					new PassthroughDecorator<AmendTournamentCommand>(
-						new AmendTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
-			services.AddTransient<ICommandHandler<AddEventCommand>>(provider =>
-				new AuditCommandDecorator<AddEventCommand>(
-					new PassthroughDecorator<AddEventCommand>(
-						new AddEventCommandHandler(provider.GetService<IUnitOfWork>()))));
-			services.AddTransient<ICommandHandler<AmendEventCommand>, AmendEventCommandHandler>();
-			services.AddTransient<ICommandHandler<RemoveEventCommand>, RemoveEventCommandHandler>();
-			services.AddTransient<ICommandHandler<OpenForEntriesCommand>, OpenForEntriesCommandHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>,
-				GetTournamentSummaryListHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>,
-				GetTournamentDetailsListHandler>();
-			services.AddTransient<IQueryHandler<GetEvent, EventDto>, GetEventHandler>();
-			services.AddTransient<IQueryHandler<GetTournamentDetails, TournamentDetailsDto>,
-				GetTournamentDetailsHandler>();
 			services.AddSingleton<MessageDispatcher>();
+			services.AddHandlers();
 
 			services.AddControllers();
 			services.AddSwaggerGen(c =>
