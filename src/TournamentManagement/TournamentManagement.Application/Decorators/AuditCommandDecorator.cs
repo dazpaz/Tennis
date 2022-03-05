@@ -5,12 +5,12 @@ using System.Text.Json;
 
 namespace TournamentManagement.Application.Decorators
 {
-	public sealed class AuditDecorator<TCommand> : ICommandHandler<TCommand>
+	public sealed class AuditCommandDecorator<TCommand> : ICommandHandler<TCommand>
 		where TCommand : ICommand
 	{
 		private readonly ICommandHandler<TCommand> _handler;
 
-		public AuditDecorator(ICommandHandler<TCommand> handler)
+		public AuditCommandDecorator(ICommandHandler<TCommand> handler)
 		{
 			_handler = handler;
 		}
@@ -29,12 +29,12 @@ namespace TournamentManagement.Application.Decorators
 		}
 	}
 
-	public sealed class AuditDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+	public sealed class AuditCommandDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
 		where TCommand : ICommand
 	{
 		private readonly ICommandHandler<TCommand, TResult> _handler;
 
-		public AuditDecorator(ICommandHandler<TCommand, TResult> handler)
+		public AuditCommandDecorator(ICommandHandler<TCommand, TResult> handler)
 		{
 			_handler = handler;
 		}

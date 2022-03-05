@@ -40,16 +40,16 @@ namespace TournamentManagement.WebApi
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
 			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
 			services.AddTransient<ICommandHandler<AddTournamentCommand, Guid>>(provider =>
-				new AuditDecorator<AddTournamentCommand, Guid>(
-					new NullDecorator<AddTournamentCommand, Guid>(
+				new AuditCommandDecorator<AddTournamentCommand, Guid>(
+					new PassthroughDecorator<AddTournamentCommand, Guid>(
 						new AddTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AmendTournamentCommand>>(provider =>
-				new AuditDecorator<AmendTournamentCommand> (
-					new NullDecorator<AmendTournamentCommand>(
+				new AuditCommandDecorator<AmendTournamentCommand> (
+					new PassthroughDecorator<AmendTournamentCommand>(
 						new AmendTournamentCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AddEventCommand>>(provider =>
-				new AuditDecorator<AddEventCommand>(
-					new NullDecorator<AddEventCommand>(
+				new AuditCommandDecorator<AddEventCommand>(
+					new PassthroughDecorator<AddEventCommand>(
 						new AddEventCommandHandler(provider.GetService<IUnitOfWork>()))));
 			services.AddTransient<ICommandHandler<AmendEventCommand>, AmendEventCommandHandler>();
 			services.AddTransient<ICommandHandler<RemoveEventCommand>, RemoveEventCommandHandler>();

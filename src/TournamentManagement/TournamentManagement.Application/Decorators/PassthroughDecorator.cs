@@ -3,12 +3,12 @@ using DomainDesign.Common;
 
 namespace TournamentManagement.Application.Decorators
 {
-	public sealed class NullDecorator<TCommand> : ICommandHandler<TCommand>
+	public sealed class PassthroughDecorator<TCommand> : ICommandHandler<TCommand>
 		where TCommand : ICommand
 	{
 		private readonly ICommandHandler<TCommand> _handler;
 
-		public NullDecorator(ICommandHandler<TCommand> handler)
+		public PassthroughDecorator(ICommandHandler<TCommand> handler)
 		{
 			_handler = handler;
 		}
@@ -20,12 +20,12 @@ namespace TournamentManagement.Application.Decorators
 		}
 	}
 
-	public sealed class NullDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+	public sealed class PassthroughDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
 		where TCommand : ICommand
 	{
 		private readonly ICommandHandler<TCommand, TResult> _handler;
 
-		public NullDecorator(ICommandHandler<TCommand, TResult> handler)
+		public PassthroughDecorator(ICommandHandler<TCommand, TResult> handler)
 		{
 			_handler = handler;
 		}
