@@ -7,7 +7,7 @@ using TournamentManagement.Application.Commands;
 using TournamentManagement.Application.Queries;
 using TournamentManagement.Common;
 using TournamentManagement.Contract;
-using TournamentManagement.Data.Query;
+using TournamentManagement.Query;
 
 namespace TournamentManagement.WebApi.Controllers
 {

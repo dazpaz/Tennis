@@ -31,8 +31,9 @@ namespace TournamentManagement.Application.Queries
 
 		public EventDto Handle(GetEvent query)
 		{
-			return Convert.ToEventDto(_uow.TournamentRepository.GetById(query.Id)
-				.GetEvent(query.EventType));
+			var tournament = _uow.TournamentRepository.GetById(query.Id);
+			var tennisEvent =  tournament.GetEvent(query.EventType);
+			return Convert.ToEventDto(tennisEvent);
 		}
 	}
 }

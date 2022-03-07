@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Contract\TournamentManagement.Contract.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Domain\TournamentManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
