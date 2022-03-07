@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 using TournamentManagement.Data;
 using TournamentManagement.Data.Repository;
 using TournamentManagement.Domain;

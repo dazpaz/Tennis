@@ -1,4 +1,5 @@
 ﻿using System;
+using TournamentManagement.Common;
 
 namespace TournamentManagement.Contract
 {

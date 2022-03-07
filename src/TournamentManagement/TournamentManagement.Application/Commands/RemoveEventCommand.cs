@@ -3,7 +3,7 @@ using DomainDesign.Common;
 using System;
 using TournamentManagement.Application.Decorators;
 using TournamentManagement.Application.Repository;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Application.Commands

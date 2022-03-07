@@ -1,6 +1,6 @@
 ﻿using DomainDesign.Common;
 using System.Collections.Generic;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 
 namespace TournamentManagement.Domain.TournamentAggregate.Events
 {

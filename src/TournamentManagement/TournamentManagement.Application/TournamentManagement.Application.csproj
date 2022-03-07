@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Contract\TournamentManagement.Contract.csproj" />
     <ProjectReference Include="..\TournamentManagement.Domain\TournamentManagement.Domain.csproj" />
   </ItemGroup>
 

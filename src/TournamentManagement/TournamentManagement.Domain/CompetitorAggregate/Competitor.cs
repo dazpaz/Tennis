@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using DomainDesign.Common;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.TournamentAggregate;
 
 namespace TournamentManagement.Domain.CompetitorAggregate

@@ -1,4 +1,4 @@
-﻿namespace TournamentManagement.Contract
+﻿namespace TournamentManagement.Common
 {
 	public enum TournamentLevel
 	{
