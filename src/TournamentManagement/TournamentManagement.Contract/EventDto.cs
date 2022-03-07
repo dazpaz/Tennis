@@ -1,14 +1,17 @@
-﻿namespace TournamentManagement.Contract
+﻿using System;
+using TournamentManagement.Common;
+
+namespace TournamentManagement.Contract
 {
 	public class EventDto
 	{
-		public string EventType { get; set; }
+		public Guid Id { get; set; }
+		public EventType EventType { get; set; }
 		public bool IsSinglesEvent { get; set; }
 		public int NumberOfSets { get;  set; }
-		public string FinalSet { get; set; }
-		public int MinimumEntrants { get; set; }
+		public SetType FinalSetType { get; set; }
 		public int EntrantsLimit { get; set; }
-		public int NumberEntrants { get; set; }
+		public int NumberOfEntrants { get; set; }
 		public bool IsCompleted { get; set; }
 	}
 }
