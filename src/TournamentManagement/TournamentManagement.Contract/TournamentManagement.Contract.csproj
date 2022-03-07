@@ -4,4 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\TournamentManagement.Common\TournamentManagement.Common.csproj" />
+  </ItemGroup>
+
 </Project>

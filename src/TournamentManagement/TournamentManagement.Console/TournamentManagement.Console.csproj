@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
     <ProjectReference Include="..\TournamentManagement.Application\TournamentManagement.Application.csproj" />
-    <ProjectReference Include="..\TournamentManagement.Contract\TournamentManagement.Contract.csproj" />
     <ProjectReference Include="..\TournamentManagement.Data\TournamentManagement.Data.csproj" />
     <ProjectReference Include="..\TournamentManagement.Domain\TournamentManagement.Domain.csproj" />
   </ItemGroup>

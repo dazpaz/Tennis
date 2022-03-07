@@ -2,7 +2,7 @@
 using DomainDesign.Common;
 using System.Collections.Generic;
 using System.Linq;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 using TournamentManagement.Domain.TournamentAggregate.Guards;

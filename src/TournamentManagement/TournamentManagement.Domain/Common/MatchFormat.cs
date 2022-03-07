@@ -1,7 +1,7 @@
 ﻿using DomainDesign.Common;
 using System;
 using System.Linq;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 
 namespace TournamentManagement.Domain.Common
 {

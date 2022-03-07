@@ -1,4 +1,6 @@
-﻿namespace TournamentManagement.Contract
+﻿using TournamentManagement.Common;
+
+namespace TournamentManagement.Contract
 {
 	public class AmendEventDto
 	{

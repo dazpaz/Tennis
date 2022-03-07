@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using System;
-using TournamentManagement.Contract;
+using TournamentManagement.Common;
 using TournamentManagement.Domain.PlayerAggregate;
 using Xunit;
 

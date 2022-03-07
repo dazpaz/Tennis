@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Consol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TournamentManagement.Contract", "TournamentManagement\TournamentManagement.Contract\TournamentManagement.Contract.csproj", "{7C634D92-F8CA-4C1D-9E83-C8A8441977FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManagement.Common", "TournamentManagement\TournamentManagement.Common\TournamentManagement.Common.csproj", "{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,18 @@ Global
 		{7C634D92-F8CA-4C1D-9E83-C8A8441977FC}.Release|x64.Build.0 = Release|Any CPU
 		{7C634D92-F8CA-4C1D-9E83-C8A8441977FC}.Release|x86.ActiveCfg = Release|Any CPU
 		{7C634D92-F8CA-4C1D-9E83-C8A8441977FC}.Release|x86.Build.0 = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|x64.Build.0 = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Debug|x86.Build.0 = Debug|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|x64.ActiveCfg = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|x64.Build.0 = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|x86.ActiveCfg = Release|Any CPU
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,6 +171,7 @@ Global
 		{982D6DF5-1950-4340-8E9F-0AB4851694E7} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 		{433B56E0-BB90-48DA-B2B4-F2EC377CD1FE} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 		{7C634D92-F8CA-4C1D-9E83-C8A8441977FC} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
+		{DE88D0AC-FD0E-4971-AC74-393B2A1DA754} = {32CCE864-ACCA-4912-9C18-EE3FFD706644}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A0BBE81-6905-4BD2-86DB-44B6D43B4DEF}
