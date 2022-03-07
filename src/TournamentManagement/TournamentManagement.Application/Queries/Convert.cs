@@ -42,13 +42,12 @@ namespace TournamentManagement.Application.Queries
 		{
 			return new EventDto
 			{
-				EventType = tennisEvent.EventType.ToString(),
+				EventType = tennisEvent.EventType,
 				IsSinglesEvent = tennisEvent.SinglesEvent,
 				NumberOfSets = tennisEvent.MatchFormat.NumberOfSets,
-				FinalSet = tennisEvent.MatchFormat.FinalSetType.ToString(),
-				MinimumEntrants = tennisEvent.EventSize.MinimumEntrants,
+				FinalSetType = tennisEvent.MatchFormat.FinalSetType,
 				EntrantsLimit = tennisEvent.EventSize.EntrantsLimit,
-				NumberEntrants = tennisEvent.Entries.Count,
+				NumberOfEntrants = tennisEvent.Entries.Count,
 				IsCompleted = tennisEvent.IsCompleted
 			};
 		}

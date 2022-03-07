@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Commands;
 using TournamentManagement.Application.Queries;
-using TournamentManagement.Common;
 using TournamentManagement.Contract;
 using TournamentManagement.Query;
 
@@ -127,13 +126,11 @@ namespace TournamentManagement.WebApi.Controllers
 		[HttpGet("{id}/Events/{eventType}")]
 		public IActionResult GetEvent(Guid id, string eventType)
 		{
-			if (!Enum.TryParse(eventType, out EventType type))
-			{
-				return BadRequest("Invalid Event Type");
-			}
+			var query = GetEventDetails.Create(id, eventType);
 
-			var query = new GetEvent(id, type);
-			Result<EventDto> result = _dispatcher.Dispatch(query);
+			if (query.IsFailure) return BadRequest(query.Error);
+
+			Result<EventDto> result = _dispatcher.Dispatch(query.Value);
 
 			return result.IsSuccess
 				? Ok(result.Value)

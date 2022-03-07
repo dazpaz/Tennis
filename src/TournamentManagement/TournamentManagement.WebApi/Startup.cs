@@ -44,6 +44,8 @@ namespace TournamentManagement.WebApi
 
 			services.AddTransient<IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>>
 				(services => new GetTournamentSummaryListHandler(connectionString));
+			services.AddTransient<IQueryHandler<GetEventDetails, EventDto>>
+				(services => new GetEventDetailsHandler(connectionString));
 
 			services.AddSingleton<MessageDispatcher>();
 			services.AddHandlers();
