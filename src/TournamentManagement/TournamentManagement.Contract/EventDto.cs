@@ -13,5 +13,6 @@ namespace TournamentManagement.Contract
 		public int EntrantsLimit { get; set; }
 		public int NumberOfEntrants { get; set; }
 		public bool IsCompleted { get; set; }
+		public Guid TournamentId { get; set; }
 	}
 }

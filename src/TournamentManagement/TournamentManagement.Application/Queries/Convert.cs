@@ -34,7 +34,7 @@ namespace TournamentManagement.Application.Queries
 				VenueId = tournament.Venue.Id.Id,
 				VenueName = tournament.Venue.Name,
 				NumberOfEvents = tournament.Events.Count,
-				Events = tournament.Events.Select(e => ToEventDto(e)).ToList()
+				//Events = tournament.Events.Select(e => ToEventDto(e)).ToList()
 			};
 		}
 
