@@ -29,10 +29,5 @@ namespace TournamentManagement.Data.Repository
 		{
 			_context.Tournaments.Add(tournament);
 		}
-
-		public IReadOnlyList<Tournament> GetList()
-		{
-			return _context.Tournaments.ToList();
-		}
 	}
 }

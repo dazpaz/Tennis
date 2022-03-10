@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Commands;
-using TournamentManagement.Application.Queries;
 using TournamentManagement.Contract;
 using TournamentManagement.Query;
 
@@ -20,6 +19,8 @@ namespace TournamentManagement.WebApi.Controllers
 		{
 			_dispatcher = dispatcher;
 		}
+
+		#region Commands
 
 		[HttpPost]
 		public IActionResult AddTournament([FromBody] AddTournamentDto tournamentDetails)
@@ -111,6 +112,10 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		#endregion
+
+		#region Queries
+
 		[HttpGet("{id}")]
 		public IActionResult GetTournament(Guid id)
 		{
@@ -158,5 +163,7 @@ namespace TournamentManagement.WebApi.Controllers
 				? Ok(result.Value)
 				: BadRequest(result.Error);
 		}
+
+		#endregion
 	}
 }
