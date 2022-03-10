@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Commands;
-using TournamentManagement.Application.Queries;
 using TournamentManagement.Contract;
 using TournamentManagement.Query;
 

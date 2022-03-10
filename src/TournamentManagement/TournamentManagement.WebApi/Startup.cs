@@ -13,9 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TournamentManagement.Application;
-using TournamentManagement.Application.Commands;
-using TournamentManagement.Application.Decorators;
-using TournamentManagement.Application.Queries;
 using TournamentManagement.Application.Repository;
 using TournamentManagement.Contract;
 using TournamentManagement.Data;
@@ -48,6 +45,8 @@ namespace TournamentManagement.WebApi
 				(services => new GetEventDetailsHandler(connectionString));
 			services.AddTransient<IQueryHandler<GetTournamentDetails, TournamentDetailsDto>>
 				(services => new GetTournamentDetailsHandler(connectionString));
+			services.AddTransient<IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>>
+				(services => new GetTournamentDetailsListHandler(connectionString));
 
 			services.AddSingleton<MessageDispatcher>();
 			services.AddHandlers();

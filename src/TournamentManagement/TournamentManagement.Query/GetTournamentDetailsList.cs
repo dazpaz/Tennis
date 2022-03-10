@@ -8,27 +8,22 @@ using TournamentManagement.Contract;
 
 namespace TournamentManagement.Query
 {
-	public sealed class GetTournamentDetails : IQuery<TournamentDetailsDto>
+	public sealed class GetTournamentDetailsList : IQuery<List<TournamentDetailsDto>>
 	{
-		public Guid TournamentId { get; }
 
-		public GetTournamentDetails(Guid tournamentId)
-		{
-			TournamentId = tournamentId;
-		}
 	}
 
-	public sealed class GetTournamentDetailsHandler
-		: IQueryHandler<GetTournamentDetails, TournamentDetailsDto>
+	public sealed class GetTournamentDetailsListHandler
+		: IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>
 	{
 		private readonly string _connectionString;
 
-		public GetTournamentDetailsHandler(string connectionString)
+		public GetTournamentDetailsListHandler(string connectionString)
 		{
 			_connectionString = connectionString;
 		}
 
-		public TournamentDetailsDto Handle(GetTournamentDetails query)
+		public List<TournamentDetailsDto> Handle(GetTournamentDetailsList query)
 		{
 			var sql = GetSqlQuery();
 
@@ -46,11 +41,9 @@ namespace TournamentManagement.Query
 					}
 					currentTournament.Events.Add(tennisEvent);
 					return currentTournament;
-				},
-				new { query.TournamentId })
-				.First();
+				});
 
-			return result;
+			return result.Distinct().ToList();
 		}
 
 		private static string GetSqlQuery()
@@ -64,8 +57,7 @@ namespace TournamentManagement.Query
 			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id
 			LEFT JOIN (SELECT ee.EventId, Count(*) NumberOfEntrants
 				FROM dbo.EventEntry ee GROUP BY ee.EventId) ee
-				ON ee.EventId = e.Id
-			WHERE t.Id = @TournamentId";
+				ON ee.EventId = e.Id";
 		}
 	}
 }
