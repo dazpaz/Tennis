@@ -32,9 +32,9 @@ namespace TournamentManagement.Query
 
 	public sealed class GetEventDetailsHandler : IQueryHandler<GetEventDetails, EventDto>
 	{
-		private readonly string _connectionString;
+		private readonly ConnectionString _connectionString;
 
-		public GetEventDetailsHandler(string connectionString)
+		public GetEventDetailsHandler(ConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
@@ -43,7 +43,7 @@ namespace TournamentManagement.Query
 		{
 			var sql = GetSqlQuery();
 
-			using SqlConnection connection = new(_connectionString);
+			using SqlConnection connection = new(_connectionString.Value);
 
 			var tennisEvent = connection.QuerySingle<EventDto>(sql, new 
 			{
