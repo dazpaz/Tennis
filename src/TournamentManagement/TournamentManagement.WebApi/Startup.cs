@@ -1,4 +1,3 @@
-using DomainDesign.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TournamentManagement.Application;
 using TournamentManagement.Application.Repository;
-using TournamentManagement.Contract;
 using TournamentManagement.Data;
 using TournamentManagement.Query;
 using TournamentManagement.Data.Repository;
@@ -34,20 +32,13 @@ namespace TournamentManagement.WebApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var connectionString = Configuration["ConnectionString"];
+			var connectionString = new ConnectionString(Configuration["ConnectionString"]);
+			services.AddSingleton(connectionString);
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
-			services.AddTransient(s => new TournamentManagementDbContext(connectionString, true));
+			services.AddTransient(s => new TournamentManagementDbContext(connectionString.Value, true));
 
-			services.AddTransient<IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>>
-				(services => new GetTournamentSummaryListHandler(connectionString));
-			services.AddTransient<IQueryHandler<GetEventDetails, EventDto>>
-				(services => new GetEventDetailsHandler(connectionString));
-			services.AddTransient<IQueryHandler<GetTournamentDetails, TournamentDetailsDto>>
-				(services => new GetTournamentDetailsHandler(connectionString));
-			services.AddTransient<IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>>
-				(services => new GetTournamentDetailsListHandler(connectionString));
-
+			
 			services.AddSingleton<MessageDispatcher>();
 			services.AddHandlers();
 

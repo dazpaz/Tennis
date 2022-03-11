@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TournamentManagement.Application;
 using TournamentManagement.Application.Decorators;
 
 namespace TournamentManagement.WebApi.Utilities
@@ -13,12 +12,24 @@ namespace TournamentManagement.WebApi.Utilities
 	{
 		public static void AddHandlers(this IServiceCollection services)
 		{
-			List<Type> handlerTypes = typeof(MessageDispatcher).Assembly.GetTypes()
+			List<Type> commandHandlers = Assembly.Load("TournamentManagement.Application")
+				.GetTypes()
 				.Where(x => x.GetInterfaces().Any(y => IsHandlerInterface(y)))
 				.Where(x => x.Name.EndsWith("Handler"))
 				.ToList();
 
-			foreach (Type type in handlerTypes)
+			foreach (Type type in commandHandlers)
+			{
+				AddHandler(services, type);
+			}
+
+			List<Type> queryHandlers = Assembly.Load("TournamentManagement.Query")
+				.GetTypes()
+				.Where(x => x.GetInterfaces().Any(y => IsHandlerInterface(y)))
+				.Where(x => x.Name.EndsWith("Handler"))
+				.ToList();
+
+			foreach (Type type in queryHandlers)
 			{
 				AddHandler(services, type);
 			}

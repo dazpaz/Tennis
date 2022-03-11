@@ -16,9 +16,9 @@ namespace TournamentManagement.Query
 	public sealed class GetTournamentDetailsListHandler
 		: IQueryHandler<GetTournamentDetailsList, List<TournamentDetailsDto>>
 	{
-		private readonly string _connectionString;
+		private readonly ConnectionString _connectionString;
 
-		public GetTournamentDetailsListHandler(string connectionString)
+		public GetTournamentDetailsListHandler(ConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
@@ -27,7 +27,7 @@ namespace TournamentManagement.Query
 		{
 			var sql = GetSqlQuery();
 
-			using SqlConnection connection = new(_connectionString);
+			using SqlConnection connection = new(_connectionString.Value);
 
 			var tournamentDict = new Dictionary<Guid, TournamentDetailsDto>();
 

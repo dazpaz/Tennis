@@ -14,9 +14,9 @@ namespace TournamentManagement.Query
 	public sealed class GetTournamentSummaryListHandler
 		: IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>
 	{
-		private readonly string _connectionString;
+		private readonly ConnectionString _connectionString;
 
-		public GetTournamentSummaryListHandler(string connectionString)
+		public GetTournamentSummaryListHandler(ConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
@@ -25,7 +25,7 @@ namespace TournamentManagement.Query
 		{
 			var sql = GetSqlQuery();
 
-			using SqlConnection connection = new(_connectionString);
+			using SqlConnection connection = new(_connectionString.Value);
 
 			return connection
 				.Query<TournamentSummaryDto>(sql)
