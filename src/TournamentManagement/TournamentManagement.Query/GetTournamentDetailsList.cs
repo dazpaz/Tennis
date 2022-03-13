@@ -10,7 +10,6 @@ namespace TournamentManagement.Query
 {
 	public sealed class GetTournamentDetailsList : IQuery<List<TournamentDetailsDto>>
 	{
-
 	}
 
 	public sealed class GetTournamentDetailsListHandler
@@ -25,9 +24,16 @@ namespace TournamentManagement.Query
 
 		public List<TournamentDetailsDto> Handle(GetTournamentDetailsList query)
 		{
-			var sql = GetSqlQuery();
-
 			using SqlConnection connection = new(_connectionString.Value);
+
+			return ExecuteTournamentDetailsListQuery(connection)
+				.Distinct()
+				.ToList();
+		}
+
+		private static IEnumerable<TournamentDetailsDto> ExecuteTournamentDetailsListQuery(SqlConnection connection)
+		{
+			var sql = GetSqlQuery();
 
 			var tournamentDict = new Dictionary<Guid, TournamentDetailsDto>();
 
@@ -39,25 +45,25 @@ namespace TournamentManagement.Query
 						currentTournament = tournament;
 						tournamentDict.Add(currentTournament.Id, currentTournament);
 					}
-					currentTournament.Events.Add(tennisEvent);
+					if (tennisEvent != null)
+					{
+						currentTournament.Events.Add(tennisEvent);
+					}
 					return currentTournament;
 				});
 
-			return result.Distinct().ToList();
+			return result;
 		}
 
 		private static string GetSqlQuery()
 		{
-			return @"SELECT t.Id, t.Title, t.Level as TournamentLevel, t.StartDate,
-				t.EndDate, t.State, v.Id as VenueId, v.Name as VenueName,
-				e.Id, e.EventType, e.NumberOfSets, e.FinalSetType,
-				e.EntrantsLimit, e.IsCompleted, e.TournamentId, ee.NumberOfEntrants
+			return @"SELECT t.Id, t.Title, t.Level, t.StartDate, t.EndDate,
+				t.State, t.VenueId, t.VenueName, t.NumberOfEvents,
+				e.Id, e.EventType, e.IsSinglesEvent, e.NumberOfSets,
+				e.FinalSetType, e.EntrantsLimit, e.NumberOfSeeds, e.NumberOfEntrants,
+				e.IsCompleted, e.TournamentId
 			FROM dbo.Tournament t
-			LEFT JOIN dbo.Venue v ON v.Id = t.VenueId
-			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id
-			LEFT JOIN (SELECT ee.EventId, Count(*) NumberOfEntrants
-				FROM dbo.EventEntry ee GROUP BY ee.EventId) ee
-				ON ee.EventId = e.Id";
+			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id";
 		}
 	}
 }
