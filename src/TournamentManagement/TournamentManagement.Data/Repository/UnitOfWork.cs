@@ -1,4 +1,9 @@
 ﻿using TournamentManagement.Application.Repository;
+using TournamentManagement.Domain.CompetitorAggregate;
+using TournamentManagement.Domain.PlayerAggregate;
+using TournamentManagement.Domain.RoundAggregate;
+using TournamentManagement.Domain.TournamentAggregate;
+using TournamentManagement.Domain.VenueAggregate;
 
 namespace TournamentManagement.Data.Repository
 {
@@ -6,51 +11,51 @@ namespace TournamentManagement.Data.Repository
 	{
 		private readonly TournamentManagementDbContext _context;
 
-		private ICompetitorRepository _competitorRepository;
-		private IPlayerRepository _playerRepository;
-		private IRoundRepository _roundRepository;
-		private ITournamentRepository _tournamentRepository;
-		private IVenueRepository _venueRepository;
+		IRepository<Competitor, CompetitorId> _competitorRepository;
+		IRepository<Player, PlayerId> _playerRepository;
+		IRepository<Round, RoundId> _roundRepository;
+		IRepository<Tournament, TournamentId> _tournamentRepository;
+		IRepository<Venue, VenueId> _venueRepository;
 
-		public ICompetitorRepository CompetitorRepository => GetCompetitorRepository();
-		public IPlayerRepository PlayerRepository => GetPlayerRepository();
-		public IRoundRepository RoundRepository => GetRoundRepository();
-		public ITournamentRepository TournamentRepository => GetTournamentRepository();
-		public IVenueRepository VenueRepository => GetVenueRepository();
+		public IRepository<Competitor, CompetitorId> CompetitorRepository => GetCompetitorRepository();
+		public IRepository<Player, PlayerId> PlayerRepository => GetPlayerRepository();
+		public IRepository<Round, RoundId> RoundRepository => GetRoundRepository();
+		public IRepository<Tournament, TournamentId> TournamentRepository => GetTournamentRepository();
+		public IRepository<Venue, VenueId> VenueRepository => GetVenueRepository();
 
 		public UnitOfWork(TournamentManagementDbContext context)
 		{
 			_context = context;
 		}
 
-		private ICompetitorRepository GetCompetitorRepository()
+		private IRepository<Competitor, CompetitorId> GetCompetitorRepository()
 		{
 			if (_competitorRepository == null)
 			{
-				_competitorRepository = new CompetitorRepository(_context);
+				_competitorRepository = new Repository<Competitor, CompetitorId >(_context);
 			}
 			return _competitorRepository;
 		}
 
-		private IPlayerRepository GetPlayerRepository()
+		private IRepository<Player, PlayerId> GetPlayerRepository()
 		{
 			if (_playerRepository == null)
 			{
-				_playerRepository = new PlayerRepository(_context);
+				_playerRepository = new Repository<Player, PlayerId>(_context);
 			}
 			return _playerRepository;
 		}
 
-		private IRoundRepository GetRoundRepository()
+		private IRepository<Round, RoundId> GetRoundRepository()
 		{
 			if (_roundRepository == null)
 			{
-				_roundRepository = new RoundRepository(_context);
+				_roundRepository = new Repository<Round, RoundId>(_context);
 			}
 			return _roundRepository;
 		}
 
-		private ITournamentRepository GetTournamentRepository()
+		private IRepository<Tournament, TournamentId> GetTournamentRepository()
 		{
 			if (_tournamentRepository == null)
 			{
@@ -59,11 +64,11 @@ namespace TournamentManagement.Data.Repository
 			return _tournamentRepository;
 		}
 
-		private IVenueRepository GetVenueRepository()
+		private IRepository<Venue, VenueId> GetVenueRepository()
 		{
 			if (_venueRepository == null)
 			{
-				_venueRepository = new VenueRepository(_context);
+				_venueRepository = new Repository<Venue, VenueId>(_context);
 			}
 			return _venueRepository;
 		}
