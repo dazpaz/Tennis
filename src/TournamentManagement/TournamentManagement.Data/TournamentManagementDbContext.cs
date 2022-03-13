@@ -24,9 +24,9 @@ namespace TournamentManagement.Data
 		public DbSet<Player> Players { get; set; }
 		public DbSet<Venue> Venues { get; set; }
 
-		public TournamentManagementDbContext(string connectionString, bool useConsoleLogger)
+		public TournamentManagementDbContext(CommandConnectionString connectionString, bool useConsoleLogger)
 		{
-			_connectionString = connectionString;
+			_connectionString = connectionString.Value;
 			_useConsoleLogger = useConsoleLogger;
 		}
 

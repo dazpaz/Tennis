@@ -11,6 +11,7 @@ namespace TournamentManagement.Contract
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public TournamentState State { get; set; }
+		public Guid VenueId { get; set; }
 		public string VenueName { get; set; }
 		public int NumberOfEvents { get; set; }
 	}

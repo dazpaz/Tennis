@@ -1,10 +1,10 @@
 ﻿namespace TournamentManagement.Query
 {
-	public sealed class ConnectionString
+	public sealed class QueryConnectionString
 	{
 		public string Value { get; }
 
-		public ConnectionString(string value)
+		public QueryConnectionString(string value)
 		{
 			Value = value;
 		}

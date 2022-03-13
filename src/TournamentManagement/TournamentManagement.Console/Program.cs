@@ -16,7 +16,7 @@ namespace TournamentManagement.Console
 {
 	class Program
 	{
-		private static string _connectionString;
+		private static CommandConnectionString _connectionString;
 		private static bool _useConsoleLogger;
 
 		public static void Main()
@@ -344,14 +344,14 @@ namespace TournamentManagement.Console
 			var roundTitle = round.Title;
 		}
 
-		private static string GetConnectionString()
+		private static CommandConnectionString GetConnectionString()
 		{
 			IConfigurationRoot configuration = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json")
 				.Build();
 
-			return configuration["ConnectionString"];
+			return new CommandConnectionString(configuration["ConnectionString"]);
 		}
 	}
 }

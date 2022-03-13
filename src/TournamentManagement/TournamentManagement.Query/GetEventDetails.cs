@@ -32,9 +32,9 @@ namespace TournamentManagement.Query
 
 	public sealed class GetEventDetailsHandler : IQueryHandler<GetEventDetails, EventDto>
 	{
-		private readonly ConnectionString _connectionString;
+		private readonly QueryConnectionString _connectionString;
 
-		public GetEventDetailsHandler(ConnectionString connectionString)
+		public GetEventDetailsHandler(QueryConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
