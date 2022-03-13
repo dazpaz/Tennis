@@ -8,19 +8,19 @@ namespace TournamentManagement.Data.Repository
 		where TAggregate : class, IAggregateRoot
 		where TKey : class
 	{
-		private readonly DbSet<TAggregate> _dbSet;
+		protected readonly DbSet<TAggregate> _dbSet;
 
 		public Repository(TournamentManagementDbContext context)
 		{
 			_dbSet = context.Set<TAggregate>();
 		}
 
-		public void Add(TAggregate entity)
+		public virtual void Add(TAggregate entity)
 		{
 			_dbSet.Add(entity);
 		}
 
-		public TAggregate GetById(TKey id)
+		public virtual TAggregate GetById(TKey id)
 		{
 			var round = _dbSet.Find(id);
 			return round;

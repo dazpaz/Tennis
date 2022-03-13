@@ -59,7 +59,7 @@ namespace TournamentManagement.Data.Repository
 		{
 			if (_tournamentRepository == null)
 			{
-				_tournamentRepository = new Repository<Tournament, TournamentId>(_context);
+				_tournamentRepository = new TournamentRepository(_context);
 			}
 			return _tournamentRepository;
 		}
