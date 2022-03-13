@@ -32,13 +32,15 @@ namespace TournamentManagement.WebApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var connectionString = new ConnectionString(Configuration["ConnectionString"]);
-			services.AddSingleton(connectionString);
+			var queryConnectionString = new QueryConnectionString(Configuration["QueryConnectionString"]);
+			services.AddSingleton(queryConnectionString);
+
+			var commandConnectionString = new CommandConnectionString(Configuration["CommandConnectionString"]);
+			services.AddSingleton(commandConnectionString);
 
 			services.AddTransient<IUnitOfWork, UnitOfWork>();
-			services.AddTransient(s => new TournamentManagementDbContext(connectionString.Value, true));
+			services.AddTransient(s => new TournamentManagementDbContext(commandConnectionString, true));
 
-			
 			services.AddSingleton<MessageDispatcher>();
 			services.AddHandlers();
 

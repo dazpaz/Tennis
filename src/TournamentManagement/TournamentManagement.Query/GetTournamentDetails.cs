@@ -21,18 +21,25 @@ namespace TournamentManagement.Query
 	public sealed class GetTournamentDetailsHandler
 		: IQueryHandler<GetTournamentDetails, TournamentDetailsDto>
 	{
-		private readonly ConnectionString _connectionString;
+		private readonly QueryConnectionString _connectionString;
 
-		public GetTournamentDetailsHandler(ConnectionString connectionString)
+		public GetTournamentDetailsHandler(QueryConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
 
 		public TournamentDetailsDto Handle(GetTournamentDetails query)
 		{
-			var sql = GetSqlQuery();
-
 			using SqlConnection connection = new(_connectionString.Value);
+
+			return ExecuteTournamentDetailsQuery(connection, query)
+				.First();
+		}
+
+		private static IEnumerable<TournamentDetailsDto> ExecuteTournamentDetailsQuery(
+			SqlConnection connection, GetTournamentDetails query)
+		{
+			var sql = GetSqlQuery();
 
 			var tournamentDict = new Dictionary<Guid, TournamentDetailsDto>();
 
@@ -44,27 +51,26 @@ namespace TournamentManagement.Query
 						currentTournament = tournament;
 						tournamentDict.Add(currentTournament.Id, currentTournament);
 					}
-					currentTournament.Events.Add(tennisEvent);
+					if (tennisEvent != null)
+					{
+						currentTournament.Events.Add(tennisEvent);
+					}
 					return currentTournament;
 				},
-				new { query.TournamentId })
-				.First();
+				new { query.TournamentId });
 
 			return result;
 		}
 
 		private static string GetSqlQuery()
 		{
-			return @"SELECT t.Id, t.Title, t.Level as TournamentLevel, t.StartDate,
-				t.EndDate, t.State, v.Id as VenueId, v.Name as VenueName,
-				e.Id, e.EventType, e.NumberOfSets, e.FinalSetType,
-				e.EntrantsLimit, e.IsCompleted, e.TournamentId, ee.NumberOfEntrants
+			return @"SELECT t.Id, t.Title, t.Level, t.StartDate, t.EndDate,
+				t.State, t.VenueId, t.VenueName, t.NumberOfEvents,
+				e.Id, e.EventType, e.IsSinglesEvent, e.NumberOfSets,
+				e.FinalSetType, e.EntrantsLimit, e.NumberOfSeeds, e.NumberOfEntrants,
+				e.IsCompleted, e.TournamentId
 			FROM dbo.Tournament t
-			LEFT JOIN dbo.Venue v ON v.Id = t.VenueId
 			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id
-			LEFT JOIN (SELECT ee.EventId, Count(*) NumberOfEntrants
-				FROM dbo.EventEntry ee GROUP BY ee.EventId) ee
-				ON ee.EventId = e.Id
 			WHERE t.Id = @TournamentId";
 		}
 	}

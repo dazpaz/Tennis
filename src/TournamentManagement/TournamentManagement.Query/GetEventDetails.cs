@@ -32,9 +32,9 @@ namespace TournamentManagement.Query
 
 	public sealed class GetEventDetailsHandler : IQueryHandler<GetEventDetails, EventDto>
 	{
-		private readonly ConnectionString _connectionString;
+		private readonly QueryConnectionString _connectionString;
 
-		public GetEventDetailsHandler(ConnectionString connectionString)
+		public GetEventDetailsHandler(QueryConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
@@ -47,30 +47,20 @@ namespace TournamentManagement.Query
 
 			var tennisEvent = connection.QuerySingle<EventDto>(sql, new 
 			{
-				TournamentId = query.TournamentId,
-				EventType = query.EventType
+				query.TournamentId,
+				query.EventType
 			});
-
-			tennisEvent.IsSinglesEvent = IsSinglesEvent(tennisEvent.EventType);
 
 			return tennisEvent;
 		}
 
-		private static bool IsSinglesEvent(EventType eventType)
-		{
-			return eventType == EventType.MensSingles ||
-				eventType == EventType.WomensSingles;
-		}
-
 		private static string GetSqlQuery()
 		{
-			return @"SELECT e.Id, e.EventType, e.NumberOfSets, e.FinalSetType,
-						e.EntrantsLimit, e.IsCompleted, ee.NumberOfEntrants
-					FROM dbo.Event e
-					LEFT JOIN (SELECT ee.EventId, Count(*) NumberOfEntrants
-						FROM dbo.EventEntry ee GROUP BY ee.EventId) ee
-						ON ee.EventId = e.Id
-					WHERE e.TournamentId = @TournamentId AND e.EventType = @EventType";
+			return @"SELECT e.Id, e.EventType, e.IsSinglesEvent, e.NumberOfSets,
+					e.FinalSetType, e.EntrantsLimit, e.NumberOfSeeds, e.NumberOfEntrants,
+					e.IsCompleted, e.TournamentId
+				FROM dbo.Event e
+				WHERE e.TournamentId = @TournamentId AND e.EventType = @EventType";
 		}
 	}
 }

@@ -14,9 +14,9 @@ namespace TournamentManagement.Query
 	public sealed class GetTournamentSummaryListHandler
 		: IQueryHandler<GetTournamentSummaryList, List<TournamentSummaryDto>>
 	{
-		private readonly ConnectionString _connectionString;
+		private readonly QueryConnectionString _connectionString;
 
-		public GetTournamentSummaryListHandler(ConnectionString connectionString)
+		public GetTournamentSummaryListHandler(QueryConnectionString connectionString)
 		{
 			_connectionString = connectionString;
 		}
@@ -34,13 +34,9 @@ namespace TournamentManagement.Query
 
 		private static string GetSqlQuery()
 		{
-			return @"SELECT t.Id, t.Title, t.Level as TournamentLevel, t.StartDate, t.EndDate,
-				t.State, v.Name as VenueName, e.NumberOfEvents
-				FROM dbo.Tournament t
-				LEFT JOIN dbo.Venue v ON v.Id = t.VenueId
-				LEFT JOIN (SELECT e.TournamentId, Count(*) NumberOfEvents
-					FROM dbo.Event e GROUP BY e.TournamentId) e
-					ON e.TournamentId = t.Id";
+			return @"SELECT t.Id, t.Title, t.Level, t.StartDate, t.EndDate,
+				t.State, t.VenueId, t.VenueName, t.NumberOfEvents
+				FROM dbo.Tournament t";
 		}
 	}
 }
