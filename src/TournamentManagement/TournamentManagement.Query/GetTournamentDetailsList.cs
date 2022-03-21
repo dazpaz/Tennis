@@ -48,6 +48,7 @@ namespace TournamentManagement.Query
 					if (tennisEvent != null)
 					{
 						currentTournament.Events.Add(tennisEvent);
+						currentTournament.NumberOfEvents = currentTournament.Events.Count;
 					}
 					return currentTournament;
 				});
@@ -57,13 +58,17 @@ namespace TournamentManagement.Query
 
 		private static string GetSqlQuery()
 		{
-			return @"SELECT t.Id, t.Title, t.Level, t.StartDate, t.EndDate,
-				t.State, t.VenueId, t.VenueName, t.NumberOfEvents,
-				e.Id, e.EventType, e.IsSinglesEvent, e.NumberOfSets,
-				e.FinalSetType, e.EntrantsLimit, e.NumberOfSeeds, e.NumberOfEntrants,
-				e.IsCompleted, e.TournamentId
+			return @"SELECT t.Id, t.Title, t.Level as TournamentLevel, t.StartDate,
+				t.EndDate, t.State, v.Id as VenueId, v.Name as VenueName,
+				e.Id, e.EventType, e.NumberOfSets, e.FinalSetType,
+				e.EntrantsLimit, e.IsCompleted, e.TournamentId, ee.NumberOfEntrants,
+				CAST (CASE WHEN e.EventType < 2 THEN 1 ELSE 0 END AS BIT) AS IsSinglesEvent
 			FROM dbo.Tournament t
-			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id";
+			LEFT JOIN dbo.Venue v ON v.Id = t.VenueId
+			LEFT JOIN dbo.Event e ON e.TournamentId = t.Id
+			LEFT JOIN (SELECT ee.EventId, Count(*) NumberOfEntrants
+				FROM dbo.EventEntry ee GROUP BY ee.EventId) ee
+				ON ee.EventId = e.Id";
 		}
 	}
 }

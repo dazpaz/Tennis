@@ -35,8 +35,13 @@ namespace TournamentManagement.Query
 		private static string GetSqlQuery()
 		{
 			return @"SELECT t.Id, t.Title, t.Level, t.StartDate, t.EndDate,
-				t.State, t.VenueId, t.VenueName, t.NumberOfEvents
-				FROM dbo.Tournament t";
+				t.State, t.VenueId AS VenueId, v.Name AS VenueName,
+				e.NumberOfEvents
+				FROM dbo.Tournament t
+				LEFT JOIN dbo.Venue v ON v.Id = t.VenueId
+				LEFT JOIN (SELECT e.TournamentId, Count(*) NumberOfEvents
+					FROM dbo.Event e GROUP BY e.TournamentId) e
+					ON e.TournamentId = t.Id";
 		}
 	}
 }
