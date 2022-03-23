@@ -118,20 +118,40 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			RaiseDomainEvent(new TournamentEntryOpened(Id, _events.Select(e => e.EventType)));
 		}
 
-		public void EnterEvent(EventType eventType, Player playerOne, Player playerTwo = null)
+		public void EnterSinglesEvent(EventType eventType, Player playerOne)
 		{
-			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(EnterEvent));
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State,
+				nameof(EnterSinglesEvent));
 			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			tennisEvent.EnterEvent(playerOne, playerTwo);
+			tennisEvent.EnterSinglesEvent(playerOne);
 		}
 
-		public void WithdrawFromEvent(EventType eventType, Player playerOne, Player playerTwo = null)
+		public void EnterDoublesEvent(EventType eventType, Player playerOne, Player playerTwo)
 		{
-			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State, nameof(WithdrawFromEvent));
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State,
+				nameof(EnterDoublesEvent));
 			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
 
-			tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
+			tennisEvent.EnterDoublesEvent(playerOne, playerTwo);
+		}
+
+		public void WithdrawFromSinglesEvent(EventType eventType, Player playerOne)
+		{
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State,
+				nameof(WithdrawFromSinglesEvent));
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
+
+			tennisEvent.WithdrawFromSinglesEvent(playerOne);
+		}
+
+		public void WithdrawFromDoublesEvent(EventType eventType, Player playerOne, Player playerTwo)
+		{
+			Guard.Against.TournamentActionInWrongState(TournamentState.AcceptingEntries, State,
+				nameof(WithdrawFromDoublesEvent));
+			var tennisEvent = Guard.Against.MissingEventType(_events, eventType);
+
+			tennisEvent.WithdrawFromDoublesEvent(playerOne, playerTwo);
 		}
 
 		public void CloseEntries()

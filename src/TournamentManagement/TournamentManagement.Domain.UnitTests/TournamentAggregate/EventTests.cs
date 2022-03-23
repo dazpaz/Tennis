@@ -91,7 +91,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(player);
+			tennisEvent.EnterSinglesEvent(player);
 
 			tennisEvent.Entries.Count.Should().Be(1);
 			tennisEvent.Entries[0].PlayerOne.Should().Be(player);
@@ -106,7 +106,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
 
-			tennisEvent.EnterEvent(playerOne, playerTwo);
+			tennisEvent.EnterDoublesEvent(playerOne, playerTwo);
 
 			tennisEvent.Entries.Count.Should().Be(1);
 			tennisEvent.Entries[0].PlayerOne.Should().Be(playerOne);
@@ -119,7 +119,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			Action act = () => tennisEvent.EnterEvent(null);
+			Action act = () => tennisEvent.EnterSinglesEvent(null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
@@ -133,12 +133,12 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			Action act = () => tennisEvent.EnterEvent(null, player);
+			Action act = () => tennisEvent.EnterDoublesEvent(null, player);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
 
-			act = () => tennisEvent.EnterEvent(player, null);
+			act = () => tennisEvent.EnterDoublesEvent(player, null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerTwo')");
@@ -152,13 +152,13 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(player);
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(player);
 
 			tennisEvent.Entries.Count.Should().Be(3);
 
-			Action act = () => tennisEvent.EnterEvent(player);
+			Action act = () => tennisEvent.EnterSinglesEvent(player);
 
 			act.Should().Throw<Exception>()
 				.WithMessage("Player Steve has already entered this event");
@@ -172,17 +172,17 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male), player);
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male), player);
 
 			tennisEvent.Entries.Count.Should().Be(3);
 
-			Action act = () => tennisEvent.EnterEvent(player,
+			Action act = () => tennisEvent.EnterDoublesEvent(player,
 				Player.Register(new PlayerId(), "Chris", 100, 50, Gender.Male));
 
 			act.Should().Throw<Exception>()
@@ -197,17 +197,17 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
 
-			tennisEvent.EnterEvent(player, Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male));
+			tennisEvent.EnterDoublesEvent(player, Player.Register(new PlayerId(), "Barry", 100, 50, Gender.Male));
 
 			tennisEvent.Entries.Count.Should().Be(3);
 
-			Action act = () => tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Chris", 100, 50, Gender.Male),
+			Action act = () => tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "Chris", 100, 50, Gender.Male),
 				player);
 
 			act.Should().Throw<Exception>()
@@ -222,13 +222,13 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(player);
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(player);
 
 			tennisEvent.Entries.Count.Should().Be(3);
 
-			tennisEvent.WithdrawFromEvent(player);
+			tennisEvent.WithdrawFromSinglesEvent(player);
 
 			tennisEvent.Entries.Count.Should().Be(2);
 		}
@@ -241,13 +241,13 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Dave", 20, 150, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(playerOne, playerTwo);
+			tennisEvent.EnterDoublesEvent(playerOne, playerTwo);
 
 			tennisEvent.Entries.Count.Should().Be(2);
 
-			tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
+			tennisEvent.WithdrawFromDoublesEvent(playerOne, playerTwo);
 
 			tennisEvent.Entries.Count.Should().Be(1);
 		}
@@ -258,7 +258,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tennisEvent = Event.Create(EventType.MensSingles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			Action act = () => tennisEvent.WithdrawFromEvent(null);
+			Action act = () => tennisEvent.WithdrawFromSinglesEvent(null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
@@ -270,7 +270,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var tennisEvent = Event.Create(EventType.MensDoubles, new EventSize(128, 32),
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 
-			Action act = () => tennisEvent.WithdrawFromEvent(null, null);
+			Action act = () => tennisEvent.WithdrawFromDoublesEvent(null, null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerOne')");
@@ -283,7 +283,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 				MatchFormat.ThreeSetMatchWithFinalSetTieBreak);
 			var playerOne = Player.Register(new PlayerId(), "John", 2, 4, Gender.Male);
 
-			Action act = () => tennisEvent.WithdrawFromEvent(playerOne, null);
+			Action act = () => tennisEvent.WithdrawFromDoublesEvent(playerOne, null);
 
 			act.Should().Throw<ArgumentNullException>()
 				.WithMessage("Value cannot be null. (Parameter 'playerTwo')");
@@ -297,10 +297,10 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			var player = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male));
+			tennisEvent.EnterSinglesEvent(Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
 
-			Action act = () => tennisEvent.WithdrawFromEvent(player);
+			Action act = () => tennisEvent.WithdrawFromSinglesEvent(player);
 
 			act.Should().Throw<Exception>()
 				.WithMessage("Player was not entered into the event");
@@ -315,12 +315,12 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 			var playerOne = Player.Register(new PlayerId(), "Steve", 100, 50, Gender.Male);
 			var playerTwo = Player.Register(new PlayerId(), "Boris", 10, 55, Gender.Male);
 
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "Dave", 100, 50, Gender.Male),
 				Player.Register(new PlayerId(), "Peter", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(playerOne, Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
-			tennisEvent.EnterEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male), playerTwo);
+			tennisEvent.EnterDoublesEvent(playerOne, Player.Register(new PlayerId(), "Lee", 100, 50, Gender.Male));
+			tennisEvent.EnterDoublesEvent(Player.Register(new PlayerId(), "John", 100, 50, Gender.Male), playerTwo);
 
-			Action act = () => tennisEvent.WithdrawFromEvent(playerOne, playerTwo);
+			Action act = () => tennisEvent.WithdrawFromDoublesEvent(playerOne, playerTwo);
 
 			act.Should().Throw<Exception>()
 				.WithMessage("Players were not entered into the event");
