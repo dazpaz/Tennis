@@ -112,6 +112,36 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		[HttpPost("{id}/EnterSinglesEvent")]
+		public IActionResult EnterSinglesEvent(Guid id, [FromBody] EnterSinglesEventDto entryDetails)
+		{
+			var command = EnterSinglesEventCommand.Create(id, entryDetails.EventType,
+				entryDetails.PlayerOneId);
+
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
+		[HttpPost("{id}/EnterDoublesEvent")]
+		public IActionResult EnterDoublesEvent(Guid id, [FromBody] EnterDoublesEventDto entryDetails)
+		{
+			var command = EnterDoublesEventCommand.Create(id, entryDetails.EventType,
+				entryDetails.PlayerOneId, entryDetails.PlayerTwoId);
+
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			Result result = _dispatcher.Dispatch(command.Value);
+
+			return result.IsSuccess
+				? Ok()
+				: BadRequest(result.Error);
+		}
+
 		#endregion
 
 		#region Queries
