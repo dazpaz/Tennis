@@ -211,7 +211,7 @@ namespace TournamentManagement.Console
 			tournament.OpenForEntries();
 
 			var player = Player.Register(playerId, "Edward Entered", 12, 123, Gender.Male);
-			tournament.EnterEvent(EventType.MensSingles, player);
+			tournament.EnterSinglesEvent(EventType.MensSingles, player);
 
 			uow.TournamentRepository.Add(tournament);
 
@@ -249,9 +249,9 @@ namespace TournamentManagement.Console
 			var tournament = uow.TournamentRepository.GetById(tournamentId);
 
 			var otherPlayer = Player.Register(new PlayerId(), "Brad New", 123, 121, Gender.Male);
-			tournament.EnterEvent(EventType.WomensSingles, player);
+			tournament.EnterSinglesEvent(EventType.WomensSingles, player);
 			uow.PlayerRepository.Add(otherPlayer);
-			tournament.EnterEvent(EventType.MensSingles, otherPlayer);
+			tournament.EnterSinglesEvent(EventType.MensSingles, otherPlayer);
 
 			uow.SaveChanges();
 		}
@@ -265,7 +265,7 @@ namespace TournamentManagement.Console
 
 			try
 			{
-				tournament.EnterEvent(EventType.MensSingles, Player.Register(playerId, "Someone Else", 1, 1, Gender.Male));
+				tournament.EnterSinglesEvent(EventType.MensSingles, Player.Register(playerId, "Someone Else", 1, 1, Gender.Male));
 			}
 			catch
 			{

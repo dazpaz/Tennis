@@ -52,53 +52,53 @@ namespace TournamentManagement.Domain.TournamentAggregate
 			IsCompleted = true;
 		}
 
-		internal void EnterEvent(Player playerOne, Player playerTwo = null)
+		internal void EnterSinglesEvent(Player playerOne)
 		{
-			EventEntry entry;
+			Guard.Against.NotASinglesEventType(EventType);
+			Guard.Against.Null(playerOne, nameof(playerOne));
+			Guard.Against.PlayerAlreadyEnteredInSingleEvent(Entries, playerOne);
 
-			if (SinglesEvent)
-			{
-				Guard.Against.Null(playerOne, nameof(playerOne));
-				Guard.Against.PlayerAlreadyEnteredInSingleEvent(Entries, playerOne);
-
-				entry = EventEntry.CreateSinglesEventEntry(EventType, playerOne);
-			}
-			else
-			{
-				Guard.Against.Null(playerOne, nameof(playerOne));
-				Guard.Against.Null(playerTwo, nameof(playerTwo));
-				Guard.Against.PlayersAlreadyEnteredInDoublesEvent(Entries, playerOne, playerTwo);
-
-				entry = EventEntry.CreateDoublesEventEntry(EventType, playerOne, playerTwo);
-			}
+			var entry = EventEntry.CreateSinglesEventEntry(EventType, playerOne);
 			
 			_entries.Add(entry);
 		}
 
-		internal void WithdrawFromEvent(Player playerOne, Player playerTwo = null)
+		internal void EnterDoublesEvent(Player playerOne, Player playerTwo)
 		{
-			if (SinglesEvent)
-			{
-				Guard.Against.Null(playerOne, nameof(playerOne));
-				var entry = Guard.Against.PlayerNotEnteredInSingleEvent(Entries, playerOne);
+			Guard.Against.NotADoublesEventType(EventType);
+			Guard.Against.Null(playerOne, nameof(playerOne));
+			Guard.Against.Null(playerTwo, nameof(playerTwo));
+			Guard.Against.PlayersAlreadyEnteredInDoublesEvent(Entries, playerOne, playerTwo);
 
-				_entries.Remove(entry);
-			}
-			else
-			{
-				Guard.Against.Null(playerOne, nameof(playerOne));
-				Guard.Against.Null(playerTwo, nameof(playerTwo));
-				var entry = Guard.Against.PlayersNotEnteredInDoublesEvent(Entries, playerOne, playerTwo);
+			var entry = EventEntry.CreateDoublesEventEntry(EventType, playerOne, playerTwo);
 
-				_entries.Remove(entry);
-			}
+			_entries.Add(entry);
+		}
+
+		internal void WithdrawFromSinglesEvent(Player playerOne)
+		{
+			Guard.Against.NotASinglesEventType(EventType);
+			Guard.Against.Null(playerOne, nameof(playerOne));
+
+			var entry = Guard.Against.PlayerNotEnteredInSingleEvent(Entries, playerOne);
+
+			_entries.Remove(entry);
+		}
+
+		internal void WithdrawFromDoublesEvent(Player playerOne, Player playerTwo)
+		{
+			Guard.Against.NotADoublesEventType(EventType);
+			Guard.Against.Null(playerOne, nameof(playerOne));
+			Guard.Against.Null(playerTwo, nameof(playerTwo));
+			var entry = Guard.Against.PlayersNotEnteredInDoublesEvent(Entries, playerOne, playerTwo);
+
+			_entries.Remove(entry);
 		}
 
 		private void SetAttributeDetails(EventSize eventSize, MatchFormat matchFormat)
 		{
 			EventSize = eventSize;
 			MatchFormat = matchFormat;
-			
 		}
 	}
 }
