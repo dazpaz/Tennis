@@ -27,24 +27,24 @@ namespace TournamentManagement.Application.Commands
 			VenueId = venueId;
 		}
 
-		public static Result<AmendTournamentCommand> Create(Guid tournamentGuid, string title, TournamentLevel level,
+		public static Result<ICommand> Create(Guid tournamentGuid, string title, TournamentLevel level,
 			DateTime startDate, DateTime endDate, Guid venueGuid)
 		{
 			try
 			{
 				if (!Enum.IsDefined(typeof(TournamentLevel), level))
 				{
-					return Result.Failure<AmendTournamentCommand>("Invalid tournament level");
+					return Result.Failure<ICommand>("Invalid tournament level");
 				}
 
-				var command = new AmendTournamentCommand(new TournamentId(tournamentGuid), new TournamentTitle(title),
+				ICommand command = new AmendTournamentCommand(new TournamentId(tournamentGuid), new TournamentTitle(title),
 					level, new TournamentDates(startDate, endDate), new VenueId(venueGuid));
 
 				return Result.Success(command);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<AmendTournamentCommand>(ex.Message);
+				return Result.Failure<ICommand>(ex.Message);
 			}
 		}
 	}

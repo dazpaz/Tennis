@@ -19,21 +19,21 @@ namespace TournamentManagement.Application.Commands
 			EventType = eventType;
 		}
 
-		public static Result<RemoveEventCommand> Create(Guid tournamentGuid, string eventType)
+		public static Result<ICommand> Create(Guid tournamentGuid, string eventType)
 		{
 			if (!Enum.TryParse(eventType, out EventType type))
 			{
-				return Result.Failure<RemoveEventCommand>("Invalid event type");
+				return Result.Failure<ICommand>("Invalid event type");
 			}
 
 			try
 			{
-				var command = new RemoveEventCommand(new TournamentId(tournamentGuid), type);
+				ICommand command = new RemoveEventCommand(new TournamentId(tournamentGuid), type);
 				return Result.Success(command);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<RemoveEventCommand>(ex.Message);
+				return Result.Failure<ICommand>(ex.Message);
 			}
 		}
 	}

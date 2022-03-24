@@ -22,24 +22,24 @@ namespace TournamentManagement.Application.Commands
 			PlayerOneId = playerOneId;
 		}
 
-		public static Result<EnterSinglesEventCommand> Create(Guid tournamentId, EventType eventType,
+		public static Result<ICommand> Create(Guid tournamentId, EventType eventType,
 			Guid playerOneId)
 		{
 			try
 			{
 				if (!Enum.IsDefined(typeof(EventType), eventType))
 				{
-					return Result.Failure<EnterSinglesEventCommand>("Invalid Event Type");
+					return Result.Failure<ICommand>("Invalid Event Type");
 				}
 
-				var command = new EnterSinglesEventCommand(new TournamentId(tournamentId), eventType,
+				ICommand command = new EnterSinglesEventCommand(new TournamentId(tournamentId), eventType,
 					new PlayerId(playerOneId));
 
 				return Result.Success(command);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<EnterSinglesEventCommand>(ex.Message);
+				return Result.Failure<ICommand>(ex.Message);
 			}
 		}
 	}

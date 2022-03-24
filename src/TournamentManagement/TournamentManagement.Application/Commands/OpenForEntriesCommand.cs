@@ -16,16 +16,16 @@ namespace TournamentManagement.Application.Commands
 			TournamentId = tournamentId;
 		}
 
-		public static Result<OpenForEntriesCommand> Create(Guid tournamentGuid)
+		public static Result<ICommand> Create(Guid tournamentGuid)
 		{
 			try
 			{
-				var command = new OpenForEntriesCommand(new TournamentId(tournamentGuid));
+				ICommand command = new OpenForEntriesCommand(new TournamentId(tournamentGuid));
 				return Result.Success(command);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<OpenForEntriesCommand>(ex.Message);
+				return Result.Failure<ICommand>(ex.Message);
 			}
 			
 		}
