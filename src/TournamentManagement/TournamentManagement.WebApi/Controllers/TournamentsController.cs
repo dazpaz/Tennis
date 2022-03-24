@@ -125,6 +125,14 @@ namespace TournamentManagement.WebApi.Controllers
 			return ExecuteCommand(command);
 		}
 
+		[HttpPost("{id}/CloseEntries")]
+		public IActionResult CloseEntries(Guid id)
+		{
+			var command = CloseEntriesCommand.Create(id);
+
+			return ExecuteCommand(command);
+		}
+
 		private IActionResult ExecuteCommand(Result<ICommand> command)
 		{
 			if (command.IsFailure) return BadRequest(command.Error);
