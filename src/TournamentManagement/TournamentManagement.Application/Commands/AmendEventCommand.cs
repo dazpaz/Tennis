@@ -24,29 +24,29 @@ namespace TournamentManagement.Application.Commands
 			MatchFormat = matchFormat;
 		}
 
-		public static Result<AmendEventCommand> Create(Guid tournamentGuid, string eventType, int entrantsLimit,
+		public static Result<ICommand> Create(Guid tournamentGuid, string eventType, int entrantsLimit,
 				int numberOfSeeds, int numberOfSets, SetType finalSetType)
 		{
 			try
 			{
 				if (!Enum.TryParse(eventType, out EventType type))
 				{
-					return Result.Failure<AmendEventCommand>("Invalid event type");
+					return Result.Failure<ICommand>("Invalid event type");
 				}
 
 				if (!Enum.IsDefined(typeof(SetType), finalSetType))
 				{
-					return Result.Failure<AmendEventCommand>("Invalid set type");
+					return Result.Failure<ICommand>("Invalid set type");
 				}
 
-				var command = new AmendEventCommand(new TournamentId(tournamentGuid), type,
+				ICommand command = new AmendEventCommand(new TournamentId(tournamentGuid), type,
 					new EventSize(entrantsLimit, numberOfSeeds), new MatchFormat(numberOfSets, finalSetType));
 
 				return Result.Success(command);
 			}
 			catch (Exception ex)
 			{
-				return Result.Failure<AmendEventCommand>(ex.Message);
+				return Result.Failure<ICommand>(ex.Message);
 			}
 		}
 	}

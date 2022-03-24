@@ -1,4 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
+using DomainDesign.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -38,22 +39,6 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
-		[HttpPut("{id}")]
-		public IActionResult AmendTournament(Guid id, [FromBody] AmendTournamentDto tournamentDetails)
-		{
-			var command = AmendTournamentCommand.Create(id, tournamentDetails.Title,
-				tournamentDetails.TournamentLevel, tournamentDetails.StartDate,
-				tournamentDetails.EndDate, tournamentDetails.VenueId);
-
-			if (command.IsFailure) return BadRequest(command.Error);
-
-			Result result = _dispatcher.Dispatch(command.Value);
-
-			return result.IsSuccess
-				? Ok()
-				: BadRequest(result.Error);
-		}
-
 		[HttpPost("{id}/Events")]
 		public IActionResult AddEvent(Guid id, [FromBody] AddEventDto eventDetails)
 		{
@@ -69,19 +54,23 @@ namespace TournamentManagement.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
+		[HttpPut("{id}")]
+		public IActionResult AmendTournament(Guid id, [FromBody] AmendTournamentDto tournamentDetails)
+		{
+			var command = AmendTournamentCommand.Create(id, tournamentDetails.Title,
+				tournamentDetails.TournamentLevel, tournamentDetails.StartDate,
+				tournamentDetails.EndDate, tournamentDetails.VenueId);
+
+			return ExecuteCommand(command);
+		}
+
 		[HttpPut("{id}/Events/{eventType}")]
 		public IActionResult AmendEvent(Guid id, string eventType, [FromBody] AmendEventDto eventDetails)
 		{
 			var command = AmendEventCommand.Create(id, eventType , eventDetails.EntrantsLimit,
 				eventDetails.NumberOfSeeds, eventDetails.NumberOfSets, eventDetails.FinalSetType);
 
-			if (command.IsFailure) return BadRequest(command.Error);
-
-			Result result = _dispatcher.Dispatch(command.Value);
-
-			return result.IsSuccess
-				? Ok()
-				: BadRequest(result.Error);
+			return ExecuteCommand(command);
 		}
 
 		[HttpDelete("{id}/Events/{eventType}")]
@@ -89,13 +78,7 @@ namespace TournamentManagement.WebApi.Controllers
 		{
 			var command = RemoveEventCommand.Create(id, eventType);
 
-			if (command.IsFailure) return BadRequest(command.Error);
-
-			Result result = _dispatcher.Dispatch(command.Value);
-
-			return result.IsSuccess
-				? Ok()
-				: BadRequest(result.Error);
+			return ExecuteCommand(command);
 		}
 
 		[HttpPost("{id}/OpenForEntries")]
@@ -103,13 +86,7 @@ namespace TournamentManagement.WebApi.Controllers
 		{
 			var command = OpenForEntriesCommand.Create(id);
 
-			if (command.IsFailure) return BadRequest(command.Error);
-
-			Result result = _dispatcher.Dispatch(command.Value);
-
-			return result.IsSuccess
-				? Ok()
-				: BadRequest(result.Error);
+			return ExecuteCommand(command);
 		}
 
 		[HttpPost("{id}/EnterSinglesEvent")]
@@ -118,13 +95,7 @@ namespace TournamentManagement.WebApi.Controllers
 			var command = EnterSinglesEventCommand.Create(id, entryDetails.EventType,
 				entryDetails.PlayerOneId);
 
-			if (command.IsFailure) return BadRequest(command.Error);
-
-			Result result = _dispatcher.Dispatch(command.Value);
-
-			return result.IsSuccess
-				? Ok()
-				: BadRequest(result.Error);
+			return ExecuteCommand(command);
 		}
 
 		[HttpPost("{id}/EnterDoublesEvent")]
@@ -133,6 +104,11 @@ namespace TournamentManagement.WebApi.Controllers
 			var command = EnterDoublesEventCommand.Create(id, entryDetails.EventType,
 				entryDetails.PlayerOneId, entryDetails.PlayerTwoId);
 
+			return ExecuteCommand(command);
+		}
+
+		private IActionResult ExecuteCommand(Result<ICommand> command)
+		{
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			Result result = _dispatcher.Dispatch(command.Value);
