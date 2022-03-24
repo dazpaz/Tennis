@@ -107,6 +107,24 @@ namespace TournamentManagement.WebApi.Controllers
 			return ExecuteCommand(command);
 		}
 
+		[HttpPost("{id}/WithdrawFromSinglesEvent")]
+		public IActionResult WithdrawFromSinglesEvent(Guid id, [FromBody] WithdrawFromSinglesEventDto entryDetails)
+		{
+			var command = WithdrawFromSinglesEventCommand.Create(id, entryDetails.EventType,
+				entryDetails.PlayerOneId);
+
+			return ExecuteCommand(command);
+		}
+
+		[HttpPost("{id}/WithdrawFromDoublesEvent")]
+		public IActionResult WithdrawFromDoublesEvent(Guid id, [FromBody] WithdrawFromDoublesEventDto entryDetails)
+		{
+			var command = WithdrawFromDoublesEventCommand.Create(id, entryDetails.EventType,
+				entryDetails.PlayerOneId, entryDetails.PlayerTwoId);
+
+			return ExecuteCommand(command);
+		}
+
 		private IActionResult ExecuteCommand(Result<ICommand> command)
 		{
 			if (command.IsFailure) return BadRequest(command.Error);
