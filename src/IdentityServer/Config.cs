@@ -16,7 +16,7 @@ namespace IdentityServer
 			{
 				new Client
 				{
-					ClientId = "api-tests",
+					ClientId = "client",
 
 					// no interactive user, use the clientid/secret for authentication
 					AllowedGrantTypes = GrantTypes.ClientCredentials,
@@ -24,7 +24,7 @@ namespace IdentityServer
 					// secret for authentication
 					ClientSecrets =
 					{
-						new Secret("api-tests-secret".Sha256())
+						new Secret("client-secret".Sha256())
 					},
 
 					// scopes that client has access to
