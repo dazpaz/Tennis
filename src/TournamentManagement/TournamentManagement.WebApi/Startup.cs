@@ -17,6 +17,7 @@ using TournamentManagement.Data;
 using TournamentManagement.Query;
 using TournamentManagement.Data.Repository;
 using TournamentManagement.WebApi.Utilities;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TournamentManagement.WebApi
 {
@@ -45,12 +46,22 @@ namespace TournamentManagement.WebApi
 			services.AddHandlers();
 
 			services.AddControllers();
+
+			services.AddAuthentication("Bearer")
+				.AddJwtBearer("Bearer", options =>
+				{
+					options.Authority = "https://localhost:6001";
+
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateAudience = false
+					};
+				});
+
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "TournamentManagement.WebApi", Version = "v1" });
 			});
-
-
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +78,7 @@ namespace TournamentManagement.WebApi
 
 			app.UseRouting();
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
