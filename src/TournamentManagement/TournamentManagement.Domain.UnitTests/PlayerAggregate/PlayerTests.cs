@@ -59,7 +59,7 @@ namespace TournamentManagement.Domain.UnitTests.PlayerAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("*Rank * is outside allowed range, 1 - 9999");
+				.WithMessage("*Rank * is outside allowed range, 1 - 9999 (Parameter '*')");
 		}
 
 		[Theory]
@@ -89,7 +89,7 @@ namespace TournamentManagement.Domain.UnitTests.PlayerAggregate
 
 			act.Should()
 				.Throw<ArgumentException>()
-				.WithMessage("*Rank * is outside allowed range, 1 - 9999");
+				.WithMessage("*Rank * is outside allowed range, 1 - 9999 (Parameter '*')");
 		}
 	}
 }
