@@ -39,7 +39,7 @@ namespace TournamentManagement.Domain.UnitTests.TournamentAggregate
 
 			act.Should()
 				.Throw<ArgumentOutOfRangeException>()
-				.WithMessage($"Tournament title was too long, maximum length is {TournamentTitle.MaxLength}");
+				.WithMessage($"Tournament title was too long, maximum length is {TournamentTitle.MaxLength} (Parameter 'title')");
 		}
 	}
 }
