@@ -1,7 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using DomainDesign.Common;
 
-namespace Players.Application;
+namespace Cqrs.Common.Application;
 
 public sealed class MessageDispatcher
 {
