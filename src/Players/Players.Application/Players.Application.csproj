@@ -14,8 +14,4 @@
     <ProjectReference Include="..\Players.Domain\Players.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
-
 </Project>
