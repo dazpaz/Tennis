@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using DomainDesign.Common;
+using Players.Application.Repository;
 using Players.Common;
+using Players.Domain.PlayerAggregate;
 
 namespace Players.Application.Commands;
 
@@ -49,6 +51,34 @@ public sealed class RegisterPlayerCommand : ICommand
 		catch (Exception ex)
 		{
 			return Result.Failure<RegisterPlayerCommand>(ex.Message);
+		}
+	}
+}
+
+public sealed class RegisterPlayerCommandHandler : ICommandHandler<RegisterPlayerCommand, Guid>
+{
+	private readonly IUnitOfWork _uow;
+
+	public RegisterPlayerCommandHandler(IUnitOfWork uow)
+	{
+		_uow = uow;
+	}
+
+	public Result<Guid> Handle(RegisterPlayerCommand command)
+	{
+		try
+		{
+			var player = Player.Register(command.FirstName, command.LastName, command.Gender,
+				command.DateOfBirth, command.Plays, command.Height, command.Country);
+
+			_uow.PlayerRepository.Add(player);
+			_uow.SaveChanges();
+
+			return Result.Success(player.Id.Id);
+		}
+		catch (Exception ex)
+		{
+			return Result.Failure<Guid>(ex.Message);
 		}
 	}
 }

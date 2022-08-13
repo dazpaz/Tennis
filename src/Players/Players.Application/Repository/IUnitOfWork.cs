@@ -5,4 +5,6 @@ namespace Players.Application.Repository;
 public interface IUnitOfWork
 {
 	IRepository<Player, PlayerId> PlayerRepository { get; }
+
+	int SaveChanges();
 }
