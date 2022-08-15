@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Cqrs.Common\Cqrs.Common.csproj" />
     <ProjectReference Include="..\..\Common\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\Players.Application\Players.Application.csproj" />
     <ProjectReference Include="..\Players.Domain\Players.Domain.csproj" />
   </ItemGroup>
 

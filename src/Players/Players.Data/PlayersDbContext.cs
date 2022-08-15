@@ -1,4 +1,5 @@
-﻿using DomainDesign.Common;
+﻿using Cqrs.Common.Data;
+using DomainDesign.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Players.Data.Configuration;
@@ -15,7 +16,7 @@ public class PlayersDbContext : DbContext
 
 	public DbSet<Player> Players { get; set; }
 
-	public PlayersDbContext(CommandConnectionString connectionString, bool useConsoleLogger)
+	public PlayersDbContext(ConnectionString connectionString, bool useConsoleLogger)
 	{
 		_connectionString = connectionString.Value;
 		_useConsoleLogger = useConsoleLogger;
