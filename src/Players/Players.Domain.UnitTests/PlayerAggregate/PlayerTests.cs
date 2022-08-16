@@ -8,7 +8,7 @@ namespace Players.Domain.UnitTests.PlayerAggregate
 		[Fact]
 		public void CanUseFactoryMethodToCreatePlayerAndItIsCreatedCorrectly()
 		{
-			var player = Player.Register("Steve", "Serve", Gender.Male, new DateOnly(2000, 10, 01),
+			var player = Player.Register("Steve", "Serve", Gender.Male, new DateTime(2000, 10, 01),
 				Plays.RightHanded, 191, "United Kingdom");
 
 			player.Id.Id.Should().NotBe(Guid.Empty);
@@ -16,7 +16,7 @@ namespace Players.Domain.UnitTests.PlayerAggregate
 			player.LastName.Should().Be("Serve");
 			player.FullName.Should().Be("Steve Serve");
 			player.Gender.Should().Be(Gender.Male);
-			player.DateOfBirth.Should().Be(new DateOnly(2000, 10, 01));
+			player.DateOfBirth.Should().Be(new DateTime(2000, 10, 01));
 			player.Plays.Should().Be(Plays.RightHanded);
 			player.Height.Should().Be(191);
 			player.Country.Should().Be("United Kingdom");

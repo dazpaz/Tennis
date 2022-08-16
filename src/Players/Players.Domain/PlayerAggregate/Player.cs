@@ -11,7 +11,7 @@ public class Player : AggregateRoot<PlayerId>
 	public string LastName { get; private set; }
 	public string FullName { get; private set; }
 	public Gender Gender { get; private set; }
-	public DateOnly DateOfBirth { get; private set; }
+	public DateTime DateOfBirth { get; private set; }
 	public Plays Plays { get; private set; }
 	public int Height { get; private set; }
 	public string Country { get; private set; }
@@ -29,7 +29,7 @@ public class Player : AggregateRoot<PlayerId>
 	}
 
 	public static Player Register(string firstName, string lastName, Gender gender,
-		DateOnly dateOfBirth, Plays plays, int height, string country)
+		DateTime dateOfBirth, Plays plays, int height, string country)
 	{
 		var player = new Player(new PlayerId())
 		{
