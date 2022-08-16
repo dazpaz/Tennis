@@ -1,3 +1,10 @@
+using Cqrs.Common.Application;
+using Cqrs.Common.Data;
+using Players.Application.Repository;
+using Players.Data;
+using Players.Data.Repository;
+using Players.WebApi.Utilities;
+
 namespace Players.WebApi
 {
 	public class Program
@@ -7,6 +14,18 @@ namespace Players.WebApi
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
+
+			var commandConnectionString = new ConnectionString(builder.Configuration["CommandConnectionString"]);
+			builder.Services.AddSingleton(commandConnectionString);
+
+			builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddTransient(s => new PlayersDbContext(commandConnectionString, true));
+
+			builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddTransient(s => new PlayersDbContext(commandConnectionString, true));
+
+			builder.Services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
+			builder.Services.AddHandlers();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -20,6 +39,9 @@ namespace Players.WebApi
 			{
 				app.UseSwagger();
 				app.UseSwaggerUI();
+
+				using var context = new PlayersDbContext(commandConnectionString, false);
+				context.Database.EnsureCreated();
 			}
 
 			app.UseHttpsRedirection();

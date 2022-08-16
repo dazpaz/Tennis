@@ -1,6 +1,11 @@
-﻿using DomainDesign.Common;
+﻿using Cqrs.Common.Data;
+using DomainDesign.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Players.Data.Configuration;
+using Players.Domain.PlayerAggregate;
+
+#nullable disable
 
 namespace Players.Data;
 
@@ -9,7 +14,9 @@ public class PlayersDbContext : DbContext
 	private readonly string _connectionString;
 	private readonly bool _useConsoleLogger;
 
-	public PlayersDbContext(CommandConnectionString connectionString, bool useConsoleLogger)
+	public DbSet<Player> Players { get; set; }
+
+	public PlayersDbContext(ConnectionString connectionString, bool useConsoleLogger)
 	{
 		_connectionString = connectionString.Value;
 		_useConsoleLogger = useConsoleLogger;
@@ -39,6 +46,7 @@ public class PlayersDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		new PlayerEntityTypeConfiguration().Configure(modelBuilder.Entity<Player>());
 	}
 
 	public override int SaveChanges()

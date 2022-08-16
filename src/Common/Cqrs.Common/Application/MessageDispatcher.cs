@@ -3,7 +3,7 @@ using DomainDesign.Common;
 
 namespace Cqrs.Common.Application;
 
-public sealed class MessageDispatcher
+public sealed class MessageDispatcher : IMessageDispatcher
 {
 	private readonly IServiceProvider _provider;
 
