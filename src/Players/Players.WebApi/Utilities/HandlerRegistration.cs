@@ -20,16 +20,16 @@ public static class HandlerRegistration
 			AddHandler(services, type);
 		}
 
-		//List<Type> queryHandlers = Assembly.Load("Players.Query")
-		//	.GetTypes()
-		//	.Where(x => x.GetInterfaces().Any(y => IsHandlerInterface(y)))
-		//	.Where(x => x.Name.EndsWith("Handler"))
-		//	.ToList();
+		List<Type> queryHandlers = Assembly.Load("Players.Query")
+			.GetTypes()
+			.Where(x => x.GetInterfaces().Any(y => IsHandlerInterface(y)))
+			.Where(x => x.Name.EndsWith("Handler"))
+			.ToList();
 
-		//foreach (Type type in queryHandlers)
-		//{
-		//	AddHandler(services, type);
-		//}
+		foreach (Type type in queryHandlers)
+		{
+			AddHandler(services, type);
+		}
 	}
 
 	private static void AddHandler(IServiceCollection services, Type type)

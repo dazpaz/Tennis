@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Players.Application\Players.Application.csproj" />
     <ProjectReference Include="..\Players.Contract\Players.Contract.csproj" />
     <ProjectReference Include="..\Players.Data\Players.Data.csproj" />
+    <ProjectReference Include="..\Players.Query\Players.Query.csproj" />
   </ItemGroup>
 
 </Project>

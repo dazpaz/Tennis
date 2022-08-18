@@ -3,6 +3,7 @@ using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Players.Application.Commands;
 using Players.Contract;
+using Players.Query;
 
 namespace Players.WebApi.Controllers
 {
@@ -38,15 +39,24 @@ namespace Players.WebApi.Controllers
 		[HttpGet("{id}")]
 		public IActionResult GetPlayer(Guid id)
 		{
-			return Ok(id);
+			var query = new GetPlayerDetails(id);
 
-			//var query = new GetTournamentDetails(id);
+			Result<PlayerDetailsDto> result = _dispatcher.Dispatch(query);
 
-			//Result<TournamentDetailsDto> result = _dispatcher.Dispatch(query);
-
-			//return result.IsSuccess
-			//	? Ok(result.Value)
-			//	: BadRequest(result.Error);
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
 		}
+
+		//[HttpGet]
+		//public IActionResult GetPlayers()
+		//{
+		//	var query = new GetPlayerSummaryList();
+		//	Result<List<PlayerSummaryDto>> result = _dispatcher.Dispatch(query);
+
+		//	return result.IsSuccess
+		//		? Ok(result.Value)
+		//		: BadRequest(result.Error);
+		//}
 	}
 }
