@@ -8,7 +8,8 @@ public class RegisterPlayerCommandTests
 	[Fact]
 	public void CanCreateARegisterPlayerCommand()
 	{
-		var command = RegisterPlayerCommand.Create("Steve", "Serve", Gender.Male, new DateTime(2000, 10, 01),
+		var command = RegisterPlayerCommand.Create("Steve", "Serve", "first.last@tennis.com",
+			Gender.Male, new DateTime(2000, 10, 01),
 			Plays.LeftHanded, 191, "France");
 
 		command.IsSuccess.Should().BeTrue();
@@ -24,7 +25,8 @@ public class RegisterPlayerCommandTests
 	[Fact]
 	public void WhenCreatingARegisterPlayerCommandWithBadGenderThenErrorResultIsReturned()
 	{
-		var command = RegisterPlayerCommand.Create("Steve", "Serve", (Gender)5, new DateTime(2000, 10, 01),
+		var command = RegisterPlayerCommand.Create("Steve", "Serve", "first.last@tennis.com",
+			(Gender)5, new DateTime(2000, 10, 01),
 			Plays.LeftHanded, 191, "France");
 
 		command.IsFailure.Should().BeTrue();
@@ -34,7 +36,8 @@ public class RegisterPlayerCommandTests
 	[Fact]
 	public void WhenCreatingARegisterPlayerCommandWithBadPlaysThenErrorResultIsReturned()
 	{
-		var command = RegisterPlayerCommand.Create("Steve", "Serve", Gender.Female, new DateTime(2000, 10, 01),
+		var command = RegisterPlayerCommand.Create("Steve", "Serve", "first.last@tennis.com",
+			Gender.Female, new DateTime(2000, 10, 01),
 			(Plays)3, 191, "France");
 
 		command.IsFailure.Should().BeTrue();

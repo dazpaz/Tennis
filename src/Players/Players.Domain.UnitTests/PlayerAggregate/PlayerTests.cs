@@ -8,13 +8,16 @@ namespace Players.Domain.UnitTests.PlayerAggregate
 		[Fact]
 		public void CanUseFactoryMethodToCreatePlayerAndItIsCreatedCorrectly()
 		{
-			var player = Player.Register("Steve", "Serve", Gender.Male, new DateTime(2000, 10, 01),
-				Plays.RightHanded, 191, "United Kingdom");
+			var player = Player.Register(PlayerName.Create("Steve").Value,
+				PlayerName.Create("Serve").Value,
+				Email.Create("steve.server@tennis.com").Value,
+				Gender.Male, new DateTime(2000, 10, 01),
+				Plays.RightHanded, Height.Create(191).Value,
+				"United Kingdom");
 
 			player.Id.Id.Should().NotBe(Guid.Empty);
 			player.FirstName.Should().Be("Steve");
 			player.LastName.Should().Be("Serve");
-			player.FullName.Should().Be("Steve Serve");
 			player.Gender.Should().Be(Gender.Male);
 			player.DateOfBirth.Should().Be(new DateTime(2000, 10, 01));
 			player.Plays.Should().Be(Plays.RightHanded);

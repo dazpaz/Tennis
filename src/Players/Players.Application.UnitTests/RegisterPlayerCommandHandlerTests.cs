@@ -11,8 +11,8 @@ public class RegisterPlayerCommandHandlerTests
 	[Fact]
 	public void RegisterPlayerCommandHandlerRegistersPlayerAndSavesToPlayerRepository()
 	{
-		var command = RegisterPlayerCommand.Create("First", "Last", Gender.Female,
-			new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
+		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));
@@ -28,8 +28,8 @@ public class RegisterPlayerCommandHandlerTests
 	[Fact]
 	public void RegisterPlayerCommandHandlerReturnFailureResultIfRepositoryFailsToSavePlayer()
 	{
-		var command = RegisterPlayerCommand.Create("First", "Last", Gender.Female,
-			new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
+		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));

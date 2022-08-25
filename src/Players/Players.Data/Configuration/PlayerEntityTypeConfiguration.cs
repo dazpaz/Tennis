@@ -28,7 +28,5 @@ public class PlayerEntityTypeConfiguration : IEntityTypeConfiguration<Player>
 		builder.Property(p => p.DoublesRank);
 		builder.Property(p => p.SinglesRankingPoints);
 		builder.Property(p => p.DoublesRankingPoints);
-
-		builder.Ignore(p => p.FullName);
 	}
 }
