@@ -24,8 +24,9 @@ namespace Players.WebApi.Controllers
 		[HttpPost]
 		public IActionResult RegisterPlayer([FromBody] RegisterPlayerDto playerDetails)
 		{
-			var command = RegisterPlayerCommand.Create(playerDetails.FirstName, playerDetails.LastName, playerDetails.Gender,
-				playerDetails.DateOfBirth, playerDetails.Plays, playerDetails.Height, playerDetails.Country);
+			var command = RegisterPlayerCommand.Create(playerDetails.FirstName, playerDetails.LastName,
+				playerDetails.Email, playerDetails.Gender, playerDetails.DateOfBirth, playerDetails.Plays,
+				playerDetails.Height, playerDetails.Country);
 
 			if (command.IsFailure) return BadRequest(command.Error);
 

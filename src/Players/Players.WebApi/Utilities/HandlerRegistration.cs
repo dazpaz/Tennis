@@ -62,7 +62,7 @@ public static class HandlerRegistration
 
 		Func<IServiceProvider, object> func = provider =>
 		{
-			object? current = null;
+			object current = null;
 
 			foreach (ConstructorInfo ctor in ctors)
 			{
