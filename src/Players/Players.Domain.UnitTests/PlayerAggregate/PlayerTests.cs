@@ -1,4 +1,5 @@
 ﻿using Players.Common;
+using Players.Domain.CountryAggregate;
 using Players.Domain.PlayerAggregate;
 
 namespace Players.Domain.UnitTests.PlayerAggregate
@@ -10,10 +11,10 @@ namespace Players.Domain.UnitTests.PlayerAggregate
 		{
 			var player = Player.Register(PlayerName.Create("Steve").Value,
 				PlayerName.Create("Serve").Value,
-				Email.Create("steve.server@tennis.com").Value,
+				EmailAddress.Create("steve.server@tennis.com").Value,
 				Gender.Male, new DateTime(2000, 10, 01),
 				Plays.RightHanded, Height.Create(191).Value,
-				"United Kingdom");
+				Country.Create("GBR", "Great Britain"));
 
 			player.Id.Id.Should().NotBe(Guid.Empty);
 			player.FirstName.Should().Be("Steve");
@@ -22,7 +23,7 @@ namespace Players.Domain.UnitTests.PlayerAggregate
 			player.DateOfBirth.Should().Be(new DateTime(2000, 10, 01));
 			player.Plays.Should().Be(Plays.RightHanded);
 			player.Height.Should().Be(191);
-			player.Country.Should().Be("United Kingdom");
+			player.Country.FullName.Should().Be("Great Britain");
 			player.SinglesRank.Should().Be(999);
 			player.DoublesRank.Should().Be(999);
 			player.SinglesRankingPoints.Should().Be(0);
