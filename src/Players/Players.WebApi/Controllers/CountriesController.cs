@@ -47,15 +47,15 @@ namespace Players.WebApi.Controllers
 				: BadRequest(result.Error);
 		}
 
-		//[HttpGet]
-		//public IActionResult GetPlayers()
-		//{
-		//	var query = new GetPlayerSummaryList();
-		//	Result<IList<PlayerSummaryDto>> result = _dispatcher.Dispatch(query);
+		[HttpGet]
+		public IActionResult GetCountries()
+		{
+			var query = new GetCountryDetailsList();
+			Result<IList<CountryDetailsDto>> result = _dispatcher.Dispatch(query);
 
-		//	return result.IsSuccess
-		//		? Ok(result.Value)
-		//		: BadRequest(result.Error);
-		//}
+			return result.IsSuccess
+				? Ok(result.Value)
+				: BadRequest(result.Error);
+		}
 	}
 }
