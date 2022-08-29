@@ -35,7 +35,9 @@ public sealed class GetPlayerSummaryListHandler
 	private static string GetSqlQuery()
 	{
 		return @"SELECT p.Id, p.FirstName + ' ' + p.LastName AS FullName,
-					p.Gender, p.Plays, p.Height, p.SinglesRank, p.DoublesRank
-				from Player p";
+					p.Gender, p.Plays, p.Height, p.SinglesRank, p.DoublesRank,
+					c.ShortName AS CountryCode
+				FROM dbo.Player p
+				LEFT JOIN dbo.Country c ON c.Id = p.CountryId";
 	}
 }

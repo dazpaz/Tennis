@@ -11,5 +11,5 @@ public class RegisterPlayerDto
 	public DateTime DateOfBirth { get; set; }
 	public Plays Plays { get; set; }
 	public int Height { get; set; }
-	public string Country { get;set; } = string.Empty;
+	public Guid Country { get;set; }
 }

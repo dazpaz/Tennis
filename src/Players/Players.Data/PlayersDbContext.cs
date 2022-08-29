@@ -3,6 +3,7 @@ using DomainDesign.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Players.Data.Configuration;
+using Players.Domain.CountryAggregate;
 using Players.Domain.PlayerAggregate;
 
 #nullable disable
@@ -15,6 +16,7 @@ public class PlayersDbContext : DbContext
 	private readonly bool _useConsoleLogger;
 
 	public DbSet<Player> Players { get; set; }
+	public DbSet<Country> Countries { get; set; }
 
 	public PlayersDbContext(ConnectionString connectionString, bool useConsoleLogger)
 	{
@@ -47,6 +49,7 @@ public class PlayersDbContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		new PlayerEntityTypeConfiguration().Configure(modelBuilder.Entity<Player>());
+		new CountryEntityTypeConfiguration().Configure(modelBuilder.Entity<Country>());
 	}
 
 	public override int SaveChanges()

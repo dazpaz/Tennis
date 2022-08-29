@@ -43,11 +43,12 @@ namespace Players.Query
 		private static string GetSqlQuery()
 		{
 			return @"SELECT p.Id, p.FirstName, p.LastName, p.FirstName + ' ' + p.LastName AS FullName,
-				p.Gender, p.DateOfBirth, p.Plays, p.Height, p.Country,
-				p.SinglesRank, p.DoublesRank, p.SinglesRankingPoints,
-				p.DoublesRankingPoints
-			FROM dbo.Player p
-			WHERE p.Id = @PlayerId";
+					p.Gender, p.Plays, p.Height, p.DateOfBirth, p.SinglesRank, p.DoublesRank,
+					p.SinglesRankingPoints, p.DoublesRankingPoints, c.ShortName AS CountryCode,
+					c.FullName AS CountryTitle
+				FROM dbo.Player p
+				LEFT JOIN dbo.Country c ON c.Id = p.CountryId
+				WHERE p.Id = @PlayerId";
 		}
 	}
 }

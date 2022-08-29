@@ -6,11 +6,11 @@ namespace Players.Domain.PlayerAggregate
 	{
 		public const int MaxNameLength = 50;
 
-		public string Value { get; }
+		public string Name { get; }
 
-		private PlayerName(string value)
+		private PlayerName(string name)
 		{
-			Value = value;
+			Name = name;
 		}
 
 		public static Result<PlayerName> Create(string name)
@@ -30,17 +30,17 @@ namespace Players.Domain.PlayerAggregate
 
 		protected override bool EqualsCore(PlayerName other)
 		{
-			return Value == other.Value;
+			return Name == other.Name;
 		}
 
 		protected override int GetHashCodeCore()
 		{
-			return Value.GetHashCode();
+			return Name.GetHashCode();
 		}
 
 		public static implicit operator string(PlayerName playerName)
 		{
-			return playerName.Value;
+			return playerName.Name;
 		}
 
 		public static explicit operator PlayerName(string name)

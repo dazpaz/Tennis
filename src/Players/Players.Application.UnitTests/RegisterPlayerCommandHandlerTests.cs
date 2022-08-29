@@ -12,7 +12,7 @@ public class RegisterPlayerCommandHandlerTests
 	public void RegisterPlayerCommandHandlerRegistersPlayerAndSavesToPlayerRepository()
 	{
 		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
-			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, Guid.NewGuid());
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));
@@ -29,7 +29,7 @@ public class RegisterPlayerCommandHandlerTests
 	public void RegisterPlayerCommandHandlerReturnFailureResultIfRepositoryFailsToSavePlayer()
 	{
 		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
-			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, "France");
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, Guid.NewGuid());
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));

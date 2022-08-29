@@ -7,7 +7,7 @@ namespace Players.Domain.PlayerAggregate
 		public const int MinHeight = 120;
 		public const int MaxHeight = 220;
 
-		private int Value { get; }
+		public int Value { get; }
 
 		private Height(int value) : base()
 		{

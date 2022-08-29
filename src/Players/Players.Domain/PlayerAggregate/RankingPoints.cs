@@ -8,11 +8,11 @@ namespace Players.Domain.PlayerAggregate
 		public const int MinPointsValue = 0;
 		public const int MaxPointsValue = 20000;
 
-		private int Value { get; }
+		public int Points { get; }
 
-		private RankingPoints(int value) : base()
+		private RankingPoints(int points) : base()
 		{
-			Value = value;
+			Points = points;
 		}
 
 		public static Result<RankingPoints> Create(int points)
@@ -28,17 +28,17 @@ namespace Players.Domain.PlayerAggregate
 
 		protected override bool EqualsCore(RankingPoints other)
 		{
-			return Value == other.Value;
+			return Points == other.Points;
 		}
 
 		protected override int GetHashCodeCore()
 		{
-			return Value.GetHashCode();
+			return Points.GetHashCode();
 		}
 
 		public static implicit operator int(RankingPoints rankingPoints)
 		{
-			return rankingPoints.Value;
+			return rankingPoints.Points;
 		}
 
 		public static explicit operator RankingPoints(int points)

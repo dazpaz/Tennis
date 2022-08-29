@@ -7,11 +7,11 @@ public sealed class Ranking : ValueObject<Ranking>
 	public const int MinRankValue = 1;
 	public const int MaxRankValue = 999;
 
-	private int Value { get; }
+	public int Rank { get; }
 
-	private Ranking(int value) : base()
+	private Ranking(int rank) : base()
 	{
-		Value = value;
+		Rank = rank;
 	}
 
 	public static Result<Ranking> Create(int rank)
@@ -27,17 +27,17 @@ public sealed class Ranking : ValueObject<Ranking>
 
 	protected override bool EqualsCore(Ranking other)
 	{
-		return Value == other.Value;
+		return Rank == other.Rank;
 	}
 
 	protected override int GetHashCodeCore()
 	{
-		return Value.GetHashCode();
+		return Rank.GetHashCode();
 	}
 
 	public static implicit operator int(Ranking ranking)
 	{
-		return ranking.Value;
+		return ranking.Rank;
 	}
 
 	public static explicit operator Ranking(int rank)
