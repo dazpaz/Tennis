@@ -2,6 +2,7 @@
 using Players.Application.Commands;
 using Players.Application.Repository;
 using Players.Common;
+using Players.Domain.CountryAggregate;
 using Players.Domain.PlayerAggregate;
 
 namespace Players.Application.UnitTests;
@@ -11,10 +12,13 @@ public class RegisterPlayerCommandHandlerTests
 	[Fact]
 	public void RegisterPlayerCommandHandlerRegistersPlayerAndSavesToPlayerRepository()
 	{
+		var countryId = Guid.NewGuid();
 		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
-			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, Guid.NewGuid());
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, countryId);
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
+		mockUow.Setup(u => u.CountryRepository.GetById(new CountryId(countryId)))
+			.Returns(Country.Create("GBR", "Great Britain"));
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));
 		mockUow.Setup(u => u.SaveChanges()).Returns(1);
 		var handler = new RegisterPlayerCommandHandler(mockUow.Object);
@@ -28,10 +32,13 @@ public class RegisterPlayerCommandHandlerTests
 	[Fact]
 	public void RegisterPlayerCommandHandlerReturnFailureResultIfRepositoryFailsToSavePlayer()
 	{
+		var countryId = Guid.NewGuid();
 		var command = RegisterPlayerCommand.Create("First", "Last", "first.last@tennis.com",
-			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, Guid.NewGuid());
+			Gender.Female, new DateTime(2000, 10, 01), Plays.LeftHanded, 191, countryId);
 
 		Mock<IUnitOfWork> mockUow = new(MockBehavior.Strict);
+		mockUow.Setup(u => u.CountryRepository.GetById(new CountryId(countryId)))
+			.Returns(Country.Create("GBR", "Great Britain"));
 		mockUow.Setup(u => u.PlayerRepository.Add(It.IsAny<Player>()));
 		mockUow.Setup(u => u.SaveChanges()).Throws(new Exception("Test Exception Message"));
 		var handler = new RegisterPlayerCommandHandler(mockUow.Object);

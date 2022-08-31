@@ -14,12 +14,13 @@ public class RegisterPlayerCommandTests
 			Plays.LeftHanded, 191, countryGuid);
 
 		command.IsSuccess.Should().BeTrue();
-		command.Value.FirstName.Should().Be("Steve");
-		command.Value.LastName.Should().Be("Serve");
+		command.Value.FirstName.Name.Should().Be("Steve");
+		command.Value.LastName.Name.Should().Be("Serve");
+		command.Value.Email.Email.Should().Be("first.last@tennis.com");
 		command.Value.Gender.Should().Be(Gender.Male);
 		command.Value.DateOfBirth.Should().Be(new DateTime(2000, 10, 01));
 		command.Value.Plays.Should().Be(Plays.LeftHanded);
-		command.Value.Height.Should().Be(191);
+		command.Value.Height.Value.Should().Be(191);
 		command.Value.CountryId.Id.Should().Be(countryGuid);
 	}
 
