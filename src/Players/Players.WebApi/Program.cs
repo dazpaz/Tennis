@@ -3,6 +3,7 @@ using Cqrs.Common.Data;
 using Players.Application.Repository;
 using Players.Data;
 using Players.Data.Repository;
+using Players.WebApi.Factory;
 using Players.WebApi.Utilities;
 
 namespace Players.WebApi
@@ -23,6 +24,9 @@ namespace Players.WebApi
 
 			builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddTransient(s => new PlayersDbContext(commandConnectionString, true));
+
+			builder.Services.AddTransient<ICommandFactory, CommandFactory>();
+			builder.Services.AddTransient<IQueryFactory, QueryFactory>();
 
 			builder.Services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
 			builder.Services.AddHandlers();
