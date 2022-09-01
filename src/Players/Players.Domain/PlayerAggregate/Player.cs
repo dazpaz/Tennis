@@ -63,7 +63,7 @@ public class Player : AggregateRoot<PlayerId>
 		// (is ranking history part of this Aggregate Root
 	}
 
-	public void UpdateDoubledRank(Ranking ranking, RankingPoints rankingPoints, DateTime date)
+	public void UpdateDoublesRank(Ranking ranking, RankingPoints rankingPoints, DateTime date)
 	{
 		DoublesRank = ranking;
 		DoublesRankingPoints = rankingPoints;

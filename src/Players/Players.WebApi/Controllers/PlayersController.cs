@@ -1,5 +1,6 @@
 using Cqrs.Common.Application;
 using CSharpFunctionalExtensions;
+using DomainDesign.Common;
 using Microsoft.AspNetCore.Mvc;
 using Players.Contract;
 using Players.WebApi.Factory;
@@ -33,6 +34,31 @@ public class PlayersController : ControllerBase
 
 		return result.IsSuccess
 			? CreatedAtAction(nameof(GetPlayer), new { id = result.Value }, null)
+			: BadRequest(result.Error);
+	}
+
+	[HttpPost("{id}/UpdateSinglesRanking")]
+	public IActionResult UpdateSinglesRanking(Guid id, [FromBody] UpdateRankingDto newRanking)
+	{
+		var command = _commandFactory.CreateUpdateSinglesRankingCommand(id, newRanking);
+		return ExecuteCommand(command);
+	}
+
+	[HttpPost("{id}/UpdateDoublesRanking")]
+	public IActionResult UpdateDoubleRanking(Guid id, [FromBody] UpdateRankingDto newRanking)
+	{
+		var command = _commandFactory.CreateUpdateDoublesRankingCommand(id, newRanking);
+		return ExecuteCommand(command);
+	}
+
+	private IActionResult ExecuteCommand(Result<ICommand> command)
+	{
+		if (command.IsFailure) return BadRequest(command.Error);
+
+		Result result = _dispatcher.Dispatch(command.Value);
+
+		return result.IsSuccess
+			? Ok()
 			: BadRequest(result.Error);
 	}
 
