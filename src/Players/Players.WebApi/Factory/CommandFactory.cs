@@ -23,5 +23,10 @@ namespace Players.WebApi.Factory
 		{
 			return UpdateDoublesRankingCommand.Create(id, newRanking.Rank, newRanking.Points, newRanking.Date);
 		}
+
+		public Result<CreateCountryCommand> CreateCreateCountryCommand(CreateCountryDto countryDetails)
+		{
+			return CreateCountryCommand.Create(countryDetails.ShortName, countryDetails.FullName);
+		}
 	}
 }
