@@ -45,7 +45,7 @@ public class PlayersController : ControllerBase
 	}
 
 	[HttpPost("{id}/UpdateDoublesRanking")]
-	public IActionResult UpdateDoubleRanking(Guid id, [FromBody] UpdateRankingDto newRanking)
+	public IActionResult UpdateDoublesRanking(Guid id, [FromBody] UpdateRankingDto newRanking)
 	{
 		var command = _commandFactory.CreateUpdateDoublesRankingCommand(id, newRanking);
 		return ExecuteCommand(command);
