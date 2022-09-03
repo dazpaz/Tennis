@@ -10,5 +10,6 @@ namespace Players.WebApi.Factory
 		Result<RegisterPlayerCommand> CreateRegisterPlayerCommand(RegisterPlayerDto playerDetails);
 		Result<ICommand> CreateUpdateSinglesRankingCommand(Guid id, UpdateRankingDto newRanking);
 		Result<ICommand> CreateUpdateDoublesRankingCommand(Guid id, UpdateRankingDto newRanking);
+		Result<CreateCountryCommand> CreateCreateCountryCommand(CreateCountryDto countryDetails);
 	}
 }

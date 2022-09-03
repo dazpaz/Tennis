@@ -1,9 +1,8 @@
 ﻿using Cqrs.Common.Application;
 using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
-using Players.Application.Commands;
 using Players.Contract;
-using Players.Query;
+using Players.WebApi.Factory;
 
 namespace Players.WebApi.Controllers
 {
@@ -11,21 +10,23 @@ namespace Players.WebApi.Controllers
 	[Route("[controller]")]
 	public class CountriesController : ControllerBase
 	{
-
-		private readonly ILogger<PlayersController> _logger;
 		private readonly IMessageDispatcher _dispatcher;
+		private readonly ICommandFactory _commandFactory;
+		private readonly IQueryFactory _queryFactory;
 
-		public CountriesController(ILogger<PlayersController> logger, IMessageDispatcher dispatcher)
+		public CountriesController(IMessageDispatcher dispatcher,
+			ICommandFactory commandFactory,
+			IQueryFactory queryFactory)
 		{
-			_logger = logger;
 			_dispatcher = dispatcher;
+			_commandFactory = commandFactory;
+			_queryFactory = queryFactory;
 		}
 
 		[HttpPost]
 		public IActionResult CreateCountry([FromBody] CreateCountryDto countryDetails)
 		{
-			var command = CreateCountryCommand.Create(countryDetails.ShortName, countryDetails.FullName);
-
+			var command = _commandFactory.CreateCreateCountryCommand(countryDetails);
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			Result<Guid> result = _dispatcher.Dispatch<Guid>(command.Value);
@@ -38,8 +39,7 @@ namespace Players.WebApi.Controllers
 		[HttpGet("{id}")]
 		public IActionResult GetCountry(Guid id)
 		{
-			var query = new GetCountryDetails(id);
-
+			var query = _queryFactory.CreateGetCountryDetailsQuery(id);
 			Result<CountryDetailsDto> result = _dispatcher.Dispatch(query);
 
 			return result.IsSuccess
@@ -50,7 +50,7 @@ namespace Players.WebApi.Controllers
 		[HttpGet]
 		public IActionResult GetCountries()
 		{
-			var query = new GetCountryDetailsList();
+			var query = _queryFactory.CreateGetCountryDetailsListQuery();
 			Result<IList<CountryDetailsDto>> result = _dispatcher.Dispatch(query);
 
 			return result.IsSuccess

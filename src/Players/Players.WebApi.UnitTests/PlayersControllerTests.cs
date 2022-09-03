@@ -1,5 +1,6 @@
 ﻿using Cqrs.Common.Application;
 using CSharpFunctionalExtensions;
+using DomainDesign.Common;
 using Microsoft.AspNetCore.Mvc;
 using Players.Application.Commands;
 using Players.Common;
@@ -24,7 +25,7 @@ namespace Players.WebApi.UnitTests
 		}
 
 		[Fact]
-		public void RegisterPlayerCommand_IfCommandCreationHasAnError_ReturnsBadRequestWithCorrectError()
+		public void RegisterPlayerCommand_IfCommandCreationFails_ReturnsBadRequestWithCorrectError()
 		{
 			var playerDetails = GetTestPlayerDetails();
 
@@ -73,8 +74,7 @@ namespace Players.WebApi.UnitTests
 
 			_mockCommandFactory.Setup(f => f.CreateRegisterPlayerCommand(playerDetails))
 				.Returns(command);
-			_mockDispatcher.Setup(d => d.Dispatch<Guid>(command.Value))
-				.Returns(Result.Success<Guid>(playerGuid));
+			_mockDispatcher.Setup(d => d.Dispatch<Guid>(command.Value)).Returns(Result.Success(playerGuid));
 
 			var controller = new PlayersController(_mockDispatcher.Object,
 				_mockCommandFactory.Object, _mockQueryFactory.Object);
@@ -165,6 +165,151 @@ namespace Players.WebApi.UnitTests
 			value!.Count.Should().Be(2);
 			value![0].FullName.Should().Be("Test Name 1");
 			value![1].FullName.Should().Be("Test Name 2");
+		}
+
+		[Fact]
+		public void UpdateSinglesRanking_IfCommandCreationFails_ReturnsBadRequestWithCorrectError()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateSinglesRankingCommand(id, newRanking))
+				.Returns(Result.Failure<ICommand>("Command Creation Error"));
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.UpdateSinglesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Command Creation Error");
+
+			VerifyAllMocks();
+		}
+
+		[Fact]
+		public void UpdateSinglesRanking_IfCommandHandlerHasAnError_ReturnsBadRequestWithCorrectError()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+			var command = GetTestUpdateSinglesRankCommand();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateSinglesRankingCommand(id, newRanking))
+				.Returns(command);
+			_mockDispatcher.Setup(d => d.Dispatch(command.Value))
+				.Returns(Result.Failure<Guid>("Command Handler Error"));
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.UpdateSinglesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Command Handler Error");
+
+			VerifyAllMocks();
+		}
+
+		[Fact]
+		public void UpdateSinglesRanking_IfCommandHandlerIndicatesSuccess_ReturnCreatedResponse()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+			var command = GetTestUpdateSinglesRankCommand();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateSinglesRankingCommand(id, newRanking))
+				.Returns(command);
+			_mockDispatcher.Setup(d => d.Dispatch(command.Value)).Returns(Result.Success());
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (OkResult)controller.UpdateSinglesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(200);
+		}
+
+		[Fact]
+		public void UpdateDoublesRanking_IfCommandCreationFails_ReturnsBadRequestWithCorrectError()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateDoublesRankingCommand(id, newRanking))
+				.Returns(Result.Failure<ICommand>("Command Creation Error"));
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.UpdateDoublesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Command Creation Error");
+
+			VerifyAllMocks();
+		}
+
+		[Fact]
+		public void UpdateDoublesRanking_IfCommandHandlerHasAnError_ReturnsBadRequestWithCorrectError()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+
+			var command = GetTestUpdateDoublesRankCommand();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateDoublesRankingCommand(id, newRanking))
+				.Returns(command);
+			_mockDispatcher.Setup(d => d.Dispatch(command.Value))
+				.Returns(Result.Failure<Guid>("Command Handler Error"));
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.UpdateDoublesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Command Handler Error");
+
+			VerifyAllMocks();
+		}
+
+		[Fact]
+		public void UpdateDoublesRanking_IfCommandHandlerIndicatesSuccess_ReturnCreatedResponse()
+		{
+			var newRanking = GetTestNewRanking();
+			var id = Guid.NewGuid();
+			var command = GetTestUpdateDoublesRankCommand();
+
+			_mockCommandFactory.Setup(f => f.CreateUpdateDoublesRankingCommand(id, newRanking))
+				.Returns(command);
+			_mockDispatcher.Setup(d => d.Dispatch(command.Value)).Returns(Result.Success());
+
+			var controller = new PlayersController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (OkResult)controller.UpdateDoublesRanking(id, newRanking);
+
+			result.StatusCode.Should().Be(200);
+		}
+
+		private static UpdateRankingDto GetTestNewRanking()
+		{
+			return new UpdateRankingDto
+			{
+				Rank = 45,
+				Points = 1000,
+				Date = new DateTime(2022, 09, 03)
+			};
+		}
+
+		private static Result<ICommand> GetTestUpdateSinglesRankCommand()
+		{
+			return UpdateSinglesRankingCommand.Create(Guid.NewGuid(), 40, 1000, new DateTime(2022, 09, 03));
+		}
+
+		private static Result<ICommand> GetTestUpdateDoublesRankCommand()
+		{
+			return UpdateDoublesRankingCommand.Create(Guid.NewGuid(), 40, 1000, new DateTime(2022, 09, 03));
 		}
 
 		private void VerifyAllMocks()
