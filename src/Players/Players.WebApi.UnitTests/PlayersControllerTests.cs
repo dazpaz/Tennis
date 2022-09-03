@@ -74,8 +74,7 @@ namespace Players.WebApi.UnitTests
 
 			_mockCommandFactory.Setup(f => f.CreateRegisterPlayerCommand(playerDetails))
 				.Returns(command);
-			_mockDispatcher.Setup(d => d.Dispatch<Guid>(command.Value))
-				.Returns(Result.Success<Guid>(playerGuid));
+			_mockDispatcher.Setup(d => d.Dispatch<Guid>(command.Value)).Returns(Result.Success(playerGuid));
 
 			var controller = new PlayersController(_mockDispatcher.Object,
 				_mockCommandFactory.Object, _mockQueryFactory.Object);
