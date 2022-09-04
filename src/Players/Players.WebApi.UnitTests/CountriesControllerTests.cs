@@ -3,13 +3,9 @@ using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Players.Application.Commands;
 using Players.Contract;
+using Players.Query;
 using Players.WebApi.Controllers;
 using Players.WebApi.Factory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Players.WebApi.UnitTests
 {
@@ -84,6 +80,93 @@ namespace Players.WebApi.UnitTests
 
 			result.StatusCode.Should().Be(201);
 			result.RouteValues!["id"].Should().Be(countryGuid);
+		}
+
+		[Fact]
+		public void GetCountry_IfQueryHandlerHasAnError_ReturnsBadRequestWithCorrectError()
+		{
+			var countryGuid = Guid.NewGuid();
+			var query = new GetCountryDetails(countryGuid);
+			_mockQueryFactory.Setup(f => f.CreateGetCountryDetailsQuery(countryGuid)).Returns(query);
+
+			_mockDispatcher.Setup(d => d.Dispatch(query))
+				.Returns(Result.Failure<CountryDetailsDto>("Query Handler Error"));
+
+			var controller = new CountriesController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.GetCountry(countryGuid);
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Query Handler Error");
+		}
+
+		[Fact]
+		public void GetCountry_IfQueryHandlerIndicatesSuccess_CountryDetailsAreReturned()
+		{
+			var countryGuid = Guid.NewGuid();
+			var query = new GetCountryDetails(countryGuid);
+			_mockQueryFactory.Setup(f => f.CreateGetCountryDetailsQuery(countryGuid)).Returns(query);
+
+			_mockDispatcher.Setup(d => d.Dispatch(query))
+				.Returns(Result.Success(new CountryDetailsDto
+				{ 
+					ShortName = "GBR",
+					FullName = "Great Britain"
+				}));
+
+			var controller = new CountriesController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (OkObjectResult)controller.GetCountry(countryGuid);
+
+			result.StatusCode.Should().Be(200);
+			var value = result.Value as CountryDetailsDto;
+			value!.ShortName.Should().Be("GBR");
+			value!.FullName.Should().Be("Great Britain");
+		}
+
+		[Fact]
+		public void GetCountries_IfQueryHandlerHasAnError_ReturnsBadRequestWithCorrectError()
+		{
+			var query = new GetCountryDetailsList();
+			_mockQueryFactory.Setup(f => f.CreateGetCountryDetailsListQuery()).Returns(query);
+
+			_mockDispatcher.Setup(d => d.Dispatch(query))
+				.Returns(Result.Failure<IList<CountryDetailsDto>>("Query Handler Error"));
+
+			var controller = new CountriesController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (BadRequestObjectResult)controller.GetCountries();
+
+			result.StatusCode.Should().Be(400);
+			result.Value.Should().Be("Query Handler Error");
+		}
+
+		[Fact]
+		public void GetCountries_IfQueryHandlerIndicatesSuccess_CountriesListIsReturned()
+		{
+			var query = new GetCountryDetailsList();
+			_mockQueryFactory.Setup(f => f.CreateGetCountryDetailsListQuery()).Returns(query);
+
+			_mockDispatcher.Setup(d => d.Dispatch(query))
+				.Returns(Result.Success<IList<CountryDetailsDto>>(new List<CountryDetailsDto>
+				{
+					new CountryDetailsDto { ShortName = "GBR", FullName = "Great Britain" },
+					new CountryDetailsDto { ShortName = "FRA", FullName = "France" },
+				}));
+
+			var controller = new CountriesController(_mockDispatcher.Object,
+				_mockCommandFactory.Object, _mockQueryFactory.Object);
+
+			var result = (OkObjectResult)controller.GetCountries();
+
+			result.StatusCode.Should().Be(200);
+			var value = result.Value as IList<CountryDetailsDto>;
+			value!.Count.Should().Be(2);
+			value![0].ShortName.Should().Be("GBR");
+			value![1].FullName.Should().Be("France");
 		}
 
 		private static CreateCountryDto GetTestCountryDetails()
