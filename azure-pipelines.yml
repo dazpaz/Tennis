@@ -30,7 +30,7 @@ steps:
 
 - task: VSTest@2
   inputs:
-    testAssemblyVer2: '**\*Cqrs.Common.UnitTests.dll'
+    testAssemblyVer2: '**\bin\Release\net6.0\Cqrs.Common.UnitTests.dll'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
