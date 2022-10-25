@@ -33,6 +33,7 @@ steps:
     testAssemblyVer2: '**\bin\Release\net6.0\Cqrs.Common.UnitTests.dll'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    codeCoverageEnabled: true
 
 - task: PublishCodeCoverageResults@1
   inputs:
